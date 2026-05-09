@@ -1,0 +1,7 @@
+demo_detector:
+  detector_node:
+    ros__parameters:
+      input_image_topic: /camera/image_raw
+      output_boxes_topic: /detections/bounding_boxes
+      confidence_threshold: 0.50
+      publish_debug_image: false

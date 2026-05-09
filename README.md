@@ -47,20 +47,22 @@ Expected output:
 
 ```txt
 outputs/demo_detector/
-├─ package.xml
-├─ setup.py
-├─ setup.cfg
-├─ README.md
-├─ launch/
-│  └─ demo_detector.launch.py
-├─ config/
-│  └─ params.yaml
-└─ demo_detector/
-   ├─ __init__.py
-   └─ detector_node.py
+|-- package.xml
+|-- setup.py
+|-- setup.cfg
+|-- README.md
+|-- launch/
+|   `-- demo_detector.launch.py
+|-- config/
+|   `-- params.yaml
+`-- demo_detector/
+    |-- __init__.py
+    `-- detector_node.py
 ```
 
 The generated files are ROS2-style templates designed for learning, prototyping, and workflow demonstration. A real ROS2 runtime is not required for the MVP.
+
+A static generated example is included at `examples/generated_projects/demo_detector/`, with the source prompt saved in `examples/prompts/demo_detector.txt`.
 
 ## Installation
 
@@ -105,8 +107,7 @@ Generate a ROS-style package skeleton:
 robopilot generate --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes."
 ```
 
-By default, RoboPilot writes generated projects to `outputs/` and refuses to
-overwrite an existing project directory.
+By default, RoboPilot writes generated projects to `outputs/` and refuses to overwrite an existing project directory.
 
 The command above creates:
 
@@ -137,24 +138,35 @@ Run tests:
 pytest
 ```
 
+## Windows Test Notes
+
+On some Windows setups, pytest may not be able to access the default user temp directory. In that case, run tests with a project-local temp directory:
+
+```powershell
+New-Item -ItemType Directory -Path .pytest_tmp -Force
+$env:TMP='R:\RoboPilot\.pytest_tmp'
+$env:TEMP='R:\RoboPilot\.pytest_tmp'
+python -m pytest -p no:cacheprovider --basetemp .pytest_tmp\basetemp
+```
+
 ## Project Structure
 
 ```txt
 robopilot/
-├─ AGENTS.md
-├─ README.md
-├─ roadmap.md
-├─ pyproject.toml
-├─ src/
-│  └─ robopilot/
-│     ├─ main.py
-│     ├─ generator/
-│     ├─ debugger/
-│     ├─ prompts/
-│     └─ utils/
-├─ examples/
-├─ tests/
-└─ docs/
+|-- AGENTS.md
+|-- README.md
+|-- roadmap.md
+|-- pyproject.toml
+|-- src/
+|   `-- robopilot/
+|       |-- main.py
+|       |-- generator/
+|       |-- debugger/
+|       |-- prompts/
+|       `-- utils/
+|-- examples/
+|-- tests/
+`-- docs/
 ```
 
 ## Design Principles

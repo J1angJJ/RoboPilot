@@ -1,0 +1,1 @@
+Create an object detection node subscribing to camera images and publishing bounding boxes.
