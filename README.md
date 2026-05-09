@@ -144,6 +144,18 @@ Analyze inline log text:
 robopilot debug --text "ModuleNotFoundError: No module named 'cv_bridge'"
 ```
 
+Generate a Mermaid workflow graph:
+
+```bash
+robopilot graph --pipeline "camera -> detector -> tracker -> planner -> controller"
+```
+
+Write a Mermaid workflow graph to a file:
+
+```bash
+robopilot graph --pipeline "camera -> detector -> tracker" --output examples/graphs/demo_pipeline.mmd
+```
+
 Run tests:
 
 ```bash

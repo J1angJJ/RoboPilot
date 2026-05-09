@@ -10,6 +10,7 @@ from rich.table import Table
 
 from robopilot.debugger.log_analyzer import LogAnalysis, analyze_log
 from robopilot.generator.project_generator import generate_project
+from robopilot.graph.mermaid_generator import PipelineParseError, generate_mermaid
 from robopilot.utils.file_ops import OutputPathExistsError
 
 
@@ -108,6 +109,41 @@ def _print_analysis(analysis: LogAnalysis) -> None:
     console.print("[bold]Suggested fixes:[/bold]")
     for fix in analysis.suggested_fixes:
         console.print(f"- {fix}")
+
+
+@app.command()
+def graph(
+    pipeline: Annotated[
+        str,
+        typer.Option(
+            "--pipeline",
+            "-p",
+            help="Arrow-based robotics pipeline, such as 'camera -> detector'.",
+        ),
+    ],
+    output: Annotated[
+        Path | None,
+        typer.Option("--output", "-o", help="Optional Mermaid output file path."),
+    ] = None,
+) -> None:
+    """Generate a Mermaid graph from a robotics workflow pipeline."""
+    try:
+        mermaid = generate_mermaid(pipeline)
+    except PipelineParseError as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    console.print(mermaid)
+
+    if output is not None:
+        try:
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_text(f"{mermaid}\n", encoding="utf-8")
+        except OSError as exc:
+            console.print(f"[red]Error:[/red] Could not write graph file: {exc}")
+            raise typer.Exit(code=1) from exc
+
+        console.print(f"[green]Wrote Mermaid graph to[/green] {output}")
 
 
 if __name__ == "__main__":
