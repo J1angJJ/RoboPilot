@@ -113,7 +113,7 @@ graph LR
 
 ## 项目状态
 
-RoboPilot 目前是早期 MVP，重点是离线、轻量的机器人开发辅助流程。
+RoboPilot 目前是早期 v0.1.0 MVP，重点是离线、轻量的机器人开发辅助流程。发布记录见 [`CHANGELOG.md`](CHANGELOG.md)。
 
 已实现：
 

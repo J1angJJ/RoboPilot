@@ -2,6 +2,8 @@
 
 [English](README.md) | [Chinese](README.zh-CN.md)
 
+[![Tests](https://github.com/J1angJJ/RoboPilot/actions/workflows/tests.yml/badge.svg)](https://github.com/J1angJJ/RoboPilot/actions/workflows/tests.yml)
+
 Lightweight offline developer tooling for ROS-style robotics workflows.
 
 RoboPilot helps robotics learners and developers scaffold ROS-style Python packages, analyze common robotics error logs, and turn simple software pipelines into Mermaid workflow diagrams. The current MVP is intentionally local, reproducible, and hardware-friendly: no ROS2 installation, GPU, Docker, OpenAI API, or heavy framework is required.
@@ -113,7 +115,7 @@ graph LR
 
 ## Project Status
 
-RoboPilot is an early MVP focused on offline, lightweight robotics developer workflows.
+RoboPilot is an early v0.1.0 MVP focused on offline, lightweight robotics developer workflows. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
 
 Implemented:
 
