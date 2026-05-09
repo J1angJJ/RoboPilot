@@ -1,0 +1,4 @@
+[ERROR] [camera_node]: OpenCV VideoCapture opened camera index 0
+[ERROR] [camera_node]: camera timeout while waiting for frame
+[ERROR] [camera_node]: cannot read frame from camera
+

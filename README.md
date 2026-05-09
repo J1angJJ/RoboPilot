@@ -132,6 +132,18 @@ Show help:
 robopilot --help
 ```
 
+Analyze a robotics error log file:
+
+```bash
+robopilot debug --log examples/error_logs/cv_bridge_missing.txt
+```
+
+Analyze inline log text:
+
+```bash
+robopilot debug --text "ModuleNotFoundError: No module named 'cv_bridge'"
+```
+
 Run tests:
 
 ```bash

@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "camera_detector.py", line 8, in <module>
+    from cv_bridge import CvBridge
+ModuleNotFoundError: No module named 'cv_bridge'
+

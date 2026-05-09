@@ -1,0 +1,3 @@
+RuntimeError: CUDA out of memory. Tried to allocate 512.00 MiB.
+GPU 0 has 8.00 GiB total capacity with only 64.00 MiB free.
+

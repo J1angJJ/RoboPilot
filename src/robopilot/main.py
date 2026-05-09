@@ -5,8 +5,10 @@ from typing import Annotated
 
 import typer
 from rich.console import Console
+from rich.panel import Panel
 from rich.table import Table
 
+from robopilot.debugger.log_analyzer import LogAnalysis, analyze_log
 from robopilot.generator.project_generator import generate_project
 from robopilot.utils.file_ops import OutputPathExistsError
 
@@ -66,6 +68,46 @@ def generate(
     for file_path in project.files:
         table.add_row(str(file_path.relative_to(project.output_dir)))
     console.print(table)
+
+
+@app.command()
+def debug(
+    log: Annotated[
+        Path | None,
+        typer.Option("--log", "-l", help="Path to a robotics error log file."),
+    ] = None,
+    text: Annotated[
+        str | None,
+        typer.Option("--text", "-t", help="Inline error log text to analyze."),
+    ] = None,
+) -> None:
+    """Analyze a robotics error log using offline rules."""
+    if (log is None and text is None) or (log is not None and text is not None):
+        console.print("[red]Error:[/red] Provide exactly one of --log or --text.")
+        raise typer.Exit(code=1)
+
+    try:
+        log_text = log.read_text(encoding="utf-8") if log is not None else text or ""
+    except OSError as exc:
+        console.print(f"[red]Error:[/red] Could not read log file: {exc}")
+        raise typer.Exit(code=1) from exc
+
+    _print_analysis(analyze_log(log_text))
+
+
+def _print_analysis(analysis: LogAnalysis) -> None:
+    console.print(Panel.fit("Robotics Error Log Diagnosis", style="bold cyan"))
+    console.print(f"[bold]Error type:[/bold] {analysis.error_type}")
+    console.print(f"[bold]Confidence level:[/bold] {analysis.confidence}")
+    console.print(f"[bold]Diagnosis:[/bold] {analysis.diagnosis}")
+
+    console.print("[bold]Possible causes:[/bold]")
+    for cause in analysis.possible_causes:
+        console.print(f"- {cause}")
+
+    console.print("[bold]Suggested fixes:[/bold]")
+    for fix in analysis.suggested_fixes:
+        console.print(f"- {fix}")
 
 
 if __name__ == "__main__":
