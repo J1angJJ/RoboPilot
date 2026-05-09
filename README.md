@@ -105,6 +105,26 @@ Generate a ROS-style package skeleton:
 robopilot generate --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes."
 ```
 
+By default, RoboPilot writes generated projects to `outputs/` and refuses to
+overwrite an existing project directory.
+
+The command above creates:
+
+```txt
+outputs/demo_detector/
+|-- package.xml
+|-- setup.py
+|-- setup.cfg
+|-- README.md
+|-- launch/
+|   `-- demo_detector.launch.py
+|-- config/
+|   `-- params.yaml
+`-- demo_detector/
+    |-- __init__.py
+    `-- detector_node.py
+```
+
 Show help:
 
 ```bash
