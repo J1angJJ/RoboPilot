@@ -31,7 +31,7 @@ class LLMProviderConfig:
         api_key = values.get("OPENAI_API_KEY", "").strip()
         if not api_key:
             raise PlannerConfigurationError(
-                "LLM planner requested, but OPENAI_API_KEY is not set. "
+                "LLM provider requested, but OPENAI_API_KEY is not set. "
                 "Set OPENAI_API_KEY or use --planner rule for offline planning."
             )
 

@@ -54,7 +54,7 @@ Point out:
 Refine the spec:
 
 ```bash
-robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after the detector" --output refined.yaml
+robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after the detector" --planner rule --output refined.yaml
 ```
 
 Diff the base and refined specs:
@@ -76,7 +76,16 @@ Point out:
 - The original spec is not modified.
 - v0.9.0 refinement is deterministic and rule-based.
 - v0.10.0 diff is static, read-only, and validates both specs before comparison.
-- LLM-assisted refinement is intentionally left for a later milestone.
+- v0.11.0 adds optional LLM-assisted refinement that still returns only ProjectSpec-compatible data.
+- Real LLM refinement requires `OPENAI_API_KEY`.
+- Run `robopilot diff` before generating from an LLM-refined spec.
+
+Optional LLM refinement:
+
+```bash
+robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after the detector" --planner llm --model gpt-4.1-mini --output llm_refined.yaml
+robopilot diff --old robopilot.yaml --new llm_refined.yaml
+```
 
 Planner selection:
 
@@ -285,10 +294,10 @@ Current implemented MVPs:
 - v0.8.0: Real OpenAI Provider Integration
 - v0.9.0: Rule-based ProjectSpec Refinement
 - v0.10.0: Static ProjectSpec Diff
+- v0.11.0: Optional LLM-assisted ProjectSpec Refinement
 
 Next planned work:
 
-- LLM-assisted spec refinement with validation
-- Hardening provider-backed ProjectSpec planning
+- Hardening provider-backed ProjectSpec planning and refinement
 - Deeper static reports and read-only repair suggestions
 - Lightweight demo UI

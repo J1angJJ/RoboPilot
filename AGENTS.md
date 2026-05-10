@@ -51,7 +51,7 @@ RoboPilot currently supports:
 10. Project repair suggestions based on inspection issues.
 11. Static Markdown project reports.
 12. Planner interface with offline rule-based planning and optional OpenAI-backed ProjectSpec-only LLM planning.
-13. Rule-based ProjectSpec refinement.
+13. Rule-based and optional LLM-assisted ProjectSpec refinement.
 14. Static ProjectSpec diff reports.
 15. English and Chinese documentation.
 16. Pytest test coverage and GitHub Actions CI.
@@ -61,24 +61,25 @@ RoboPilot currently supports:
 The current priority is:
 
 ```txt
-v0.10.0 Spec Diff
+v0.11.0 LLM-assisted Spec Refinement
 ```
 
-The goal is to compare two `robopilot.yaml` / ProjectSpec files using deterministic offline rules.
+The goal is to enable optional provider-backed refinement while preserving the spec-first workflow.
 
 Expected command:
 
 ```bash
-robopilot diff --old base.yaml --new refined.yaml
+robopilot refine --spec base.yaml --instruction "Add a tracker node after the detector" --planner llm --output refined.yaml
 ```
 
-The diff layer should:
+The LLM refinement layer should:
 
-- load both ProjectSpec files
-- validate both specs before comparison
-- compare scalar fields, nodes, topics, config files, launch files, and notes
-- support readable terminal output and deterministic JSON output
-- never modify either spec file
+- load an existing ProjectSpec
+- ask the provider for a full ProjectSpec-compatible response
+- validate the refined ProjectSpec before writing
+- write a new spec only through the CLI output path
+- never generate project files or source code directly
+- keep rule-based refinement as the default
 
 The optional LLM planner must not run ROS2, launch files, colcon, or generated Python nodes. It must not modify files or generate arbitrary code directly.
 
@@ -386,7 +387,7 @@ robopilot plan --name demo_detector --task "Create an object detection pipeline"
 Implement:
 
 ```txt
-v0.10.0 Spec Diff
+v0.11.0 LLM-assisted Spec Refinement
 ```
 
 The planner layer should continue to support:
@@ -417,4 +418,12 @@ The diff implementation should include:
 - readable terminal output and stable JSON output
 - no file modification
 
-Do not start broad LLM orchestration, LLM-assisted refinement, direct LLM code generation, RAG, Streamlit UI, VSCode integration, real ROS2 runtime execution, `--apply`, or colcon integration until the rule-based spec workflow is stable.
+The optional LLM refiner should include:
+
+- provider-backed structured ProjectSpec output only
+- reuse of existing provider configuration and OpenAI client logic
+- reuse of existing ProjectSpec parsing and validation
+- clear missing-configuration errors
+- no direct file or code generation
+
+Do not start broad LLM orchestration, direct LLM code generation, RAG, Streamlit UI, VSCode integration, real ROS2 runtime execution, `--apply`, or colcon integration until the spec-first workflow is stable.

@@ -26,6 +26,7 @@ from robopilot.planner import (
     RuleBasedPlanner,
 )
 from robopilot.repair.repair_suggester import RepairSuggestionReport, suggest_repairs
+from robopilot.refiner.llm_refiner import LLMRefiner
 from robopilot.refiner.spec_refiner import refine_spec
 from robopilot.report.project_report import generate_project_report, write_project_report
 from robopilot.spec.io import load_spec, spec_to_yaml, write_spec
@@ -184,19 +185,50 @@ def refine(
     ],
     planner: Annotated[
         str,
-        typer.Option("--planner", help="Refinement backend to use. Only 'rule' is supported."),
+        typer.Option("--planner", help="Refinement backend to use: rule or llm."),
     ] = "rule",
+    model: Annotated[
+        str | None,
+        typer.Option(
+            "--model",
+            help="Optional model name for --planner llm.",
+        ),
+    ] = None,
 ) -> None:
     """Refine an existing ProjectSpec and write a new spec file."""
     try:
         original_spec = load_spec(spec)
-        refined_spec = refine_spec(original_spec, instruction, planner=planner)
+        refined_spec = _refine_with_selected_planner(
+            original_spec,
+            instruction,
+            planner_name=planner,
+            model=model,
+        )
         write_spec(refined_spec, output)
-    except (OSError, ValueError) as exc:
+    except (OSError, PlannerError, ValueError) as exc:
         console.print(f"[red]Error:[/red] {exc}")
         raise typer.Exit(code=1) from exc
 
     console.print(f"[green]Wrote refined ProjectSpec to[/green] {output}")
+
+
+def _refine_with_selected_planner(
+    project_spec,
+    instruction: str,
+    *,
+    planner_name: str,
+    model: str | None = None,
+):
+    normalized = planner_name.strip().lower()
+    if normalized == "rule":
+        return refine_spec(project_spec, instruction, planner="rule")
+    if normalized == "llm":
+        config = LLMProviderConfig.from_env(model_override=model)
+        refiner = LLMRefiner(client=OpenAIPlannerClient(config))
+        return refiner.refine(project_spec, instruction)
+    raise PlannerConfigurationError(
+        f"Unknown refinement planner: {planner_name}. Use 'rule' or 'llm'."
+    )
 
 
 @app.command()

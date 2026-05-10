@@ -35,7 +35,7 @@ class LLMPlanner:
 
         prompt = build_project_spec_prompt(package_name=package_name, task=task)
         raw_response = self.client.complete(prompt)
-        spec = _parse_project_spec(raw_response)
+        spec = parse_project_spec_response(raw_response)
         validation = validate_spec(spec)
         if not validation.is_valid:
             raise PlannerValidationError(
@@ -45,7 +45,8 @@ class LLMPlanner:
         return spec
 
 
-def _parse_project_spec(raw_response: str | dict[str, Any]) -> ProjectSpec:
+def parse_project_spec_response(raw_response: str | dict[str, Any]) -> ProjectSpec:
+    """Parse provider output into a ProjectSpec."""
     if isinstance(raw_response, str):
         cleaned_response = _strip_code_fence(raw_response.strip())
         try:

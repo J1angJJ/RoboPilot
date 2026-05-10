@@ -11,7 +11,7 @@ RoboPilot helps robotics learners and developers scaffold ROS-style Python packa
 ## Core Capabilities
 
 - `plan`: convert a robotics task into a readable `robopilot.yaml` ProjectSpec.
-- `refine`: update an existing ProjectSpec into a new refined spec using offline rules.
+- `refine`: update an existing ProjectSpec into a new refined spec with offline rules or an optional LLM provider.
 - `diff`: compare two ProjectSpec files with a static, read-only report.
 - `plan --planner llm`: optional ProjectSpec-only OpenAI planner for configured environments.
 - `validate`: check a saved ProjectSpec before generation.
@@ -52,7 +52,7 @@ Install in editable mode:
 pip install -e ".[dev]"
 ```
 
-Optional LLM planning support:
+Optional LLM planning and refinement support:
 
 ```bash
 pip install -e ".[dev,llm]"
@@ -76,14 +76,27 @@ Spec-first workflow:
 
 ```bash
 robopilot plan --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes." --output robopilot.yaml
-robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after the detector" --output refined.yaml
+robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after the detector" --planner rule --output refined.yaml
 robopilot diff --old robopilot.yaml --new refined.yaml
 robopilot validate --spec refined.yaml
 robopilot generate --spec refined.yaml
 ```
 
 `refine` writes a new spec by default. It does not modify the original
-`robopilot.yaml`; no `--in-place` mode exists yet.
+`robopilot.yaml`; no `--in-place` mode exists yet. The default planner is
+`rule` and remains fully offline.
+
+Optional LLM-assisted refinement:
+
+```bash
+robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after the detector" --planner llm --model gpt-4.1-mini --output llm_refined.yaml
+robopilot diff --old robopilot.yaml --new llm_refined.yaml
+```
+
+Real LLM refinement requires `OPENAI_API_KEY`. The LLM must return a full
+ProjectSpec-compatible JSON or YAML document, RoboPilot validates it before
+writing, and the LLM never writes project files or generated code directly.
+Run `robopilot diff` before generating from an LLM-refined spec.
 
 `diff` is static and read-only. It validates both specs, compares fields,
 nodes, topics, files, and notes, and can also print deterministic JSON:
@@ -204,7 +217,7 @@ graph LR
 
 ## Project Status
 
-RoboPilot is an early v0.10.0 MVP focused on lightweight robotics developer workflows with offline defaults. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
+RoboPilot is an early v0.11.0 MVP focused on lightweight robotics developer workflows with offline defaults. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
 
 Implemented:
 
@@ -220,6 +233,7 @@ Implemented:
 - v0.8.0: Real OpenAI Provider Integration for ProjectSpec planning
 - v0.9.0: Rule-based ProjectSpec Refinement
 - v0.10.0: Static ProjectSpec Diff
+- v0.11.0: Optional LLM-assisted ProjectSpec Refinement
 
 Not included yet:
 
@@ -234,9 +248,9 @@ Not included yet:
 
 Near-term roadmap:
 
-1. LLM-assisted spec refinement while preserving validation and safety
-2. Hardening provider-backed ProjectSpec planning
-3. Lightweight demo UI
+1. Hardening provider-backed ProjectSpec planning and refinement
+2. Lightweight demo UI
+3. Better static reports and repair guidance
 
 Longer-term direction:
 

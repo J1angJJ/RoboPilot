@@ -396,9 +396,9 @@ Supported rule-based refinements:
 - Add explicit topic names from instructions
 - Avoid duplicate nodes and topics
 
-## Current: v0.10.0 Spec Diff
+## Completed: v0.10.0 Spec Diff
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -425,13 +425,33 @@ Requirements:
 - Never modify either spec file.
 - Keep output deterministic and testable.
 
-## Future: v0.11.0 LLM-assisted Spec Refinement
+## Current: v0.11.0 LLM-assisted Spec Refinement
 
-Status: Planned
+Status: Current work
 
 Goal:
 
 Allow optional provider-backed refinement while preserving ProjectSpec validation and preventing direct file or code generation.
+
+Commands:
+
+```bash
+robopilot refine --spec base.yaml --instruction "Add a tracker node after the detector" --planner rule --output rule_refined.yaml
+```
+
+```bash
+robopilot refine --spec base.yaml --instruction "Add a tracker node after the detector" --planner llm --output llm_refined.yaml
+```
+
+Requirements:
+
+- `rule` remains the default refiner.
+- `OPENAI_API_KEY` is required only for real LLM refinement.
+- LLM output must be a full ProjectSpec-compatible JSON or YAML document.
+- ProjectSpec validation must run before writing the refined spec.
+- The original spec must not be modified.
+- The LLM must not generate project files or arbitrary code directly.
+- Users should run `robopilot diff` before generating from an LLM-refined spec.
 
 ## Future: v0.12.0 Web Demo
 
@@ -508,11 +528,9 @@ Priority order:
 ## Current Recommended Development Path
 
 ```txt
-v0.10.0 Spec Diff
-        ↓
 v0.11.0 LLM-assisted Spec Refinement
         ↓
-v0.11.0 Web Demo
+v0.12.0 Web Demo
         ↓
 VSCode Integration
 ```
