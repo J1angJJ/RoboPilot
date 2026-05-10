@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.14.0 safe apply-from-plan workflow.
+- `robopilot apply --plan ...` dry-run command.
+- `robopilot apply --plan ... --confirm` confirmed file-writing mode.
+- `robopilot apply --json` deterministic JSON summary output.
+- Stale-plan, conflict, unsafe-path, and unexpected-file safety checks before writing.
+- Backup creation under `.robopilot_backups/<timestamp>/` before updating existing files.
 - v0.13.0 read-only apply plan export workflow.
 - `robopilot apply-plan --spec ... --project ... --output ...` command.
 - `robopilot apply-plan --format json` support.

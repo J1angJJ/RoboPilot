@@ -9,6 +9,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
+from robopilot.apply.apply_plan import ApplySummary, apply_from_plan
 from robopilot.apply_plan.plan import export_apply_plan, validate_apply_plan_file
 from robopilot.apply_preview.preview import ApplyPreviewResult, preview_apply
 from robopilot.debugger.log_analyzer import LogAnalysis, analyze_log
@@ -436,6 +437,63 @@ def apply_plan_validate(
     for error in result.errors:
         console.print(f"- {error}")
     raise typer.Exit(code=1)
+
+
+@app.command()
+def apply(
+    plan: Annotated[
+        Path,
+        typer.Option("--plan", "-p", help="Path to a validated apply plan file."),
+    ],
+    confirm: Annotated[
+        bool,
+        typer.Option("--confirm", help="Actually write planned create/update files."),
+    ] = False,
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Dry-run or safely apply a previously exported apply plan."""
+    try:
+        summary = apply_from_plan(plan, confirm=confirm)
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    if json_output:
+        print(json.dumps(summary.to_dict(), indent=2))
+        return
+
+    _print_apply_summary(summary)
+
+
+def _print_apply_summary(summary: ApplySummary) -> None:
+    console.print(Panel.fit("Apply Summary", style="bold cyan"))
+    console.print(f"[bold]Plan path:[/bold] {summary.plan_path}")
+    console.print(f"[bold]Project path:[/bold] {summary.project_path}")
+    console.print(f"[bold]Dry run:[/bold] {summary.dry_run}")
+
+    console.print(Panel.fit("Files Created", style="bold cyan"))
+    _print_scalar_values(summary.files_created)
+
+    console.print(Panel.fit("Files Updated", style="bold cyan"))
+    _print_scalar_values(summary.files_updated)
+
+    console.print(Panel.fit("Files Kept", style="bold cyan"))
+    _print_scalar_values(summary.files_kept)
+
+    console.print(Panel.fit("Backups Created", style="bold cyan"))
+    _print_scalar_values(summary.backups_created)
+
+    console.print(Panel.fit("Skipped Files", style="bold cyan"))
+    _print_scalar_values(summary.skipped_files)
+
+    console.print(Panel.fit("Conflicts", style="bold cyan"))
+    _print_scalar_values(summary.conflicts)
+
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    console.print(summary.safety_note)
 
 
 @app.command()

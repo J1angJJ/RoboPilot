@@ -22,6 +22,7 @@ Current core commands:
 - `robopilot apply-preview`
 - `robopilot apply-plan`
 - `robopilot apply-plan-validate`
+- `robopilot apply`
 - `robopilot generate`
 - `robopilot inspect`
 - `robopilot repair-suggest`
@@ -38,7 +39,7 @@ robopilot --help
 
 Expected result:
 
-The CLI lists the available commands, including `plan`, `refine`, `diff`, `validate`, `apply-preview`, `apply-plan`, `apply-plan-validate`, `generate`, `inspect`, `repair-suggest`, `report`, `debug`, and `graph`.
+The CLI lists the available commands, including `plan`, `refine`, `diff`, `validate`, `apply-preview`, `apply-plan`, `apply-plan-validate`, `apply`, `generate`, `inspect`, `repair-suggest`, `report`, `debug`, and `graph`.
 
 ## 3. Demo: Plan a ProjectSpec
 
@@ -88,6 +89,13 @@ robopilot apply-plan-validate --plan apply_plan.yaml
 robopilot apply-plan --spec refined.yaml --project examples/generated_projects/demo_detector --output apply_plan.json --format json
 ```
 
+Dry-run or confirm apply from the plan:
+
+```bash
+robopilot apply --plan apply_plan.yaml
+robopilot apply --plan apply_plan.yaml --confirm
+```
+
 Point out:
 
 - `refine` loads an existing ProjectSpec and writes a new refined spec.
@@ -97,6 +105,8 @@ Point out:
 - v0.11.0 adds optional LLM-assisted refinement that still returns only ProjectSpec-compatible data.
 - v0.12.0 apply-preview compares a spec to a project directory without modifying files.
 - v0.13.0 apply-plan exports the preview result for review without modifying files.
+- v0.14.0 apply is dry-run by default and only writes with `--confirm`.
+- Existing files are backed up before update, and conflicts stop apply.
 - Real LLM refinement requires `OPENAI_API_KEY`.
 - Run `robopilot diff` before generating from an LLM-refined spec.
 
@@ -317,10 +327,11 @@ Current implemented MVPs:
 - v0.11.0: Optional LLM-assisted ProjectSpec Refinement
 - v0.12.0: Read-only Apply Preview
 - v0.13.0: Read-only Apply Plan Export
+- v0.14.0: Safe Apply from Plan
 
 Next planned work:
 
-- Real apply workflow with explicit safety controls
+- Hardening apply safety controls and conflict reporting
 - Hardening provider-backed ProjectSpec planning and refinement
 - Deeper static reports and read-only repair suggestions
 - Lightweight demo UI

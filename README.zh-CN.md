@@ -53,6 +53,7 @@ robopilot validate --spec refined.yaml
 robopilot apply-preview --spec refined.yaml --project outputs/demo_detector
 robopilot apply-plan --spec refined.yaml --project outputs/demo_detector --output apply_plan.yaml
 robopilot apply-plan-validate --plan apply_plan.yaml
+robopilot apply --plan apply_plan.yaml
 robopilot generate --spec refined.yaml
 ```
 
@@ -89,6 +90,16 @@ robopilot apply-plan --spec refined.yaml --project outputs/demo_detector --outpu
 ```
 
 `apply-plan` exports the apply-preview result for review or sharing. It does not modify project files and does not implement real apply.
+
+Apply is dry-run by default:
+
+```bash
+robopilot apply --plan apply_plan.yaml
+robopilot apply --plan apply_plan.yaml --confirm
+robopilot apply --plan apply_plan.yaml --confirm --json
+```
+
+`apply` only writes files when `--confirm` is provided. It validates the plan, re-runs apply-preview, refuses stale plans and conflicts, and backs up existing files before update under `.robopilot_backups/<timestamp>/`.
 
 `refine` 默认会写入新的 spec 文件，不会修改原始 `robopilot.yaml`。本版本没有 `--in-place`。
 
@@ -133,7 +144,7 @@ robopilot graph --pipeline "camera -> detector -> tracker -> planner -> controll
 
 ## 项目状态
 
-RoboPilot 目前是早期 v0.13.0 MVP，默认仍然保持离线工作流，并新增 read-only apply plan export。发布记录见 [`CHANGELOG.md`](CHANGELOG.md)。
+RoboPilot 目前是早期 v0.14.0 MVP，默认仍然保持离线工作流，并新增 safe apply from plan。发布记录见 [`CHANGELOG.md`](CHANGELOG.md)。
 
 已实现：
 

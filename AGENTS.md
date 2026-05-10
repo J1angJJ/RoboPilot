@@ -55,33 +55,35 @@ RoboPilot currently supports:
 14. Static ProjectSpec diff reports.
 15. Read-only apply preview.
 16. Read-only apply plan export.
-17. English and Chinese documentation.
-18. Pytest test coverage and GitHub Actions CI.
+17. Safe apply from plan with dry-run default and backups.
+18. English and Chinese documentation.
+19. Pytest test coverage and GitHub Actions CI.
 
 ## Current Priority
 
 The current priority is:
 
 ```txt
-v0.13.0 Apply Plan Export
+v0.14.0 Apply from Plan
 ```
 
-The goal is to export and validate a deterministic read-only apply plan based on apply-preview.
+The goal is to safely apply a previously exported apply plan with dry-run as the default.
 
 Expected command:
 
 ```bash
-robopilot apply-plan --spec refined.yaml --project outputs/demo_detector --output apply_plan.yaml
+robopilot apply --plan apply_plan.yaml --confirm
 ```
 
-The apply plan layer should:
+The apply layer should:
 
-- reuse apply-preview results
-- serialize files to create, update, keep, and conflicts
-- support deterministic YAML-like and JSON output
-- validate saved apply plan files
-- never modify target project files
-- never implement real apply or `--apply` in this version
+- dry-run by default
+- require `--confirm` before writing files
+- validate the plan and referenced ProjectSpec
+- re-run apply-preview and reject stale plans
+- refuse conflicts
+- only write files listed in create/update lists
+- back up existing files before updates
 
 The optional LLM planner must not run ROS2, launch files, colcon, or generated Python nodes. It must not modify files or generate arbitrary code directly.
 
@@ -291,6 +293,10 @@ robopilot apply-preview --spec refined.yaml --project outputs/demo_detector
 robopilot apply-plan --spec refined.yaml --project outputs/demo_detector --output apply_plan.yaml
 ```
 
+```bash
+robopilot apply --plan apply_plan.yaml --confirm
+```
+
 ## ProjectSpec Rules
 
 `ProjectSpec` is the central intermediate representation.
@@ -397,7 +403,7 @@ robopilot plan --name demo_detector --task "Create an object detection pipeline"
 Implement:
 
 ```txt
-v0.13.0 Apply Plan Export
+v0.14.0 Apply from Plan
 ```
 
 The planner layer should continue to support:
@@ -451,4 +457,13 @@ The apply plan implementation should include:
 - validation of required apply plan fields
 - no target project modification and no real apply execution
 
-Do not start broad LLM orchestration, direct LLM code generation, RAG, Streamlit UI, VSCode integration, real ROS2 runtime execution, real apply, `--apply`, or colcon integration until the spec-first workflow is stable.
+The apply implementation should include:
+
+- dry-run default
+- explicit `--confirm` for writes
+- stale plan rejection
+- conflict rejection
+- backup creation before updating existing files
+- strict create/update/keep/conflict boundaries
+
+Do not start broad LLM orchestration, direct LLM code generation, RAG, Streamlit UI, VSCode integration, real ROS2 runtime execution, `--apply`, automatic unconfirmed apply, or colcon integration until the spec-first workflow is stable.

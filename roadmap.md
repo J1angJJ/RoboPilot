@@ -482,9 +482,9 @@ Requirements:
 - Never modify project files.
 - Do not implement real apply or `--apply` yet.
 
-## Current: v0.13.0 Apply Plan Export
+## Completed: v0.13.0 Apply Plan Export
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -517,15 +517,45 @@ Requirements:
 - Never modify the target project.
 - Do not implement real apply or `--apply` yet.
 
-## Future: v0.14.0 Real Apply Workflow
+## Current: v0.14.0 Apply from Plan
+
+Status: Current work
+
+Goal:
+
+Safely apply a previously exported apply plan to a target project directory.
+
+Commands:
+
+```bash
+robopilot apply --plan apply_plan.yaml
+```
+
+```bash
+robopilot apply --plan apply_plan.yaml --confirm
+```
+
+Requirements:
+
+- Dry-run by default.
+- Require `--confirm` before writing files.
+- Validate the apply plan and referenced ProjectSpec.
+- Re-run apply-preview and reject stale plans.
+- Refuse to apply when conflicts are present.
+- Only create files listed in `files_to_create`.
+- Only update files listed in `files_to_update`.
+- Never modify files listed in `files_to_keep` or `conflicts`.
+- Create backups under `.robopilot_backups/<timestamp>/` before updates.
+
+## Future: v0.15.0 Apply Hardening
 
 Status: Planned
 
 Goal:
 
-Apply generated changes only with explicit safety controls, backups, conflict handling, and user confirmation.
+Improve conflict explanations, rollback guidance, and human review ergonomics for apply workflows.
 
-## Future: v0.15.0 Web Demo
+## Future: v0.16.0 Web Demo
 
 Status: Planned
 
@@ -600,7 +630,7 @@ Priority order:
 ## Current Recommended Development Path
 
 ```txt
-v0.13.0 Apply Plan Export
+v0.14.0 Apply from Plan
         ↓
 v0.13.0 Real Apply Workflow
         ↓
