@@ -703,9 +703,9 @@ Expected analysis:
 This feature should remain static and should not require ROS, run `catkin_make`,
 run colcon, import user modules, execute launch files, or execute ROS1 code.
 
-## Current: v0.19.0 Dependency Analyzer
+## Completed: v0.19.0 Dependency Analyzer
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -746,18 +746,22 @@ Possible sources:
 
 The analyzer should be conservative and should report uncertainty clearly.
 
-## Future: v0.20.0 ROS1 to ROS2 Migration Plan
+## Current: v0.20.0 ROS1 to ROS2 Migration Plan
 
-Status: Planned
+Status: Current work
 
 Goal:
 
 Generate a static migration plan for ROS1 packages moving toward ROS2-style structure.
 
-Possible command:
+Core commands:
 
 ```bash
 robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.yaml
+```
+
+```bash
+robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.json --format json
 ```
 
 Expected migration plan sections:
@@ -775,7 +779,7 @@ Expected migration plan sections:
 
 Important:
 
-This version should only generate a migration plan. It should not automatically rewrite the project.
+This version should only generate a migration plan. It should not automatically rewrite the project, generate migrated files, run ROS, run catkin, or run colcon.
 
 ## Future: v0.21.0 Migration Apply Preview
 

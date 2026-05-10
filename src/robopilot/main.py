@@ -23,6 +23,10 @@ from robopilot.generator.project_generator import (
 from robopilot.graph.mermaid_generator import PipelineParseError, generate_mermaid
 from robopilot.history.journal import HistoryReport, list_history
 from robopilot.inspector.project_inspector import ProjectInspection, inspect_project
+from robopilot.migration.ros1_to_ros2 import (
+    ROS1ToROS2MigrationPlan,
+    write_migration_plan,
+)
 from robopilot.planner import (
     LLMProviderConfig,
     LLMPlanner,
@@ -769,6 +773,93 @@ def _print_dependency_analysis(result: DependencyAnalysis) -> None:
 
     console.print(Panel.fit("Safety Note", style="bold cyan"))
     console.print(result.safety_note)
+
+
+@app.command("migrate-plan")
+def migrate_plan(
+    source_path: Annotated[
+        Path,
+        typer.Option("--from", help="Source ROS1 package directory."),
+    ],
+    target: Annotated[
+        str,
+        typer.Option("--to", help="Migration target. Currently only 'ros2' is supported."),
+    ],
+    output: Annotated[
+        Path,
+        typer.Option("--output", "-o", help="Path to write the migration plan."),
+    ],
+    output_format: Annotated[
+        str,
+        typer.Option("--format", help="Migration plan output format: yaml or json."),
+    ] = "yaml",
+) -> None:
+    """Create a static ROS1-to-ROS2 migration plan without modifying files."""
+    try:
+        plan = write_migration_plan(
+            source_path=source_path,
+            target=target,
+            output_path=output,
+            output_format=output_format,
+        )
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    console.print(f"[green]Wrote migration plan to[/green] {output}")
+    _print_migration_plan(plan)
+
+
+def _print_migration_plan(plan: ROS1ToROS2MigrationPlan) -> None:
+    console.print(Panel.fit("Migration Plan Summary", style="bold cyan"))
+    console.print(f"[bold]Source Project:[/bold] {plan.source_path}")
+    console.print(f"[bold]Package:[/bold] {plan.package_name or 'unknown'}")
+    console.print(f"[bold]Target:[/bold] {plan.target}")
+    console.print(f"[bold]Source project type:[/bold] {plan.source_project_type}")
+    console.print(f"[bold]Confidence:[/bold] {plan.confidence}")
+    console.print(plan.summary)
+
+    console.print(Panel.fit("Package XML Migration", style="bold cyan"))
+    _print_scalar_values(plan.package_xml_migration)
+
+    console.print(Panel.fit("Build System Migration", style="bold cyan"))
+    _print_scalar_values(plan.build_system_migration)
+
+    console.print(Panel.fit("Source Code Migration", style="bold cyan"))
+    _print_scalar_values(plan.source_code_migration)
+
+    console.print(Panel.fit("Launch Migration", style="bold cyan"))
+    _print_scalar_values(plan.launch_migration)
+
+    console.print(Panel.fit("Interface Migration", style="bold cyan"))
+    _print_scalar_values(plan.interface_migration)
+
+    console.print(Panel.fit("Dependency Migration", style="bold cyan"))
+    dependency = plan.dependency_migration
+    for key in (
+        "possibly_missing",
+        "possibly_unused",
+        "ros2_equivalent_hints",
+        "manual_review_dependencies",
+    ):
+        value = dependency.get(key, [])
+        console.print(f"[bold]{key}:[/bold]")
+        _print_scalar_values(tuple(str(item) for item in value) if isinstance(value, list) else ())
+
+    console.print(Panel.fit("Suggested File Changes", style="bold cyan"))
+    _print_scalar_values(plan.suggested_file_changes)
+
+    console.print(Panel.fit("Manual Review Items", style="bold cyan"))
+    _print_scalar_values(plan.manual_review_items)
+
+    console.print(Panel.fit("Risks", style="bold cyan"))
+    _print_scalar_values(plan.risks)
+
+    console.print(Panel.fit("Suggested Next Steps", style="bold cyan"))
+    _print_scalar_values(plan.suggested_next_steps)
+
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    console.print(plan.safety_note)
 
 
 @app.command()

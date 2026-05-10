@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.20.0 no-ROS-required static ROS1-to-ROS2 migration planning.
+- `robopilot migrate-plan --from ... --to ros2 --output ...` command.
+- `robopilot migrate-plan --format json` deterministic JSON output.
+- Migration plan sections for package.xml migration, build system migration, source code migration, launch migration, interface migration, dependency migration, suggested file changes, manual review items, risks, and suggested next steps.
+- Migration planning reuse of static project detection, ROS1 inspection, and dependency analysis.
+- Conservative ROS1-to-ROS2 hints for catkin to ament, `rospy` to `rclpy`, `roscpp` to `rclcpp`, ROS1 launch XML to ROS2 Python launch files, and catkin message generation to ROS2 interface generation.
 - v0.19.0 no-ROS-required static dependency analyzer for ROS-style projects.
 - `robopilot deps path/to/project` command.
 - `robopilot deps --json` deterministic JSON output.

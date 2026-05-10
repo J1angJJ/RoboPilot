@@ -21,6 +21,7 @@ RoboPilot helps robotics learners and developers scaffold ROS-style Python packa
 - `detect`: statically detect RoboPilot, ROS1 catkin, ROS2 ament Python, ROS2 ament C++, mixed ROS-style, non-ROS, or unknown projects.
 - `inspect-ros1`: statically inspect ROS1 catkin package metadata, dependencies, files, and node candidates.
 - `deps`: conservatively analyze declared and detected dependencies in ROS-style projects.
+- `migrate-plan`: create a static ROS1-to-ROS2 migration plan without modifying files.
 - `plan --planner llm`: optional ProjectSpec-only OpenAI planner for configured environments.
 - `validate`: check a saved ProjectSpec before generation.
 - `generate`: create a ROS-style Python package from a task or a saved ProjectSpec.
@@ -96,6 +97,7 @@ robopilot history --project outputs/demo_detector
 robopilot detect outputs/demo_detector
 robopilot inspect-ros1 path/to/ros1_package
 robopilot deps path/to/project
+robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.yaml
 robopilot generate --spec refined.yaml
 ```
 
@@ -223,6 +225,20 @@ possibly missing dependencies, possibly unused dependencies, and hints. It does
 not import project modules, execute launch files, run `catkin_make`, run
 colcon, or execute user code.
 
+Create a ROS1-to-ROS2 migration plan:
+
+```bash
+robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.yaml
+robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.json --format json
+```
+
+`migrate-plan` is static, conservative, and read-only. It combines project
+detection, ROS1 inspection, and dependency analysis to produce a reviewable
+plan for package metadata, build system, source code, launch files, interfaces,
+dependencies, file changes, manual review items, and risks. It does not modify
+the source project, generate migrated files, execute launch files, run
+`catkin_make`, run colcon, or validate runtime behavior.
+
 Planner selection:
 
 ```bash
@@ -335,7 +351,7 @@ graph LR
 
 ## Project Status
 
-RoboPilot is an early v0.19.0 MVP focused on lightweight robotics developer workflows with offline defaults. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
+RoboPilot is an early v0.20.0 MVP focused on lightweight robotics developer workflows with offline defaults. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
 
 Implemented:
 
@@ -360,6 +376,7 @@ Implemented:
 - v0.17.0: ROS Project Detector
 - v0.18.0: ROS1 Static Inspector
 - v0.19.0: Dependency Analyzer
+- v0.20.0: ROS1 to ROS2 Migration Plan
 
 Not included yet:
 
@@ -376,9 +393,9 @@ Not included yet:
 
 Near-term roadmap:
 
-1. ROS1 to ROS2 Migration Plan
-2. Migration Apply Preview
-3. Optional LLM Report Explanation
+1. Migration Apply Preview
+2. Optional LLM Report Explanation
+3. First stable static workflow hardening
 
 Longer-term direction:
 
@@ -429,6 +446,7 @@ robopilot/
 |       |-- ros1/
 |       |-- graph/
 |       |-- inspector/
+|       |-- migration/
 |       |-- planner/
 |       |-- refiner/
 |       |-- repair/

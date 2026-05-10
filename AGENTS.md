@@ -108,41 +108,41 @@ RoboPilot currently supports:
 21. ROS project detection without requiring ROS.
 22. ROS1 static inspection without requiring ROS.
 23. Dependency analysis without requiring ROS.
-24. Pytest test coverage and GitHub Actions CI.
+24. ROS1-to-ROS2 static migration planning.
+25. Pytest test coverage and GitHub Actions CI.
 
 ## Current Priority
 
 The current priority is:
 
 ```txt
-v0.19.0 Dependency Analyzer
+v0.20.0 ROS1 to ROS2 Migration Plan
 ```
 
-The goal is to add a no-ROS-required static dependency analyzer for ROS-style projects.
+The goal is to add a no-ROS-required static migration planning command for ROS1 catkin packages moving toward ROS2-style structure.
 
 Expected commands:
 
 ```bash
-robopilot deps path/to/project
+robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.yaml
 ```
 
 Optional JSON output:
 
 ```bash
-robopilot deps path/to/project --json
+robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.json --format json
 ```
 
 Expected behavior:
 
-- Reuse project detection context.
-- Inspect `package.xml`, `CMakeLists.txt`, `setup.py`, `setup.cfg`, Python files, C++ files, launch files, and msg/srv/action directories.
-- Extract declared dependencies, CMake packages, catkin components, Python imports, C++ includes, and launch references.
-- Conservatively infer possibly missing dependencies, possibly unused dependencies, dependency hints, and ROS version hints.
-- Support deterministic JSON output.
+- Reuse `detect_project`, `inspect_ros1_project`, and dependency analysis.
+- Generate package.xml, build system, source code, launch, interface, dependency, suggested file change, manual review, risk, and next-step sections.
+- Support deterministic YAML-like and JSON output.
 - Do not require ROS or ROS2.
 - Do not run `catkin_make` or colcon.
 - Do not execute launch files or generated code.
 - Do not import user project modules.
+- Do not modify the source project or generate migrated files.
 
 ## Important Constraints
 
@@ -416,6 +416,10 @@ robopilot deps path/to/project
 ```
 
 ```bash
+robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.yaml
+```
+
+```bash
 robopilot inspect outputs/demo_detector
 ```
 
@@ -438,7 +442,7 @@ robopilot graph --pipeline "camera -> detector -> tracker -> planner -> controll
 The next planned command is:
 
 ```bash
-robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.yaml
+robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_package
 ```
 
 ## ProjectSpec Rules
@@ -521,26 +525,26 @@ python -m pytest --basetemp=".pytest_tmp" -p no:cacheprovider
 
 For CLI-related changes, also run relevant commands manually.
 
-For the current dependency analyzer work, manually verify commands similar to:
+For the current migration planning work, manually verify commands similar to:
 
 ```bash
-robopilot deps .pytest_tmp/ros1_dep_demo
+robopilot detect .pytest_tmp/ros1_migration_demo
 ```
 
 ```bash
-robopilot deps .pytest_tmp/ros1_dep_demo --json
+robopilot inspect-ros1 .pytest_tmp/ros1_migration_demo
 ```
 
 ```bash
-robopilot deps .pytest_tmp/ros2_py_dep_demo
+robopilot deps .pytest_tmp/ros1_migration_demo
 ```
 
 ```bash
-robopilot deps .pytest_tmp/ros2_cpp_dep_demo
+robopilot migrate-plan --from .pytest_tmp/ros1_migration_demo --to ros2 --output .pytest_tmp/migration_plan.yaml
 ```
 
 ```bash
-robopilot deps .pytest_tmp/non_ros_demo
+robopilot migrate-plan --from .pytest_tmp/ros1_migration_demo --to ros2 --output .pytest_tmp/migration_plan.json --format json
 ```
 
 ## Preferred Development Workflow
@@ -561,35 +565,35 @@ robopilot deps .pytest_tmp/non_ros_demo
 Implement:
 
 ```txt
-v0.19.0 Dependency Analyzer
+v0.20.0 ROS1 to ROS2 Migration Plan
 ```
 
-The dependency analyzer should support:
+The migration planner should support:
 
 ```bash
-robopilot deps path/to/project
+robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.yaml
 ```
 
 Optional JSON output:
 
 ```bash
-robopilot deps path/to/project --json
+robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.json --format json
 ```
 
 Suggested implementation files:
 
 ```txt
-src/robopilot/deps/
+src/robopilot/migration/
 ├─ __init__.py
-└─ analyzer.py
+└─ ros1_to_ros2.py
 ```
 
 Suggested tests:
 
 ```txt
-tests/test_dependency_analyzer.py
+tests/test_ros1_to_ros2_migration_plan.py
 ```
 
-The analyzer should be static, deterministic, conservative, and testable. It must not require ROS, ROS2, catkin, colcon, launch execution, generated code execution, or user module imports.
+The migration planner should be static, deterministic, conservative, and testable. It must not require ROS, ROS2, catkin, colcon, launch execution, generated code execution, source project modification, or user module imports.
 
-Do not start ROS1-to-ROS2 migration, VSCode integration, RAG, Streamlit UI, or broad multi-agent orchestration until dependency analysis is stable.
+Do not start migration apply preview, migration apply, VSCode integration, RAG, Streamlit UI, or broad multi-agent orchestration until migration planning is stable.
