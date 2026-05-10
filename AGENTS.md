@@ -53,33 +53,34 @@ RoboPilot currently supports:
 12. Planner interface with offline rule-based planning and optional OpenAI-backed ProjectSpec-only LLM planning.
 13. Rule-based and optional LLM-assisted ProjectSpec refinement.
 14. Static ProjectSpec diff reports.
-15. English and Chinese documentation.
-16. Pytest test coverage and GitHub Actions CI.
+15. Read-only apply preview.
+16. English and Chinese documentation.
+17. Pytest test coverage and GitHub Actions CI.
 
 ## Current Priority
 
 The current priority is:
 
 ```txt
-v0.11.0 LLM-assisted Spec Refinement
+v0.12.0 Apply Preview
 ```
 
-The goal is to enable optional provider-backed refinement while preserving the spec-first workflow.
+The goal is to preview applying a ProjectSpec to an existing project directory without modifying files.
 
 Expected command:
 
 ```bash
-robopilot refine --spec base.yaml --instruction "Add a tracker node after the detector" --planner llm --output refined.yaml
+robopilot apply-preview --spec refined.yaml --project outputs/demo_detector
 ```
 
-The LLM refinement layer should:
+The apply preview layer should:
 
-- load an existing ProjectSpec
-- ask the provider for a full ProjectSpec-compatible response
-- validate the refined ProjectSpec before writing
-- write a new spec only through the CLI output path
-- never generate project files or source code directly
-- keep rule-based refinement as the default
+- load and validate the ProjectSpec
+- render expected project files in memory
+- compare expected files with an existing project directory
+- report files to create, update, keep, and review as conflicts
+- never modify project files
+- never implement real apply or `--apply` in this version
 
 The optional LLM planner must not run ROS2, launch files, colcon, or generated Python nodes. It must not modify files or generate arbitrary code directly.
 
@@ -281,6 +282,10 @@ robopilot plan --name demo_detector --task "Create an object detection pipeline"
 robopilot diff --old base.yaml --new refined.yaml
 ```
 
+```bash
+robopilot apply-preview --spec refined.yaml --project outputs/demo_detector
+```
+
 ## ProjectSpec Rules
 
 `ProjectSpec` is the central intermediate representation.
@@ -387,7 +392,7 @@ robopilot plan --name demo_detector --task "Create an object detection pipeline"
 Implement:
 
 ```txt
-v0.11.0 LLM-assisted Spec Refinement
+v0.12.0 Apply Preview
 ```
 
 The planner layer should continue to support:
@@ -426,4 +431,12 @@ The optional LLM refiner should include:
 - clear missing-configuration errors
 - no direct file or code generation
 
-Do not start broad LLM orchestration, direct LLM code generation, RAG, Streamlit UI, VSCode integration, real ROS2 runtime execution, `--apply`, or colcon integration until the spec-first workflow is stable.
+The apply preview implementation should include:
+
+- in-memory rendering of expected deterministic project files
+- comparison against an existing project directory
+- create/update/keep/conflict classification
+- readable terminal output and stable JSON output
+- no file modification and no `--apply`
+
+Do not start broad LLM orchestration, direct LLM code generation, RAG, Streamlit UI, VSCode integration, real ROS2 runtime execution, real apply, `--apply`, or colcon integration until the spec-first workflow is stable.

@@ -425,9 +425,9 @@ Requirements:
 - Never modify either spec file.
 - Keep output deterministic and testable.
 
-## Current: v0.11.0 LLM-assisted Spec Refinement
+## Completed: v0.11.0 LLM-assisted Spec Refinement
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -453,7 +453,44 @@ Requirements:
 - The LLM must not generate project files or arbitrary code directly.
 - Users should run `robopilot diff` before generating from an LLM-refined spec.
 
-## Future: v0.12.0 Web Demo
+## Current: v0.12.0 Apply Preview
+
+Status: Current work
+
+Goal:
+
+Preview applying a ProjectSpec to an existing project directory without modifying files.
+
+Command:
+
+```bash
+robopilot apply-preview --spec refined.yaml --project outputs/demo_detector
+```
+
+Optional JSON output:
+
+```bash
+robopilot apply-preview --spec refined.yaml --project outputs/demo_detector --json
+```
+
+Requirements:
+
+- Load and validate the ProjectSpec.
+- Render expected project files in memory.
+- Compare expected files with the target project directory.
+- Report files to create, update, keep, and review as conflicts.
+- Never modify project files.
+- Do not implement real apply or `--apply` yet.
+
+## Future: v0.13.0 Real Apply Workflow
+
+Status: Planned
+
+Goal:
+
+Apply generated changes only with explicit safety controls, backups, conflict handling, and user confirmation.
+
+## Future: v0.14.0 Web Demo
 
 Status: Planned
 
@@ -528,9 +565,11 @@ Priority order:
 ## Current Recommended Development Path
 
 ```txt
-v0.11.0 LLM-assisted Spec Refinement
+v0.12.0 Apply Preview
         ↓
-v0.12.0 Web Demo
+v0.13.0 Real Apply Workflow
+        ↓
+v0.14.0 Web Demo
         ↓
 VSCode Integration
 ```

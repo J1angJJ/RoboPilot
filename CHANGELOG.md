@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.12.0 read-only apply preview workflow.
+- `robopilot apply-preview --spec ... --project ...` command.
+- `robopilot apply-preview --json` deterministic JSON output.
+- Preview classification for files to create, update, keep, and conflicts.
+- In-memory project rendering shared with deterministic generation.
+- Multi-node ProjectSpec rendering for expected Python node files.
 - v0.11.0 optional LLM-assisted ProjectSpec refinement workflow.
 - `robopilot refine --planner llm --model ...` support.
 - LLM refiner prompt that includes the current ProjectSpec, user instruction, allowed schema, and safety constraints.

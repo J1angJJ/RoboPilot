@@ -50,6 +50,7 @@ robopilot plan --name demo_detector --task "Create an object detection node subs
 robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after the detector" --planner rule --output refined.yaml
 robopilot diff --old robopilot.yaml --new refined.yaml
 robopilot validate --spec refined.yaml
+robopilot apply-preview --spec refined.yaml --project outputs/demo_detector
 robopilot generate --spec refined.yaml
 ```
 
@@ -67,6 +68,15 @@ LLM refinement requires `OPENAI_API_KEY`. It writes a new ProjectSpec, not proje
 ```bash
 robopilot diff --old robopilot.yaml --new refined.yaml --json
 ```
+
+Apply preview is also read-only:
+
+```bash
+robopilot apply-preview --spec refined.yaml --project outputs/demo_detector
+robopilot apply-preview --spec refined.yaml --project outputs/demo_detector --json
+```
+
+`apply-preview` only reports files to create, update, keep, or review as conflicts. It does not modify project files.
 
 `refine` 默认会写入新的 spec 文件，不会修改原始 `robopilot.yaml`。本版本没有 `--in-place`。
 
@@ -111,7 +121,7 @@ robopilot graph --pipeline "camera -> detector -> tracker -> planner -> controll
 
 ## 项目状态
 
-RoboPilot 目前是早期 v0.11.0 MVP，默认仍然使用离线 rule-based refinement，同时提供可选的 LLM-assisted ProjectSpec refinement。发布记录见 [`CHANGELOG.md`](CHANGELOG.md)。
+RoboPilot 目前是早期 v0.12.0 MVP，默认仍然保持离线工作流，并新增 read-only apply preview。发布记录见 [`CHANGELOG.md`](CHANGELOG.md)。
 
 已实现：
 

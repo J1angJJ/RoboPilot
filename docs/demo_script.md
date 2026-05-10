@@ -19,6 +19,7 @@ Current core commands:
 - `robopilot refine`
 - `robopilot diff`
 - `robopilot validate`
+- `robopilot apply-preview`
 - `robopilot generate`
 - `robopilot inspect`
 - `robopilot repair-suggest`
@@ -35,7 +36,7 @@ robopilot --help
 
 Expected result:
 
-The CLI lists the available commands, including `plan`, `refine`, `diff`, `validate`, `generate`, `inspect`, `repair-suggest`, `report`, `debug`, and `graph`.
+The CLI lists the available commands, including `plan`, `refine`, `diff`, `validate`, `apply-preview`, `generate`, `inspect`, `repair-suggest`, `report`, `debug`, and `graph`.
 
 ## 3. Demo: Plan a ProjectSpec
 
@@ -70,6 +71,13 @@ Validate the refined spec:
 robopilot validate --spec refined.yaml
 ```
 
+Preview applying the refined spec to an existing project:
+
+```bash
+robopilot apply-preview --spec refined.yaml --project examples/generated_projects/demo_detector
+robopilot apply-preview --spec refined.yaml --project examples/generated_projects/demo_detector --json
+```
+
 Point out:
 
 - `refine` loads an existing ProjectSpec and writes a new refined spec.
@@ -77,6 +85,7 @@ Point out:
 - v0.9.0 refinement is deterministic and rule-based.
 - v0.10.0 diff is static, read-only, and validates both specs before comparison.
 - v0.11.0 adds optional LLM-assisted refinement that still returns only ProjectSpec-compatible data.
+- v0.12.0 apply-preview compares a spec to a project directory without modifying files.
 - Real LLM refinement requires `OPENAI_API_KEY`.
 - Run `robopilot diff` before generating from an LLM-refined spec.
 
@@ -295,9 +304,11 @@ Current implemented MVPs:
 - v0.9.0: Rule-based ProjectSpec Refinement
 - v0.10.0: Static ProjectSpec Diff
 - v0.11.0: Optional LLM-assisted ProjectSpec Refinement
+- v0.12.0: Read-only Apply Preview
 
 Next planned work:
 
+- Real apply workflow with explicit safety controls
 - Hardening provider-backed ProjectSpec planning and refinement
 - Deeper static reports and read-only repair suggestions
 - Lightweight demo UI

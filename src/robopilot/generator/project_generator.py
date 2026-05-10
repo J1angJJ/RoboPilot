@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 from robopilot.generator import templates
@@ -60,7 +60,7 @@ def generate_project_from_spec(
     project_dir = root / spec.package_name
     ensure_new_directory(project_dir, overwrite=overwrite)
 
-    files = _render_files(spec)
+    files = render_project_files(spec)
     written_files: list[Path] = []
     for relative_path, content in files.items():
         target_path = project_dir / relative_path
@@ -85,11 +85,12 @@ def expected_project_files(
         task=task,
         selected_template=classify_task(task),
     )
-    return tuple(_render_files(spec).keys())
+    return tuple(render_project_files(spec).keys())
 
 
-def _render_files(spec: ProjectSpec) -> dict[Path, str]:
-    return {
+def render_project_files(spec: ProjectSpec) -> dict[Path, str]:
+    """Render expected project files to memory without writing them."""
+    files = {
         Path("package.xml"): templates.package_xml(spec),
         Path("setup.py"): templates.setup_py(spec),
         Path("setup.cfg"): templates.setup_cfg(spec),
@@ -98,5 +99,8 @@ def _render_files(spec: ProjectSpec) -> dict[Path, str]:
         Path("launch") / f"{spec.package_name}.launch.py": templates.launch_file(spec),
         Path("config") / "params.yaml": templates.params_yaml(spec),
         Path(spec.package_name) / "__init__.py": "",
-        Path(spec.package_name) / spec.node_file_name: templates.node_file(spec),
     }
+    for node in spec.nodes:
+        node_spec = replace(spec, nodes=(node,))
+        files[Path(spec.package_name) / node.file_name] = templates.node_file(node_spec)
+    return files

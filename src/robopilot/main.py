@@ -9,6 +9,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
+from robopilot.apply_preview.preview import ApplyPreviewResult, preview_apply
 from robopilot.debugger.log_analyzer import LogAnalysis, analyze_log
 from robopilot.diff.spec_diff import SpecDiffResult, diff_spec_files
 from robopilot.generator.project_generator import (
@@ -325,6 +326,62 @@ def _print_scalar_values(values: tuple[str, ...]) -> None:
         return
     for value in values:
         console.print(f"- {value}")
+
+
+@app.command("apply-preview")
+def apply_preview(
+    spec: Annotated[
+        Path,
+        typer.Option("--spec", "-s", help="Path to a robopilot.yaml ProjectSpec."),
+    ],
+    project: Annotated[
+        Path,
+        typer.Option("--project", "-p", help="Existing project directory to preview."),
+    ],
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Preview applying a ProjectSpec to a project without modifying files."""
+    try:
+        result = preview_apply(spec, project)
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    if json_output:
+        print(json.dumps(result.to_dict(), indent=2))
+        return
+
+    _print_apply_preview(result)
+
+
+def _print_apply_preview(result: ApplyPreviewResult) -> None:
+    console.print(Panel.fit("Apply Preview Summary", style="bold cyan"))
+    console.print(f"[bold]Spec path:[/bold] {result.spec_path}")
+    console.print(f"[bold]Project path:[/bold] {result.project_path}")
+    console.print(f"[bold]Package name:[/bold] {result.package_name}")
+    console.print(f"[bold]Selected template:[/bold] {result.selected_template}")
+    console.print(f"[bold]Missing project:[/bold] {result.missing_project}")
+
+    console.print(Panel.fit("Files to Create", style="bold cyan"))
+    _print_scalar_values(result.files_to_create)
+
+    console.print(Panel.fit("Files to Update", style="bold cyan"))
+    _print_scalar_values(result.files_to_update)
+
+    console.print(Panel.fit("Files to Keep", style="bold cyan"))
+    _print_scalar_values(result.files_to_keep)
+
+    console.print(Panel.fit("Conflicts", style="bold cyan"))
+    _print_scalar_values(result.conflicts)
+
+    console.print(Panel.fit("Suggested Next Steps", style="bold cyan"))
+    _print_scalar_values(result.suggested_next_steps)
+
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    console.print(result.safety_note)
 
 
 @app.command()
