@@ -19,6 +19,7 @@ from robopilot.generator.project_generator import (
     generate_project_from_spec,
 )
 from robopilot.graph.mermaid_generator import PipelineParseError, generate_mermaid
+from robopilot.history.journal import HistoryReport, list_history
 from robopilot.inspector.project_inspector import ProjectInspection, inspect_project
 from robopilot.planner import (
     LLMProviderConfig,
@@ -554,6 +555,62 @@ def _print_rollback_summary(summary: RollbackSummary) -> None:
 
     console.print(Panel.fit("Safety Note", style="bold cyan"))
     console.print(summary.safety_note)
+
+
+@app.command()
+def history(
+    project: Annotated[
+        Path,
+        typer.Option("--project", "-p", help="Project directory to read history from."),
+    ],
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Show project-local RoboPilot apply and rollback history."""
+    try:
+        report = list_history(project)
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    if json_output:
+        print(json.dumps(report.to_dict(), indent=2))
+        return
+
+    _print_history(report)
+
+
+def _print_history(report: HistoryReport) -> None:
+    console.print(Panel.fit("History Summary", style="bold cyan"))
+    console.print(f"[bold]Project path:[/bold] {report.project_path}")
+    console.print(f"[bold]History dir:[/bold] {report.history_dir}")
+    console.print(f"[bold]Number of entries:[/bold] {len(report.entries)}")
+
+    console.print(Panel.fit("Recent Entries", style="bold cyan"))
+    if not report.entries:
+        console.print("[green]No RoboPilot history entries found.[/green]")
+        return
+
+    table = Table()
+    table.add_column("Operation")
+    table.add_column("Timestamp")
+    table.add_column("Summary")
+    table.add_column("Files changed/restored")
+    for entry in report.entries[-10:]:
+        changed_count = (
+            len(entry.files_created)
+            + len(entry.files_updated)
+            + len(entry.files_restored)
+        )
+        table.add_row(
+            entry.operation,
+            entry.timestamp,
+            entry.summary,
+            str(changed_count),
+        )
+    console.print(table)
 
 
 @app.command()

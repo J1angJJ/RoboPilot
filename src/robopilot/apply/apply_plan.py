@@ -14,6 +14,7 @@ from robopilot.apply_plan.plan import (
 )
 from robopilot.apply_preview.preview import preview_apply
 from robopilot.generator.project_generator import render_project_files
+from robopilot.history.journal import record_history_entry
 from robopilot.spec.io import load_spec
 from robopilot.spec.validator import validate_spec
 
@@ -124,7 +125,7 @@ def apply_from_plan(plan_path: Path, *, confirm: bool = False) -> ApplySummary:
         _write_expected_file(target, expected_files[relative_path])
         updated.append(relative_path)
 
-    return ApplySummary(
+    summary = ApplySummary(
         plan_path=str(plan_path),
         project_path=str(project_path),
         dry_run=False,
@@ -136,6 +137,23 @@ def apply_from_plan(plan_path: Path, *, confirm: bool = False) -> ApplySummary:
         conflicts=conflicts,
         safety_note=SAFETY_NOTE,
     )
+    record_history_entry(
+        project_path=project_path,
+        operation="apply",
+        plan_path=str(plan_path),
+        dry_run=False,
+        success=True,
+        files_created=summary.files_created,
+        files_updated=summary.files_updated,
+        files_kept=summary.files_kept,
+        conflicts=summary.conflicts,
+        skipped_files=summary.skipped_files,
+        summary=(
+            f"Applied plan with {len(summary.files_created)} files created "
+            f"and {len(summary.files_updated)} files updated."
+        ),
+    )
+    return summary
 
 
 def _ensure_plan_is_fresh(

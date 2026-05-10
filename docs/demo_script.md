@@ -24,6 +24,7 @@ Current core commands:
 - `robopilot apply-plan-validate`
 - `robopilot apply`
 - `robopilot rollback`
+- `robopilot history`
 - `robopilot generate`
 - `robopilot inspect`
 - `robopilot repair-suggest`
@@ -40,7 +41,7 @@ robopilot --help
 
 Expected result:
 
-The CLI lists the available commands, including `plan`, `refine`, `diff`, `validate`, `apply-preview`, `apply-plan`, `apply-plan-validate`, `apply`, `rollback`, `generate`, `inspect`, `repair-suggest`, `report`, `debug`, and `graph`.
+The CLI lists the available commands, including `plan`, `refine`, `diff`, `validate`, `apply-preview`, `apply-plan`, `apply-plan-validate`, `apply`, `rollback`, `history`, `generate`, `inspect`, `repair-suggest`, `report`, `debug`, and `graph`.
 
 ## 3. Demo: Plan a ProjectSpec
 
@@ -104,6 +105,13 @@ robopilot rollback --project examples/generated_projects/demo_detector --backup 
 robopilot rollback --project examples/generated_projects/demo_detector --backup examples/generated_projects/demo_detector/.robopilot_backups/<timestamp> --confirm
 ```
 
+Show project-local history:
+
+```bash
+robopilot history --project examples/generated_projects/demo_detector
+robopilot history --project examples/generated_projects/demo_detector --json
+```
+
 Point out:
 
 - `refine` loads an existing ProjectSpec and writes a new refined spec.
@@ -117,6 +125,8 @@ Point out:
 - Existing files are backed up before update, and conflicts stop apply.
 - v0.15.0 rollback is dry-run by default and only restores with `--confirm`.
 - Rollback restores only files from a RoboPilot backup and does not delete newly created files.
+- v0.16.0 history records confirmed apply and rollback operations under `.robopilot_history/`.
+- History entries are project-local metadata and do not include file contents.
 - Real LLM refinement requires `OPENAI_API_KEY`.
 - Run `robopilot diff` before generating from an LLM-refined spec.
 
@@ -339,10 +349,11 @@ Current implemented MVPs:
 - v0.13.0: Read-only Apply Plan Export
 - v0.14.0: Safe Apply from Plan
 - v0.15.0: Safe Apply Rollback
+- v0.16.0: Apply History / Workspace Journal
 
 Next planned work:
 
-- Hardening apply and rollback safety controls
-- Hardening provider-backed ProjectSpec planning and refinement
-- Deeper static reports and read-only repair suggestions
-- Lightweight demo UI
+- ROS Project Detector
+- ROS1 Static Inspector
+- Dependency Analyzer
+- ROS1 to ROS2 Migration Plan

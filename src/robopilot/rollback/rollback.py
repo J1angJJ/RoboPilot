@@ -6,6 +6,8 @@ import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
+from robopilot.history.journal import record_history_entry
+
 
 SAFETY_NOTE = (
     "Rollback is dry-run by default. RoboPilot restores only files contained in "
@@ -96,7 +98,7 @@ def rollback_project(
         shutil.copy2(source, target)
         restored.append(normalized)
 
-    return RollbackSummary(
+    summary = RollbackSummary(
         project_path=str(project_path),
         backup_path=str(backup_path),
         dry_run=False,
@@ -106,6 +108,17 @@ def rollback_project(
         errors=tuple(errors),
         safety_note=SAFETY_NOTE,
     )
+    record_history_entry(
+        project_path=project_path,
+        operation="rollback",
+        backup_path=str(backup_path),
+        dry_run=False,
+        success=True,
+        files_restored=summary.files_restored,
+        skipped_files=summary.skipped_files,
+        summary=f"Restored {len(summary.files_restored)} files from backup.",
+    )
+    return summary
 
 
 def _resolve_existing_directory(path: Path, label: str) -> Path:

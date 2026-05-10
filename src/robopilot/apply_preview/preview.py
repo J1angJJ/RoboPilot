@@ -144,7 +144,12 @@ def _suggest_next_steps(
 
 def _is_ignored_artifact(relative_path: Path) -> bool:
     parts = set(relative_path.parts)
-    return "__pycache__" in parts or relative_path.suffix in {".pyc", ".pyo"}
+    return (
+        "__pycache__" in parts
+        or ".robopilot_backups" in parts
+        or ".robopilot_history" in parts
+        or relative_path.suffix in {".pyc", ".pyo"}
+    )
 
 
 def _normalize_path(path: Path) -> str:

@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.16.0 project-local apply history / workspace journal.
+- `robopilot history --project ...` command.
+- `robopilot history --json` deterministic JSON output.
+- History entries under `.robopilot_history/` for confirmed apply operations.
+- History entries under `.robopilot_history/` for confirmed rollback operations.
+- Apply-preview conflict ignoring for RoboPilot metadata directories such as `.robopilot_history/` and `.robopilot_backups/`.
 - v0.15.0 safe apply rollback workflow.
 - `robopilot rollback --project ... --backup ...` dry-run command.
 - `robopilot rollback --confirm` confirmed restore mode for RoboPilot backups.
