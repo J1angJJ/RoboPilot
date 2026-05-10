@@ -105,63 +105,40 @@ RoboPilot currently supports:
 18. Mermaid workflow graph generation.
 19. Optional LLM planner and refiner.
 20. English and Chinese documentation.
-21. Pytest test coverage and GitHub Actions CI.
+21. ROS project detection without requiring ROS.
+22. Pytest test coverage and GitHub Actions CI.
 
 ## Current Priority
 
 The current priority is:
 
 ```txt
-v0.16.0 Apply History / Workspace Journal
+v0.17.0 ROS Project Detector
 ```
 
-The goal is to add a lightweight workspace history system that records apply and rollback operations.
+The goal is to add a no-ROS-required static detector for RoboPilot, ROS1 catkin, ROS2 ament Python, ROS2 ament CMake, mixed ROS-style, non-ROS, and unknown projects.
 
 Expected commands:
 
 ```bash
-robopilot history --project outputs/demo_detector
+robopilot detect outputs/demo_detector
 ```
 
 Optional JSON output:
 
 ```bash
-robopilot history --project outputs/demo_detector --json
+robopilot detect outputs/demo_detector --json
 ```
 
 Expected behavior:
 
-- Record confirmed apply operations.
-- Record confirmed rollback operations.
-- Store journal entries under a project-local RoboPilot directory.
-- List project history in readable terminal output.
+- Inspect static project signals such as `robopilot.yaml`, `package.xml`, `CMakeLists.txt`, `setup.py`, ROS-style directories, catkin, ament, `rclpy`, `rclcpp`, `rospy`, and `roscpp`.
+- Classify project type conservatively.
+- Report confidence, detected signals, missing common files, notes, and suggested next steps.
 - Support deterministic JSON output.
-- Do not execute ROS2, launch files, colcon, or generated code.
-- Do not modify project files except for writing RoboPilot history metadata.
-
-Suggested history directory:
-
-```txt
-.robopilot_history/
-```
-
-Suggested history entry fields:
-
-- operation type
-- timestamp
-- project path
-- plan path if applicable
-- backup path if applicable
-- files created
-- files updated
-- files restored
-- files kept
-- conflicts
-- dry-run status
-- success status
-- summary message
-
-This feature should make apply and rollback workflows easier to audit.
+- Do not require ROS or ROS2.
+- Do not execute launch files, generated code, catkin, or colcon.
+- Do not import user project modules.
 
 ## Important Constraints
 
@@ -295,6 +272,9 @@ src/robopilot/
 ├─ history/
 │  ├─ __init__.py
 │  └─ journal.py
+├─ detector/
+│  ├─ __init__.py
+│  └─ project_detector.py
 ├─ inspector/
 │  ├─ __init__.py
 │  └─ project_inspector.py
@@ -346,6 +326,7 @@ If a directory does not exist yet, create it only when needed by the current tas
 - Never assume the user has ROS or ROS2 installed.
 - Never require external services for default offline features.
 - Static inspection must not execute user code.
+- Static detection must not execute user code or import user modules.
 - Apply must only write files listed in a validated apply plan.
 - Rollback must only restore files from a RoboPilot backup.
 - History / journal writing must only write RoboPilot metadata under `.robopilot_history/`.
@@ -415,6 +396,14 @@ robopilot rollback --project outputs/demo_detector --backup outputs/demo_detecto
 ```
 
 ```bash
+robopilot history --project outputs/demo_detector
+```
+
+```bash
+robopilot detect outputs/demo_detector
+```
+
+```bash
 robopilot inspect outputs/demo_detector
 ```
 
@@ -437,7 +426,7 @@ robopilot graph --pipeline "camera -> detector -> tracker -> planner -> controll
 The next planned command is:
 
 ```bash
-robopilot history --project outputs/demo_detector
+robopilot inspect path/to/ros1_package --ros-version ros1
 ```
 
 ## ProjectSpec Rules
@@ -520,36 +509,30 @@ python -m pytest --basetemp=".pytest_tmp" -p no:cacheprovider
 
 For CLI-related changes, also run relevant commands manually.
 
-For the current history-related work, manually verify a workflow similar to:
+For the current detector-related work, manually verify commands similar to:
 
 ```bash
-robopilot plan --name demo_detector --task "Create an object detection pipeline" --output .pytest_tmp/base_spec.yaml
+robopilot detect examples/generated_projects/demo_detector
 ```
 
 ```bash
-robopilot refine --spec .pytest_tmp/base_spec.yaml --instruction "Add a tracker node after the detector" --output .pytest_tmp/refined_spec.yaml
+robopilot detect examples/generated_projects/demo_detector --json
 ```
 
 ```bash
-robopilot apply-plan --spec .pytest_tmp/refined_spec.yaml --project .pytest_tmp/history_target --output .pytest_tmp/apply_plan.yaml
+robopilot detect .pytest_tmp/ros1_catkin_demo
 ```
 
 ```bash
-robopilot apply --plan .pytest_tmp/apply_plan.yaml --confirm
+robopilot detect .pytest_tmp/ros2_ament_python_demo
 ```
 
 ```bash
-robopilot history --project .pytest_tmp/history_target
-```
-
-If rollback history is implemented, also verify:
-
-```bash
-robopilot rollback --project .pytest_tmp/history_target --backup <backup_dir> --confirm
+robopilot detect .pytest_tmp/ros2_ament_cmake_demo
 ```
 
 ```bash
-robopilot history --project .pytest_tmp/history_target --json
+robopilot detect .pytest_tmp/non_ros_demo
 ```
 
 ## Preferred Development Workflow
@@ -570,39 +553,35 @@ robopilot history --project .pytest_tmp/history_target --json
 Implement:
 
 ```txt
-v0.16.0 Apply History / Workspace Journal
+v0.17.0 ROS Project Detector
 ```
 
-The history system should support:
+The detector should support:
 
 ```bash
-robopilot history --project outputs/demo_detector
+robopilot detect path/to/project
 ```
 
 Optional JSON output:
 
 ```bash
-robopilot history --project outputs/demo_detector --json
+robopilot detect path/to/project --json
 ```
-
-The history system should record confirmed apply operations and confirmed rollback operations.
-
-It should not record dry-runs as successful modifications. If dry-run entries are recorded in the future, they must be clearly marked as dry-run and must not be confused with confirmed project changes.
 
 Suggested implementation files:
 
 ```txt
-src/robopilot/history/
+src/robopilot/detector/
 ├─ __init__.py
-└─ journal.py
+└─ project_detector.py
 ```
 
 Suggested tests:
 
 ```txt
-tests/test_history.py
+tests/test_project_detector.py
 ```
 
-The journal should be deterministic and testable.
+The detector should be static, deterministic, and testable. It must not require ROS, ROS2, catkin, colcon, launch execution, generated code execution, or user module imports.
 
-Do not start ROS1/ROS2 project detection, ROS1 static inspection, dependency analysis, ROS1-to-ROS2 migration, VSCode integration, RAG, Streamlit UI, or broad multi-agent orchestration until the current apply/history safety loop is stable.
+Do not start ROS1 static inspection, dependency analysis, ROS1-to-ROS2 migration, VSCode integration, RAG, Streamlit UI, or broad multi-agent orchestration until the detector is stable.

@@ -18,6 +18,7 @@ RoboPilot helps robotics learners and developers scaffold ROS-style Python packa
 - `apply`: dry-run or safely apply a validated apply plan with explicit confirmation.
 - `rollback`: dry-run or restore files from a RoboPilot backup with explicit confirmation.
 - `history`: list project-local confirmed apply and rollback journal entries.
+- `detect`: statically detect RoboPilot, ROS1 catkin, ROS2 ament Python, ROS2 ament C++, mixed ROS-style, non-ROS, or unknown projects.
 - `plan --planner llm`: optional ProjectSpec-only OpenAI planner for configured environments.
 - `validate`: check a saved ProjectSpec before generation.
 - `generate`: create a ROS-style Python package from a task or a saved ProjectSpec.
@@ -90,6 +91,7 @@ robopilot apply-plan-validate --plan apply_plan.yaml
 robopilot apply --plan apply_plan.yaml
 robopilot rollback --project outputs/demo_detector --backup outputs/demo_detector/.robopilot_backups/<timestamp>
 robopilot history --project outputs/demo_detector
+robopilot detect outputs/demo_detector
 robopilot generate --spec refined.yaml
 ```
 
@@ -176,6 +178,18 @@ robopilot history --project outputs/demo_detector --json
 project's `.robopilot_history/` directory. Dry-run apply and rollback commands
 do not create successful modification history entries. History entries record
 metadata such as changed paths and summaries, not file contents.
+
+Detect a project type:
+
+```bash
+robopilot detect examples/generated_projects/demo_detector
+robopilot detect examples/generated_projects/demo_detector --json
+```
+
+`detect` is static and no-ROS-required. It checks files, directories, and text
+signals such as `package.xml`, `CMakeLists.txt`, `setup.py`, `catkin_package`,
+`ament_package()`, `rclpy`, `rclcpp`, `rospy`, and `roscpp`; it does not import
+project modules, execute launch files, run catkin, or run colcon.
 
 Planner selection:
 
@@ -289,7 +303,7 @@ graph LR
 
 ## Project Status
 
-RoboPilot is an early v0.16.0 MVP focused on lightweight robotics developer workflows with offline defaults. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
+RoboPilot is an early v0.17.0 MVP focused on lightweight robotics developer workflows with offline defaults. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
 
 Implemented:
 
@@ -311,6 +325,7 @@ Implemented:
 - v0.14.0: Safe Apply from Plan
 - v0.15.0: Safe Apply Rollback
 - v0.16.0: Apply History / Workspace Journal
+- v0.17.0: ROS Project Detector
 
 Not included yet:
 
@@ -327,9 +342,9 @@ Not included yet:
 
 Near-term roadmap:
 
-1. ROS Project Detector
-2. ROS1 Static Inspector
-3. Dependency Analyzer
+1. ROS1 Static Inspector
+2. Dependency Analyzer
+3. ROS1 to ROS2 Migration Plan
 
 Longer-term direction:
 
@@ -375,6 +390,7 @@ robopilot/
 |       |-- generator/
 |       |-- diff/
 |       |-- debugger/
+|       |-- detector/
 |       |-- graph/
 |       |-- inspector/
 |       |-- planner/

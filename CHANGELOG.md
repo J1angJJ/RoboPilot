@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.17.0 no-ROS-required static ROS project detector.
+- `robopilot detect path/to/project` command.
+- `robopilot detect --json` deterministic JSON output.
+- Detection categories for RoboPilot projects, ROS1 catkin packages, ROS2 ament Python packages, ROS2 ament CMake packages, mixed ROS-style projects, non-ROS projects, and unknown projects.
+- Static signal detection for `robopilot.yaml`, `package.xml`, `CMakeLists.txt`, `setup.py`, `setup.cfg`, ROS-style directories, catkin, ament, `rclpy`, `rclcpp`, `rospy`, and `roscpp`.
 - v0.16.0 project-local apply history / workspace journal.
 - `robopilot history --project ...` command.
 - `robopilot history --json` deterministic JSON output.

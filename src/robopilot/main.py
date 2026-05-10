@@ -13,6 +13,7 @@ from robopilot.apply.apply_plan import ApplySummary, apply_from_plan
 from robopilot.apply_plan.plan import export_apply_plan, validate_apply_plan_file
 from robopilot.apply_preview.preview import ApplyPreviewResult, preview_apply
 from robopilot.debugger.log_analyzer import LogAnalysis, analyze_log
+from robopilot.detector.project_detector import ProjectDetection, detect_project
 from robopilot.diff.spec_diff import SpecDiffResult, diff_spec_files
 from robopilot.generator.project_generator import (
     generate_project,
@@ -611,6 +612,43 @@ def _print_history(report: HistoryReport) -> None:
             str(changed_count),
         )
     console.print(table)
+
+
+@app.command()
+def detect(
+    project_path: Annotated[Path, typer.Argument(help="Project directory to detect.")],
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Detect whether a directory looks like a RoboPilot, ROS1, or ROS2 project."""
+    result = detect_project(project_path)
+    if json_output:
+        print(json.dumps(result.to_dict(), indent=2))
+        return
+
+    _print_detection(result)
+
+
+def _print_detection(result: ProjectDetection) -> None:
+    console.print(Panel.fit("Detection Summary", style="bold cyan"))
+    console.print(f"[bold]Project path:[/bold] {result.project_path}")
+    console.print(f"[bold]Exists:[/bold] {result.exists}")
+    console.print(f"[bold]Project type:[/bold] {result.project_type}")
+    console.print(f"[bold]Confidence:[/bold] {result.confidence}")
+
+    console.print(Panel.fit("Detected Signals", style="bold cyan"))
+    _print_scalar_values(result.detected_signals)
+
+    console.print(Panel.fit("Missing Common Files", style="bold cyan"))
+    _print_scalar_values(result.missing_common_files)
+
+    console.print(Panel.fit("Notes", style="bold cyan"))
+    _print_scalar_values(result.notes)
+
+    console.print(Panel.fit("Suggested Next Steps", style="bold cyan"))
+    _print_scalar_values(result.suggested_next_steps)
 
 
 @app.command()

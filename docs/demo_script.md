@@ -25,6 +25,7 @@ Current core commands:
 - `robopilot apply`
 - `robopilot rollback`
 - `robopilot history`
+- `robopilot detect`
 - `robopilot generate`
 - `robopilot inspect`
 - `robopilot repair-suggest`
@@ -41,7 +42,7 @@ robopilot --help
 
 Expected result:
 
-The CLI lists the available commands, including `plan`, `refine`, `diff`, `validate`, `apply-preview`, `apply-plan`, `apply-plan-validate`, `apply`, `rollback`, `history`, `generate`, `inspect`, `repair-suggest`, `report`, `debug`, and `graph`.
+The CLI lists the available commands, including `plan`, `refine`, `diff`, `validate`, `apply-preview`, `apply-plan`, `apply-plan-validate`, `apply`, `rollback`, `history`, `detect`, `generate`, `inspect`, `repair-suggest`, `report`, `debug`, and `graph`.
 
 ## 3. Demo: Plan a ProjectSpec
 
@@ -112,6 +113,13 @@ robopilot history --project examples/generated_projects/demo_detector
 robopilot history --project examples/generated_projects/demo_detector --json
 ```
 
+Detect project type:
+
+```bash
+robopilot detect examples/generated_projects/demo_detector
+robopilot detect examples/generated_projects/demo_detector --json
+```
+
 Point out:
 
 - `refine` loads an existing ProjectSpec and writes a new refined spec.
@@ -127,6 +135,8 @@ Point out:
 - Rollback restores only files from a RoboPilot backup and does not delete newly created files.
 - v0.16.0 history records confirmed apply and rollback operations under `.robopilot_history/`.
 - History entries are project-local metadata and do not include file contents.
+- v0.17.0 detect classifies RoboPilot, ROS1 catkin, ROS2 ament Python, ROS2 ament C++, mixed ROS-style, non-ROS, and unknown projects.
+- Detection is static: it does not import user modules, execute launch files, run catkin, or run colcon.
 - Real LLM refinement requires `OPENAI_API_KEY`.
 - Run `robopilot diff` before generating from an LLM-refined spec.
 
@@ -350,10 +360,10 @@ Current implemented MVPs:
 - v0.14.0: Safe Apply from Plan
 - v0.15.0: Safe Apply Rollback
 - v0.16.0: Apply History / Workspace Journal
+- v0.17.0: ROS Project Detector
 
 Next planned work:
 
-- ROS Project Detector
 - ROS1 Static Inspector
 - Dependency Analyzer
 - ROS1 to ROS2 Migration Plan

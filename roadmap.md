@@ -536,9 +536,9 @@ robopilot rollback --project outputs/demo_detector --backup outputs/demo_detecto
 robopilot rollback --project outputs/demo_detector --backup outputs/demo_detector/.robopilot_backups/<timestamp> --json
 ```
 
-## Current: v0.16.0 Apply History / Workspace Journal
+## Completed: v0.16.0 Apply History / Workspace Journal
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -614,9 +614,9 @@ Suggested test cases:
 - History entries are sorted deterministically.
 - Existing apply and rollback tests still pass.
 
-## Future: v0.17.0 ROS Project Detector
+## Current: v0.17.0 ROS Project Detector
 
-Status: Planned
+Status: Current work
 
 Goal:
 
@@ -624,10 +624,14 @@ Introduce static project type detection for existing ROS-style projects.
 
 This is the first step toward expanding RoboPilot beyond RoboPilot-generated projects.
 
-Possible command:
+Core commands:
 
 ```bash
 robopilot detect path/to/project
+```
+
+```bash
+robopilot detect path/to/project --json
 ```
 
 Expected project categories:
@@ -636,8 +640,9 @@ Expected project categories:
 - ROS1 catkin package
 - ROS2 ament Python package
 - ROS2 ament C++ package
-- Mixed or unknown ROS-style project
+- Mixed ROS-style project
 - Non-ROS project
+- Unknown project
 
 Detection signals:
 
