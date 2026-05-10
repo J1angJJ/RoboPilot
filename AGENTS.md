@@ -106,38 +106,41 @@ RoboPilot currently supports:
 19. Optional LLM planner and refiner.
 20. English and Chinese documentation.
 21. ROS project detection without requiring ROS.
-22. Pytest test coverage and GitHub Actions CI.
+22. ROS1 static inspection without requiring ROS.
+23. Pytest test coverage and GitHub Actions CI.
 
 ## Current Priority
 
 The current priority is:
 
 ```txt
-v0.17.0 ROS Project Detector
+v0.18.0 ROS1 Static Inspector
 ```
 
-The goal is to add a no-ROS-required static detector for RoboPilot, ROS1 catkin, ROS2 ament Python, ROS2 ament CMake, mixed ROS-style, non-ROS, and unknown projects.
+The goal is to add a no-ROS-required static inspector for ROS1 catkin packages that extracts package metadata, dependencies, catkin signals, files, node candidates, issues, and suggested next steps.
 
 Expected commands:
 
 ```bash
-robopilot detect outputs/demo_detector
+robopilot inspect-ros1 path/to/ros1_package
 ```
 
 Optional JSON output:
 
 ```bash
-robopilot detect outputs/demo_detector --json
+robopilot inspect-ros1 path/to/ros1_package --json
 ```
 
 Expected behavior:
 
-- Inspect static project signals such as `robopilot.yaml`, `package.xml`, `CMakeLists.txt`, `setup.py`, ROS-style directories, catkin, ament, `rclpy`, `rclcpp`, `rospy`, and `roscpp`.
-- Classify project type conservatively.
-- Report confidence, detected signals, missing common files, notes, and suggested next steps.
+- Reuse project detection context when useful.
+- Inspect `package.xml`, `CMakeLists.txt`, `launch/`, `scripts/`, `src/`, `msg/`, `srv/`, `action/`, Python files, and C++ files.
+- Extract package name, package format, declared dependencies, catkin components, catkin package signals, file lists, and ROS1 node candidates.
+- Report potential issues and suggested next steps.
 - Support deterministic JSON output.
 - Do not require ROS or ROS2.
-- Do not execute launch files, generated code, catkin, or colcon.
+- Do not run `catkin_make` or colcon.
+- Do not execute launch files or generated code.
 - Do not import user project modules.
 
 ## Important Constraints
@@ -404,6 +407,10 @@ robopilot detect outputs/demo_detector
 ```
 
 ```bash
+robopilot inspect-ros1 path/to/ros1_package
+```
+
+```bash
 robopilot inspect outputs/demo_detector
 ```
 
@@ -426,7 +433,7 @@ robopilot graph --pipeline "camera -> detector -> tracker -> planner -> controll
 The next planned command is:
 
 ```bash
-robopilot inspect path/to/ros1_package --ros-version ros1
+robopilot deps path/to/project
 ```
 
 ## ProjectSpec Rules
@@ -509,30 +516,18 @@ python -m pytest --basetemp=".pytest_tmp" -p no:cacheprovider
 
 For CLI-related changes, also run relevant commands manually.
 
-For the current detector-related work, manually verify commands similar to:
+For the current ROS1 inspection work, manually verify commands similar to:
 
 ```bash
-robopilot detect examples/generated_projects/demo_detector
+robopilot detect .pytest_tmp/ros1_demo
 ```
 
 ```bash
-robopilot detect examples/generated_projects/demo_detector --json
+robopilot inspect-ros1 .pytest_tmp/ros1_demo
 ```
 
 ```bash
-robopilot detect .pytest_tmp/ros1_catkin_demo
-```
-
-```bash
-robopilot detect .pytest_tmp/ros2_ament_python_demo
-```
-
-```bash
-robopilot detect .pytest_tmp/ros2_ament_cmake_demo
-```
-
-```bash
-robopilot detect .pytest_tmp/non_ros_demo
+robopilot inspect-ros1 .pytest_tmp/ros1_demo --json
 ```
 
 ## Preferred Development Workflow
@@ -553,35 +548,35 @@ robopilot detect .pytest_tmp/non_ros_demo
 Implement:
 
 ```txt
-v0.17.0 ROS Project Detector
+v0.18.0 ROS1 Static Inspector
 ```
 
-The detector should support:
+The ROS1 inspector should support:
 
 ```bash
-robopilot detect path/to/project
+robopilot inspect-ros1 path/to/ros1_package
 ```
 
 Optional JSON output:
 
 ```bash
-robopilot detect path/to/project --json
+robopilot inspect-ros1 path/to/ros1_package --json
 ```
 
 Suggested implementation files:
 
 ```txt
-src/robopilot/detector/
+src/robopilot/ros1/
 ├─ __init__.py
-└─ project_detector.py
+└─ inspector.py
 ```
 
 Suggested tests:
 
 ```txt
-tests/test_project_detector.py
+tests/test_ros1_inspector.py
 ```
 
-The detector should be static, deterministic, and testable. It must not require ROS, ROS2, catkin, colcon, launch execution, generated code execution, or user module imports.
+The inspector should be static, deterministic, and testable. It must not require ROS, ROS2, catkin, colcon, launch execution, generated code execution, or user module imports.
 
-Do not start ROS1 static inspection, dependency analysis, ROS1-to-ROS2 migration, VSCode integration, RAG, Streamlit UI, or broad multi-agent orchestration until the detector is stable.
+Do not start dependency analysis, ROS1-to-ROS2 migration, VSCode integration, RAG, Streamlit UI, or broad multi-agent orchestration until ROS1 static inspection is stable.

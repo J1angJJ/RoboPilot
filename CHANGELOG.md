@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.18.0 no-ROS-required static ROS1 catkin package inspector.
+- `robopilot inspect-ros1 path/to/ros1_package` command.
+- `robopilot inspect-ros1 --json` deterministic JSON output.
+- Static ROS1 metadata extraction from `package.xml`, including package name, package format, buildtool dependencies, build dependencies, exec dependencies, and run dependencies.
+- Static CMake/catkin signal extraction from `CMakeLists.txt`, including `find_package(catkin REQUIRED COMPONENTS ...)` components and `catkin_package()`.
+- Detection of launch, msg, srv, action, Python, and C++ files in ROS1 package directories.
+- ROS1 node candidate detection for `rospy` Python files and `roscpp` C++ files without importing or executing user code.
+- ROS1 package issue reporting for missing core files, missing catkin metadata, missing launch/scripts directories, missing message generation hints, and non-ROS or ROS2 detector warnings.
 - v0.17.0 no-ROS-required static ROS project detector.
 - `robopilot detect path/to/project` command.
 - `robopilot detect --json` deterministic JSON output.

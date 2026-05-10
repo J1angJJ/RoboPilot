@@ -35,6 +35,7 @@ from robopilot.refiner.llm_refiner import LLMRefiner
 from robopilot.refiner.spec_refiner import refine_spec
 from robopilot.report.project_report import generate_project_report, write_project_report
 from robopilot.rollback.rollback import RollbackSummary, rollback_project
+from robopilot.ros1.inspector import ROS1Inspection, inspect_ros1_project
 from robopilot.spec.io import load_spec, spec_to_yaml, write_spec
 from robopilot.spec.validator import validate_spec
 from robopilot.utils.file_ops import OutputPathExistsError
@@ -649,6 +650,68 @@ def _print_detection(result: ProjectDetection) -> None:
 
     console.print(Panel.fit("Suggested Next Steps", style="bold cyan"))
     _print_scalar_values(result.suggested_next_steps)
+
+
+@app.command("inspect-ros1")
+def inspect_ros1(
+    project_path: Annotated[Path, typer.Argument(help="ROS1 catkin package directory to inspect.")],
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Statically inspect a ROS1 catkin package without requiring ROS."""
+    result = inspect_ros1_project(project_path)
+    if json_output:
+        print(json.dumps(result.to_dict(), indent=2))
+        return
+
+    _print_ros1_inspection(result)
+
+
+def _print_ros1_inspection(result: ROS1Inspection) -> None:
+    console.print(Panel.fit("ROS1 Inspection Summary", style="bold cyan"))
+    console.print(f"[bold]Project path:[/bold] {result.project_path}")
+    console.print(f"[bold]Exists:[/bold] {result.exists}")
+    console.print(f"[bold]Detected project type:[/bold] {result.detected_project_type}")
+
+    console.print(Panel.fit("Package Metadata", style="bold cyan"))
+    console.print(f"[bold]Package name:[/bold] {result.package_name or 'unknown'}")
+    console.print(f"[bold]Package format:[/bold] {result.package_format or 'unknown'}")
+
+    console.print(Panel.fit("Dependencies", style="bold cyan"))
+    _print_scalar_group("Buildtool", result.dependencies.buildtool)
+    _print_scalar_group("Build", result.dependencies.build)
+    _print_scalar_group("Exec", result.dependencies.exec)
+    _print_scalar_group("Run", result.dependencies.run)
+
+    console.print(Panel.fit("CMake / Catkin Signals", style="bold cyan"))
+    console.print(f"[bold]find_package(catkin):[/bold] {result.catkin.find_package_catkin}")
+    console.print(f"[bold]catkin_package():[/bold] {result.catkin.catkin_package}")
+    _print_scalar_group("Catkin components", result.catkin.catkin_components)
+
+    console.print(Panel.fit("Detected Files", style="bold cyan"))
+    _print_scalar_group("Launch files", result.files.launch_files)
+    _print_scalar_group("Message files", result.files.msg_files)
+    _print_scalar_group("Service files", result.files.srv_files)
+    _print_scalar_group("Action files", result.files.action_files)
+    _print_scalar_group("Python files", result.files.python_files)
+    _print_scalar_group("C++ files", result.files.cpp_files)
+
+    console.print(Panel.fit("Node Candidates", style="bold cyan"))
+    _print_scalar_group("Python ROS1 nodes", result.nodes.python_node_candidates)
+    _print_scalar_group("C++ ROS1 nodes", result.nodes.cpp_node_candidates)
+    console.print(f"[bold]rospy usage:[/bold] {result.rospy_usage}")
+    console.print(f"[bold]roscpp usage:[/bold] {result.roscpp_usage}")
+
+    console.print(Panel.fit("Potential Issues", style="bold cyan"))
+    _print_scalar_values(result.issues)
+
+    console.print(Panel.fit("Suggested Next Steps", style="bold cyan"))
+    _print_scalar_values(result.suggested_next_steps)
+
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    console.print(result.safety_note)
 
 
 @app.command()

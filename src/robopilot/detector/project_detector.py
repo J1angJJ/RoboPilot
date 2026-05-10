@@ -176,8 +176,10 @@ def _classify(signals: set[str]) -> tuple[str, str, tuple[str, ...]]:
     ros2_py_score = _score(signals, _ROS2_PY_SIGNALS)
     ros2_cpp_score = _score(signals, _ROS2_CPP_SIGNALS)
     ros2_score = max(ros2_py_score, ros2_cpp_score)
+    ros1_strong_score = _score(signals, _ROS1_STRONG_SIGNALS)
+    ros2_strong_score = _score(signals, _ROS2_PY_STRONG_SIGNALS | _ROS2_CPP_STRONG_SIGNALS)
 
-    if ros1_score >= 2 and ros2_score >= 2:
+    if ros1_strong_score >= 1 and ros2_strong_score >= 1:
         return (
             "mixed_ros_project",
             "high",

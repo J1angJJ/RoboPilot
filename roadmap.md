@@ -614,9 +614,9 @@ Suggested test cases:
 - History entries are sorted deterministically.
 - Existing apply and rollback tests still pass.
 
-## Current: v0.17.0 ROS Project Detector
+## Completed: v0.17.0 ROS Project Detector
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -665,18 +665,22 @@ Detection signals:
 
 This feature should remain static and should not require ROS, ROS2, catkin, or colcon.
 
-## Future: v0.18.0 ROS1 Static Inspector
+## Current: v0.18.0 ROS1 Static Inspector
 
-Status: Planned
+Status: Current work
 
 Goal:
 
 Extend RoboPilot's inspection capability to ROS1 catkin packages.
 
-Possible command:
+Core commands:
 
 ```bash
-robopilot inspect path/to/ros1_package --ros-version ros1
+robopilot inspect-ros1 path/to/ros1_package
+```
+
+```bash
+robopilot inspect-ros1 path/to/ros1_package --json
 ```
 
 Expected analysis:
@@ -696,7 +700,8 @@ Expected analysis:
 - C++ ROS1 nodes using `roscpp`
 - Potential ROS1 package structure issues
 
-This feature should remain static and should not execute ROS1 code.
+This feature should remain static and should not require ROS, run `catkin_make`,
+run colcon, import user modules, execute launch files, or execute ROS1 code.
 
 ## Future: v0.19.0 Dependency Analyzer
 
