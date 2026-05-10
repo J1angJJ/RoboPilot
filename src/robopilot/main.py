@@ -25,6 +25,7 @@ from robopilot.planner import (
     RuleBasedPlanner,
 )
 from robopilot.repair.repair_suggester import RepairSuggestionReport, suggest_repairs
+from robopilot.refiner.spec_refiner import refine_spec
 from robopilot.report.project_report import generate_project_report, write_project_report
 from robopilot.spec.io import load_spec, spec_to_yaml, write_spec
 from robopilot.spec.validator import validate_spec
@@ -164,6 +165,37 @@ def _build_planner(
     raise PlannerConfigurationError(
         f"Unknown planner: {planner_name}. Use 'rule' or 'llm'."
     )
+
+
+@app.command()
+def refine(
+    spec: Annotated[
+        Path,
+        typer.Option("--spec", "-s", help="Path to an existing robopilot.yaml ProjectSpec."),
+    ],
+    instruction: Annotated[
+        str,
+        typer.Option("--instruction", "-i", help="Instruction for refining the ProjectSpec."),
+    ],
+    output: Annotated[
+        Path,
+        typer.Option("--output", "-o", help="Path to write the refined ProjectSpec."),
+    ],
+    planner: Annotated[
+        str,
+        typer.Option("--planner", help="Refinement backend to use. Only 'rule' is supported."),
+    ] = "rule",
+) -> None:
+    """Refine an existing ProjectSpec and write a new spec file."""
+    try:
+        original_spec = load_spec(spec)
+        refined_spec = refine_spec(original_spec, instruction, planner=planner)
+        write_spec(refined_spec, output)
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    console.print(f"[green]Wrote refined ProjectSpec to[/green] {output}")
 
 
 @app.command()

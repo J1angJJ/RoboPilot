@@ -16,6 +16,7 @@ Key message:
 Current core commands:
 
 - `robopilot plan`
+- `robopilot refine`
 - `robopilot validate`
 - `robopilot generate`
 - `robopilot inspect`
@@ -33,7 +34,7 @@ robopilot --help
 
 Expected result:
 
-The CLI lists the available commands, including `plan`, `validate`, `generate`, `inspect`, `repair-suggest`, `report`, `debug`, and `graph`.
+The CLI lists the available commands, including `plan`, `refine`, `validate`, `generate`, `inspect`, `repair-suggest`, `report`, `debug`, and `graph`.
 
 ## 3. Demo: Plan a ProjectSpec
 
@@ -49,11 +50,24 @@ Point out:
 - The spec records the package name, selected template, nodes, topics, config files, launch files, and notes.
 - The spec is saved as `robopilot.yaml` and can be reviewed before generation.
 
-Validate the spec:
+Refine the spec:
 
 ```bash
-robopilot validate --spec robopilot.yaml
+robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after the detector" --output refined.yaml
 ```
+
+Validate the refined spec:
+
+```bash
+robopilot validate --spec refined.yaml
+```
+
+Point out:
+
+- `refine` loads an existing ProjectSpec and writes a new refined spec.
+- The original spec is not modified.
+- v0.9.0 refinement is deterministic and rule-based.
+- LLM-assisted refinement is intentionally left for a later milestone.
 
 Planner selection:
 
@@ -83,7 +97,7 @@ robopilot generate --name demo_detector --task "Create an object detection node 
 Spec-first generation:
 
 ```bash
-robopilot generate --spec robopilot.yaml
+robopilot generate --spec refined.yaml
 ```
 
 Point out:
@@ -260,9 +274,11 @@ Current implemented MVPs:
 - v0.6.0: Project Report Export
 - v0.7.0: Planner Interface and Optional LLM Planner
 - v0.8.0: Real OpenAI Provider Integration
+- v0.9.0: Rule-based ProjectSpec Refinement
 
 Next planned work:
 
+- LLM-assisted spec refinement with validation
 - Hardening provider-backed ProjectSpec planning
 - Deeper static reports and read-only repair suggestions
 - Lightweight demo UI

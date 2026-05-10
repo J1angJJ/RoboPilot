@@ -334,9 +334,9 @@ src/robopilot/planner/
 └─ llm_planner.py
 ```
 
-## Current: v0.8.0 Real LLM Provider Integration
+## Completed: v0.8.0 Real LLM Provider Integration
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -362,7 +362,49 @@ Requirements:
 - The LLM must not generate project files or arbitrary code directly.
 - Tests must use fake or mocked provider responses.
 
-## Future: v0.9.0 Web Demo
+## Current: v0.9.0 Spec Refinement
+
+Status: Current work
+
+Goal:
+
+Refine an existing `robopilot.yaml` / ProjectSpec using deterministic offline rules.
+
+Command:
+
+```bash
+robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after the detector" --output refined.yaml
+```
+
+Requirements:
+
+- Load an existing ProjectSpec.
+- Apply rule-based refinement.
+- Validate the refined spec before writing.
+- Write a new spec to `--output`.
+- Do not modify the original spec.
+- Do not implement `--in-place` yet.
+- Keep `--planner rule` as the default.
+- Leave LLM-assisted refinement as a future milestone.
+
+Supported rule-based refinements:
+
+- Add tracker node
+- Add camera node
+- Add controller node
+- Add note for unsupported instructions
+- Add explicit topic names from instructions
+- Avoid duplicate nodes and topics
+
+## Future: v0.10.0 LLM-assisted Spec Refinement
+
+Status: Planned
+
+Goal:
+
+Allow optional provider-backed refinement while preserving ProjectSpec validation and preventing direct file or code generation.
+
+## Future: v0.11.0 Web Demo
 
 Status: Planned
 
@@ -437,9 +479,11 @@ Priority order:
 ## Current Recommended Development Path
 
 ```txt
-v0.8.0 Real LLM Provider Integration
+v0.9.0 Spec Refinement
         ↓
-v0.9.0 Web Demo
+v0.10.0 LLM-assisted Spec Refinement
+        ↓
+v0.11.0 Web Demo
         ↓
 VSCode Integration
 ```

@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.9.0 rule-based ProjectSpec refinement workflow.
+- `robopilot refine --spec ... --instruction ... --output ...` command.
+- Deterministic refinements for tracker, camera, controller, notes, and explicit topic additions.
+- Duplicate node/topic avoidance during refinement.
+- Refined ProjectSpec validation before writing output.
+- Clear message for unsupported `--planner llm` refinement path.
 - v0.8.0 real OpenAI provider integration for optional ProjectSpec-only planning.
 - Provider configuration from `OPENAI_API_KEY` and `ROBOPILOT_LLM_MODEL`.
 - `robopilot plan --planner llm --model ...` model override support.

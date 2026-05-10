@@ -11,6 +11,7 @@ RoboPilot helps robotics learners and developers scaffold ROS-style Python packa
 ## Core Capabilities
 
 - `plan`: convert a robotics task into a readable `robopilot.yaml` ProjectSpec.
+- `refine`: update an existing ProjectSpec into a new refined spec using offline rules.
 - `plan --planner llm`: optional ProjectSpec-only OpenAI planner for configured environments.
 - `validate`: check a saved ProjectSpec before generation.
 - `generate`: create a ROS-style Python package from a task or a saved ProjectSpec.
@@ -74,9 +75,13 @@ Spec-first workflow:
 
 ```bash
 robopilot plan --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes." --output robopilot.yaml
-robopilot validate --spec robopilot.yaml
-robopilot generate --spec robopilot.yaml
+robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after the detector" --output refined.yaml
+robopilot validate --spec refined.yaml
+robopilot generate --spec refined.yaml
 ```
+
+`refine` writes a new spec by default. It does not modify the original
+`robopilot.yaml`; no `--in-place` mode exists yet.
 
 Planner selection:
 
@@ -190,7 +195,7 @@ graph LR
 
 ## Project Status
 
-RoboPilot is an early v0.8.0 MVP focused on lightweight robotics developer workflows with offline defaults. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
+RoboPilot is an early v0.9.0 MVP focused on lightweight robotics developer workflows with offline defaults. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
 
 Implemented:
 
@@ -204,6 +209,7 @@ Implemented:
 - v0.6.0: Project Report Export
 - v0.7.0: Planner Interface and Optional LLM Planner
 - v0.8.0: Real OpenAI Provider Integration for ProjectSpec planning
+- v0.9.0: Rule-based ProjectSpec Refinement
 
 Not included yet:
 
@@ -218,8 +224,8 @@ Not included yet:
 
 Near-term roadmap:
 
-1. Hardening provider-backed ProjectSpec planning
-2. Deeper static reports and read-only repair guidance
+1. LLM-assisted spec refinement while preserving validation and safety
+2. Hardening provider-backed ProjectSpec planning
 3. Lightweight demo UI
 
 Longer-term direction:
@@ -263,6 +269,7 @@ robopilot/
 |       |-- graph/
 |       |-- inspector/
 |       |-- planner/
+|       |-- refiner/
 |       |-- repair/
 |       |-- report/
 |       `-- utils/

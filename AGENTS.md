@@ -3,7 +3,7 @@
 
 ## Project Goal
 
-RoboPilot is an AI-native robotics development assistant for ROS-style workflows, ProjectSpec planning, debugging, workflow visualization, project inspection, safe repair suggestions, and static project reports.
+RoboPilot is an AI-native robotics development assistant for ROS-style workflows, ProjectSpec planning and refinement, debugging, workflow visualization, project inspection, safe repair suggestions, and static project reports.
 
 The project explores how lightweight AI-assisted developer tools can help robotics learners and developers plan, validate, generate, inspect, and debug robotics software projects without requiring a full ROS2 runtime environment.
 
@@ -51,34 +51,34 @@ RoboPilot currently supports:
 10. Project repair suggestions based on inspection issues.
 11. Static Markdown project reports.
 12. Planner interface with offline rule-based planning and optional OpenAI-backed ProjectSpec-only LLM planning.
-13. English and Chinese documentation.
-14. Pytest test coverage and GitHub Actions CI.
+13. Rule-based ProjectSpec refinement.
+14. English and Chinese documentation.
+15. Pytest test coverage and GitHub Actions CI.
 
 ## Current Priority
 
 The current priority is:
 
 ```txt
-v0.8.0 Real LLM Provider Integration
+v0.9.0 Spec Refinement
 ```
 
-The goal is to make the optional LLM planner usable with a real provider while preserving spec-first generation.
+The goal is to refine an existing `robopilot.yaml` / ProjectSpec using deterministic offline rules.
 
 Expected command:
 
 ```bash
-robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner rule
-robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner llm --model gpt-4.1-mini
+robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after the detector" --output refined.yaml
 ```
 
-The planner layer should:
+The refinement layer should:
 
-- keep `rule` as the default fully offline planner
-- read `OPENAI_API_KEY` only when `--planner llm` is requested
-- allow `ROBOPILOT_LLM_MODEL` or `--model` model selection
-- require LLM output to be ProjectSpec-compatible JSON or YAML
-- validate ProjectSpec before generation
-- never let the LLM write code or project files directly
+- keep `rule` as the default fully offline refiner
+- load an existing ProjectSpec
+- write a new refined ProjectSpec without modifying the original
+- validate the refined ProjectSpec before writing
+- avoid duplicate nodes and topics
+- leave LLM-assisted refinement for a later milestone unless implemented safely
 
 The optional LLM planner must not run ROS2, launch files, colcon, or generated Python nodes. It must not modify files or generate arbitrary code directly.
 
@@ -374,30 +374,27 @@ robopilot plan --name demo_detector --task "Create an object detection pipeline"
 Implement:
 
 ```txt
-v0.8.0 Real LLM Provider Integration
+v0.9.0 Spec Refinement
 ```
 
-The planner layer should support:
+The planner layer should continue to support:
 
 ```bash
 robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner rule
 ```
 
-Optional LLM planner selection should also be supported:
+Spec refinement should be supported:
 
 ```bash
-robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner llm --model gpt-4.1-mini
+robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after the detector" --output refined.yaml
 ```
 
-The planner implementation should include:
+The refiner implementation should include:
 
-- `Planner` interface
-- `RuleBasedPlanner`
-- optional `LLMPlanner`
-- OpenAI provider client
-- provider config from environment variables
-- prompt template for structured ProjectSpec output
-- tests with a fake LLM client
-- validation before generation
+- rule-based tracker, camera, controller, note, and topic refinements
+- duplicate avoidance
+- validation before saving
+- no `--in-place` mode yet
+- a clear message for `--planner llm`
 
-Do not start broad LLM orchestration, direct LLM code generation, RAG, Streamlit UI, VSCode integration, real ROS2 runtime execution, `--apply`, or colcon integration until the planner interface and spec-first workflow are stable.
+Do not start broad LLM orchestration, LLM-assisted refinement, direct LLM code generation, RAG, Streamlit UI, VSCode integration, real ROS2 runtime execution, `--apply`, or colcon integration until the rule-based refiner and spec-first workflow are stable.
