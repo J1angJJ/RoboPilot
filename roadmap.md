@@ -453,9 +453,9 @@ Requirements:
 - The LLM must not generate project files or arbitrary code directly.
 - Users should run `robopilot diff` before generating from an LLM-refined spec.
 
-## Current: v0.12.0 Apply Preview
+## Completed: v0.12.0 Apply Preview
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -482,7 +482,42 @@ Requirements:
 - Never modify project files.
 - Do not implement real apply or `--apply` yet.
 
-## Future: v0.13.0 Real Apply Workflow
+## Current: v0.13.0 Apply Plan Export
+
+Status: Current work
+
+Goal:
+
+Export a deterministic read-only apply plan based on the existing apply-preview result.
+
+Command:
+
+```bash
+robopilot apply-plan --spec refined.yaml --project outputs/demo_detector --output apply_plan.yaml
+```
+
+Optional JSON output:
+
+```bash
+robopilot apply-plan --spec refined.yaml --project outputs/demo_detector --output apply_plan.json --format json
+```
+
+Validation:
+
+```bash
+robopilot apply-plan-validate --plan apply_plan.yaml
+```
+
+Requirements:
+
+- Reuse apply-preview classification logic.
+- Serialize generated_by, spec path, project path, template, create/update/keep/conflict lists, safety note, and next steps.
+- Support deterministic YAML-like and JSON output.
+- Validate required apply plan fields.
+- Never modify the target project.
+- Do not implement real apply or `--apply` yet.
+
+## Future: v0.14.0 Real Apply Workflow
 
 Status: Planned
 
@@ -490,7 +525,7 @@ Goal:
 
 Apply generated changes only with explicit safety controls, backups, conflict handling, and user confirmation.
 
-## Future: v0.14.0 Web Demo
+## Future: v0.15.0 Web Demo
 
 Status: Planned
 
@@ -565,7 +600,7 @@ Priority order:
 ## Current Recommended Development Path
 
 ```txt
-v0.12.0 Apply Preview
+v0.13.0 Apply Plan Export
         ↓
 v0.13.0 Real Apply Workflow
         ↓

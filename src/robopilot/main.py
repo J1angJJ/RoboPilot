@@ -9,6 +9,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
+from robopilot.apply_plan.plan import export_apply_plan, validate_apply_plan_file
 from robopilot.apply_preview.preview import ApplyPreviewResult, preview_apply
 from robopilot.debugger.log_analyzer import LogAnalysis, analyze_log
 from robopilot.diff.spec_diff import SpecDiffResult, diff_spec_files
@@ -382,6 +383,59 @@ def _print_apply_preview(result: ApplyPreviewResult) -> None:
 
     console.print(Panel.fit("Safety Note", style="bold cyan"))
     console.print(result.safety_note)
+
+
+@app.command("apply-plan")
+def apply_plan(
+    spec: Annotated[
+        Path,
+        typer.Option("--spec", "-s", help="Path to a robopilot.yaml ProjectSpec."),
+    ],
+    project: Annotated[
+        Path,
+        typer.Option("--project", "-p", help="Existing project directory to preview."),
+    ],
+    output: Annotated[
+        Path,
+        typer.Option("--output", "-o", help="Path to write the apply plan."),
+    ],
+    output_format: Annotated[
+        str,
+        typer.Option("--format", help="Apply plan output format: yaml or json."),
+    ] = "yaml",
+) -> None:
+    """Export a read-only apply plan from an apply-preview result."""
+    try:
+        export_apply_plan(
+            spec_path=spec,
+            project_path=project,
+            output_path=output,
+            output_format=output_format,
+        )
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    console.print(f"[green]Wrote apply plan to[/green] {output}")
+
+
+@app.command("apply-plan-validate")
+def apply_plan_validate(
+    plan: Annotated[
+        Path,
+        typer.Option("--plan", "-p", help="Path to an apply plan file."),
+    ],
+) -> None:
+    """Validate a serialized apply plan without executing it."""
+    result = validate_apply_plan_file(plan)
+    if result.is_valid:
+        console.print(f"[green]Valid apply plan:[/green] {plan}")
+        return
+
+    console.print(f"[red]Invalid apply plan:[/red] {plan}")
+    for error in result.errors:
+        console.print(f"- {error}")
+    raise typer.Exit(code=1)
 
 
 @app.command()

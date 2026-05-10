@@ -54,32 +54,33 @@ RoboPilot currently supports:
 13. Rule-based and optional LLM-assisted ProjectSpec refinement.
 14. Static ProjectSpec diff reports.
 15. Read-only apply preview.
-16. English and Chinese documentation.
-17. Pytest test coverage and GitHub Actions CI.
+16. Read-only apply plan export.
+17. English and Chinese documentation.
+18. Pytest test coverage and GitHub Actions CI.
 
 ## Current Priority
 
 The current priority is:
 
 ```txt
-v0.12.0 Apply Preview
+v0.13.0 Apply Plan Export
 ```
 
-The goal is to preview applying a ProjectSpec to an existing project directory without modifying files.
+The goal is to export and validate a deterministic read-only apply plan based on apply-preview.
 
 Expected command:
 
 ```bash
-robopilot apply-preview --spec refined.yaml --project outputs/demo_detector
+robopilot apply-plan --spec refined.yaml --project outputs/demo_detector --output apply_plan.yaml
 ```
 
-The apply preview layer should:
+The apply plan layer should:
 
-- load and validate the ProjectSpec
-- render expected project files in memory
-- compare expected files with an existing project directory
-- report files to create, update, keep, and review as conflicts
-- never modify project files
+- reuse apply-preview results
+- serialize files to create, update, keep, and conflicts
+- support deterministic YAML-like and JSON output
+- validate saved apply plan files
+- never modify target project files
 - never implement real apply or `--apply` in this version
 
 The optional LLM planner must not run ROS2, launch files, colcon, or generated Python nodes. It must not modify files or generate arbitrary code directly.
@@ -286,6 +287,10 @@ robopilot diff --old base.yaml --new refined.yaml
 robopilot apply-preview --spec refined.yaml --project outputs/demo_detector
 ```
 
+```bash
+robopilot apply-plan --spec refined.yaml --project outputs/demo_detector --output apply_plan.yaml
+```
+
 ## ProjectSpec Rules
 
 `ProjectSpec` is the central intermediate representation.
@@ -392,7 +397,7 @@ robopilot plan --name demo_detector --task "Create an object detection pipeline"
 Implement:
 
 ```txt
-v0.12.0 Apply Preview
+v0.13.0 Apply Plan Export
 ```
 
 The planner layer should continue to support:
@@ -438,5 +443,12 @@ The apply preview implementation should include:
 - create/update/keep/conflict classification
 - readable terminal output and stable JSON output
 - no file modification and no `--apply`
+
+The apply plan implementation should include:
+
+- reuse of apply-preview classification logic
+- deterministic YAML-like and JSON serialization
+- validation of required apply plan fields
+- no target project modification and no real apply execution
 
 Do not start broad LLM orchestration, direct LLM code generation, RAG, Streamlit UI, VSCode integration, real ROS2 runtime execution, real apply, `--apply`, or colcon integration until the spec-first workflow is stable.

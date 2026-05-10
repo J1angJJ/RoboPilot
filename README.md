@@ -14,6 +14,7 @@ RoboPilot helps robotics learners and developers scaffold ROS-style Python packa
 - `refine`: update an existing ProjectSpec into a new refined spec with offline rules or an optional LLM provider.
 - `diff`: compare two ProjectSpec files with a static, read-only report.
 - `apply-preview`: preview generated file changes against an existing project without modifying files.
+- `apply-plan`: export and validate a read-only apply plan from an apply preview.
 - `plan --planner llm`: optional ProjectSpec-only OpenAI planner for configured environments.
 - `validate`: check a saved ProjectSpec before generation.
 - `generate`: create a ROS-style Python package from a task or a saved ProjectSpec.
@@ -81,6 +82,8 @@ robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after t
 robopilot diff --old robopilot.yaml --new refined.yaml
 robopilot validate --spec refined.yaml
 robopilot apply-preview --spec refined.yaml --project outputs/demo_detector
+robopilot apply-plan --spec refined.yaml --project outputs/demo_detector --output apply_plan.yaml
+robopilot apply-plan-validate --plan apply_plan.yaml
 robopilot generate --spec refined.yaml
 ```
 
@@ -117,6 +120,17 @@ robopilot apply-preview --spec refined.yaml --project outputs/demo_detector --js
 `apply-preview` is read-only. It reports files RoboPilot would create, update,
 keep, or flag as conflicts, but it does not modify project files and does not
 execute ROS2, launch files, colcon, or generated Python code.
+
+Export a read-only apply plan:
+
+```bash
+robopilot apply-plan --spec refined.yaml --project outputs/demo_detector --output apply_plan.yaml
+robopilot apply-plan-validate --plan apply_plan.yaml
+robopilot apply-plan --spec refined.yaml --project outputs/demo_detector --output apply_plan.json --format json
+```
+
+`apply-plan` serializes the apply-preview result for review or sharing. It does
+not modify project files and does not implement real apply.
 
 Planner selection:
 
@@ -230,7 +244,7 @@ graph LR
 
 ## Project Status
 
-RoboPilot is an early v0.12.0 MVP focused on lightweight robotics developer workflows with offline defaults. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
+RoboPilot is an early v0.13.0 MVP focused on lightweight robotics developer workflows with offline defaults. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
 
 Implemented:
 
@@ -248,6 +262,7 @@ Implemented:
 - v0.10.0: Static ProjectSpec Diff
 - v0.11.0: Optional LLM-assisted ProjectSpec Refinement
 - v0.12.0: Read-only Apply Preview
+- v0.13.0: Read-only Apply Plan Export
 
 Not included yet:
 
@@ -303,6 +318,7 @@ robopilot/
 |-- src/
 |   `-- robopilot/
 |       |-- main.py
+|       |-- apply_plan/
 |       |-- apply_preview/
 |       |-- generator/
 |       |-- diff/

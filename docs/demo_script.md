@@ -20,6 +20,8 @@ Current core commands:
 - `robopilot diff`
 - `robopilot validate`
 - `robopilot apply-preview`
+- `robopilot apply-plan`
+- `robopilot apply-plan-validate`
 - `robopilot generate`
 - `robopilot inspect`
 - `robopilot repair-suggest`
@@ -36,7 +38,7 @@ robopilot --help
 
 Expected result:
 
-The CLI lists the available commands, including `plan`, `refine`, `diff`, `validate`, `apply-preview`, `generate`, `inspect`, `repair-suggest`, `report`, `debug`, and `graph`.
+The CLI lists the available commands, including `plan`, `refine`, `diff`, `validate`, `apply-preview`, `apply-plan`, `apply-plan-validate`, `generate`, `inspect`, `repair-suggest`, `report`, `debug`, and `graph`.
 
 ## 3. Demo: Plan a ProjectSpec
 
@@ -78,6 +80,14 @@ robopilot apply-preview --spec refined.yaml --project examples/generated_project
 robopilot apply-preview --spec refined.yaml --project examples/generated_projects/demo_detector --json
 ```
 
+Export and validate a read-only apply plan:
+
+```bash
+robopilot apply-plan --spec refined.yaml --project examples/generated_projects/demo_detector --output apply_plan.yaml
+robopilot apply-plan-validate --plan apply_plan.yaml
+robopilot apply-plan --spec refined.yaml --project examples/generated_projects/demo_detector --output apply_plan.json --format json
+```
+
 Point out:
 
 - `refine` loads an existing ProjectSpec and writes a new refined spec.
@@ -86,6 +96,7 @@ Point out:
 - v0.10.0 diff is static, read-only, and validates both specs before comparison.
 - v0.11.0 adds optional LLM-assisted refinement that still returns only ProjectSpec-compatible data.
 - v0.12.0 apply-preview compares a spec to a project directory without modifying files.
+- v0.13.0 apply-plan exports the preview result for review without modifying files.
 - Real LLM refinement requires `OPENAI_API_KEY`.
 - Run `robopilot diff` before generating from an LLM-refined spec.
 
@@ -305,6 +316,7 @@ Current implemented MVPs:
 - v0.10.0: Static ProjectSpec Diff
 - v0.11.0: Optional LLM-assisted ProjectSpec Refinement
 - v0.12.0: Read-only Apply Preview
+- v0.13.0: Read-only Apply Plan Export
 
 Next planned work:
 

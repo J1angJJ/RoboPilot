@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.13.0 read-only apply plan export workflow.
+- `robopilot apply-plan --spec ... --project ... --output ...` command.
+- `robopilot apply-plan --format json` support.
+- `robopilot apply-plan-validate --plan ...` command.
+- Deterministic YAML-like and JSON apply plan serialization.
+- Apply plan validation for required stable fields.
 - v0.12.0 read-only apply preview workflow.
 - `robopilot apply-preview --spec ... --project ...` command.
 - `robopilot apply-preview --json` deterministic JSON output.
