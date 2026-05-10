@@ -17,6 +17,7 @@ Current core commands:
 
 - `robopilot plan`
 - `robopilot refine`
+- `robopilot diff`
 - `robopilot validate`
 - `robopilot generate`
 - `robopilot inspect`
@@ -34,7 +35,7 @@ robopilot --help
 
 Expected result:
 
-The CLI lists the available commands, including `plan`, `refine`, `validate`, `generate`, `inspect`, `repair-suggest`, `report`, `debug`, and `graph`.
+The CLI lists the available commands, including `plan`, `refine`, `diff`, `validate`, `generate`, `inspect`, `repair-suggest`, `report`, `debug`, and `graph`.
 
 ## 3. Demo: Plan a ProjectSpec
 
@@ -56,6 +57,13 @@ Refine the spec:
 robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after the detector" --output refined.yaml
 ```
 
+Diff the base and refined specs:
+
+```bash
+robopilot diff --old robopilot.yaml --new refined.yaml
+robopilot diff --old robopilot.yaml --new refined.yaml --json
+```
+
 Validate the refined spec:
 
 ```bash
@@ -67,6 +75,7 @@ Point out:
 - `refine` loads an existing ProjectSpec and writes a new refined spec.
 - The original spec is not modified.
 - v0.9.0 refinement is deterministic and rule-based.
+- v0.10.0 diff is static, read-only, and validates both specs before comparison.
 - LLM-assisted refinement is intentionally left for a later milestone.
 
 Planner selection:
@@ -275,6 +284,7 @@ Current implemented MVPs:
 - v0.7.0: Planner Interface and Optional LLM Planner
 - v0.8.0: Real OpenAI Provider Integration
 - v0.9.0: Rule-based ProjectSpec Refinement
+- v0.10.0: Static ProjectSpec Diff
 
 Next planned work:
 

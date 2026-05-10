@@ -48,8 +48,15 @@ Spec-first 工作流：
 ```bash
 robopilot plan --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes." --output robopilot.yaml
 robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after the detector" --output refined.yaml
+robopilot diff --old robopilot.yaml --new refined.yaml
 robopilot validate --spec refined.yaml
 robopilot generate --spec refined.yaml
+```
+
+`diff` is static and read-only:
+
+```bash
+robopilot diff --old robopilot.yaml --new refined.yaml --json
 ```
 
 `refine` 默认会写入新的 spec 文件，不会修改原始 `robopilot.yaml`。本版本没有 `--in-place`。
@@ -95,7 +102,7 @@ robopilot graph --pipeline "camera -> detector -> tracker -> planner -> controll
 
 ## 项目状态
 
-RoboPilot 目前是早期 v0.9.0 MVP，重点是保持离线默认能力，同时提供可选的 OpenAI ProjectSpec planner。发布记录见 [`CHANGELOG.md`](CHANGELOG.md)。
+RoboPilot 目前是早期 v0.10.0 MVP，重点是保持离线默认能力，同时提供 ProjectSpec refinement、static diff，以及可选的 OpenAI ProjectSpec planner。发布记录见 [`CHANGELOG.md`](CHANGELOG.md)。
 
 已实现：
 

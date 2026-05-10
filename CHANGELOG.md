@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.10.0 static ProjectSpec diff workflow.
+- `robopilot diff --old ... --new ...` command.
+- `robopilot diff --json` deterministic JSON output for tests and integrations.
+- Diff reporting for scalar fields, nodes, topics, config files, launch files, and notes.
+- Validation of both ProjectSpec files before diffing.
+- Read-only diff behavior that never modifies either spec file.
 - v0.9.0 rule-based ProjectSpec refinement workflow.
 - `robopilot refine --spec ... --instruction ... --output ...` command.
 - Deterministic refinements for tracker, camera, controller, notes, and explicit topic additions.

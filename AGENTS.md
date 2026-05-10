@@ -52,33 +52,33 @@ RoboPilot currently supports:
 11. Static Markdown project reports.
 12. Planner interface with offline rule-based planning and optional OpenAI-backed ProjectSpec-only LLM planning.
 13. Rule-based ProjectSpec refinement.
-14. English and Chinese documentation.
-15. Pytest test coverage and GitHub Actions CI.
+14. Static ProjectSpec diff reports.
+15. English and Chinese documentation.
+16. Pytest test coverage and GitHub Actions CI.
 
 ## Current Priority
 
 The current priority is:
 
 ```txt
-v0.9.0 Spec Refinement
+v0.10.0 Spec Diff
 ```
 
-The goal is to refine an existing `robopilot.yaml` / ProjectSpec using deterministic offline rules.
+The goal is to compare two `robopilot.yaml` / ProjectSpec files using deterministic offline rules.
 
 Expected command:
 
 ```bash
-robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after the detector" --output refined.yaml
+robopilot diff --old base.yaml --new refined.yaml
 ```
 
-The refinement layer should:
+The diff layer should:
 
-- keep `rule` as the default fully offline refiner
-- load an existing ProjectSpec
-- write a new refined ProjectSpec without modifying the original
-- validate the refined ProjectSpec before writing
-- avoid duplicate nodes and topics
-- leave LLM-assisted refinement for a later milestone unless implemented safely
+- load both ProjectSpec files
+- validate both specs before comparison
+- compare scalar fields, nodes, topics, config files, launch files, and notes
+- support readable terminal output and deterministic JSON output
+- never modify either spec file
 
 The optional LLM planner must not run ROS2, launch files, colcon, or generated Python nodes. It must not modify files or generate arbitrary code directly.
 
@@ -237,6 +237,14 @@ robopilot validate --spec robopilot.yaml
 ```
 
 ```bash
+robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after the detector" --output refined.yaml
+```
+
+```bash
+robopilot diff --old robopilot.yaml --new refined.yaml
+```
+
+```bash
 robopilot generate --spec robopilot.yaml
 ```
 
@@ -266,6 +274,10 @@ robopilot report examples/generated_projects/demo_detector --output report.md
 
 ```bash
 robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner rule
+```
+
+```bash
+robopilot diff --old base.yaml --new refined.yaml
 ```
 
 ## ProjectSpec Rules
@@ -374,7 +386,7 @@ robopilot plan --name demo_detector --task "Create an object detection pipeline"
 Implement:
 
 ```txt
-v0.9.0 Spec Refinement
+v0.10.0 Spec Diff
 ```
 
 The planner layer should continue to support:
@@ -389,12 +401,20 @@ Spec refinement should be supported:
 robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after the detector" --output refined.yaml
 ```
 
-The refiner implementation should include:
+Spec diff should be supported:
 
-- rule-based tracker, camera, controller, note, and topic refinements
-- duplicate avoidance
-- validation before saving
-- no `--in-place` mode yet
-- a clear message for `--planner llm`
+```bash
+robopilot diff --old base.yaml --new refined.yaml
+```
 
-Do not start broad LLM orchestration, LLM-assisted refinement, direct LLM code generation, RAG, Streamlit UI, VSCode integration, real ROS2 runtime execution, `--apply`, or colcon integration until the rule-based refiner and spec-first workflow are stable.
+The diff implementation should include:
+
+- validation before comparison
+- changed scalar fields
+- added and removed nodes
+- added and removed topics
+- added and removed config files, launch files, and notes
+- readable terminal output and stable JSON output
+- no file modification
+
+Do not start broad LLM orchestration, LLM-assisted refinement, direct LLM code generation, RAG, Streamlit UI, VSCode integration, real ROS2 runtime execution, `--apply`, or colcon integration until the rule-based spec workflow is stable.

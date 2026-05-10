@@ -362,9 +362,9 @@ Requirements:
 - The LLM must not generate project files or arbitrary code directly.
 - Tests must use fake or mocked provider responses.
 
-## Current: v0.9.0 Spec Refinement
+## Completed: v0.9.0 Spec Refinement
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -396,7 +396,36 @@ Supported rule-based refinements:
 - Add explicit topic names from instructions
 - Avoid duplicate nodes and topics
 
-## Future: v0.10.0 LLM-assisted Spec Refinement
+## Current: v0.10.0 Spec Diff
+
+Status: Current work
+
+Goal:
+
+Compare two `robopilot.yaml` / ProjectSpec files using deterministic offline rules.
+
+Command:
+
+```bash
+robopilot diff --old base.yaml --new refined.yaml
+```
+
+Optional JSON output:
+
+```bash
+robopilot diff --old base.yaml --new refined.yaml --json
+```
+
+Requirements:
+
+- Load both ProjectSpec files.
+- Validate both specs before comparison.
+- Compare package name, task, selected template, nodes, topics, config files, launch files, and notes.
+- Report added, removed, and changed items.
+- Never modify either spec file.
+- Keep output deterministic and testable.
+
+## Future: v0.11.0 LLM-assisted Spec Refinement
 
 Status: Planned
 
@@ -404,7 +433,7 @@ Goal:
 
 Allow optional provider-backed refinement while preserving ProjectSpec validation and preventing direct file or code generation.
 
-## Future: v0.11.0 Web Demo
+## Future: v0.12.0 Web Demo
 
 Status: Planned
 
@@ -479,9 +508,9 @@ Priority order:
 ## Current Recommended Development Path
 
 ```txt
-v0.9.0 Spec Refinement
+v0.10.0 Spec Diff
         ↓
-v0.10.0 LLM-assisted Spec Refinement
+v0.11.0 LLM-assisted Spec Refinement
         ↓
 v0.11.0 Web Demo
         ↓

@@ -10,6 +10,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from robopilot.debugger.log_analyzer import LogAnalysis, analyze_log
+from robopilot.diff.spec_diff import SpecDiffResult, diff_spec_files
 from robopilot.generator.project_generator import (
     generate_project,
     generate_project_from_spec,
@@ -196,6 +197,102 @@ def refine(
         raise typer.Exit(code=1) from exc
 
     console.print(f"[green]Wrote refined ProjectSpec to[/green] {output}")
+
+
+@app.command()
+def diff(
+    old: Annotated[
+        Path,
+        typer.Option("--old", help="Path to the baseline ProjectSpec."),
+    ],
+    new: Annotated[
+        Path,
+        typer.Option("--new", help="Path to the updated ProjectSpec."),
+    ],
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Compare two ProjectSpec files without modifying either one."""
+    try:
+        result = diff_spec_files(old, new)
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    if json_output:
+        print(json.dumps(result.to_dict(), indent=2))
+        return
+
+    _print_spec_diff(result)
+
+
+def _print_spec_diff(result: SpecDiffResult) -> None:
+    console.print(Panel.fit("Spec Summary", style="bold cyan"))
+    console.print(f"[bold]Old spec:[/bold] {result.old_spec}")
+    console.print(f"[bold]New spec:[/bold] {result.new_spec}")
+    console.print(f"[bold]Valid:[/bold] {result.valid}")
+    console.print(f"[bold]Has changes:[/bold] {result.has_changes}")
+
+    console.print(Panel.fit("Changed Fields", style="bold cyan"))
+    if result.changed_fields:
+        table = Table()
+        table.add_column("Field")
+        table.add_column("Old")
+        table.add_column("New")
+        for field, values in result.changed_fields.items():
+            table.add_row(field, values["old"], values["new"])
+        console.print(table)
+    else:
+        console.print("[green]No scalar field changes.[/green]")
+
+    _print_named_items("Added Nodes", result.added_nodes)
+    _print_named_items("Removed Nodes", result.removed_nodes)
+    _print_named_items("Added Topics", result.added_topics)
+    _print_named_items("Removed Topics", result.removed_topics)
+
+    console.print(Panel.fit("Added Files", style="bold cyan"))
+    _print_scalar_group("Config files", result.added_config_files)
+    _print_scalar_group("Launch files", result.added_launch_files)
+
+    console.print(Panel.fit("Removed Files", style="bold cyan"))
+    _print_scalar_group("Config files", result.removed_config_files)
+    _print_scalar_group("Launch files", result.removed_launch_files)
+
+    console.print(Panel.fit("Added Notes", style="bold cyan"))
+    _print_scalar_values(result.added_notes)
+
+    console.print(Panel.fit("Removed Notes", style="bold cyan"))
+    _print_scalar_values(result.removed_notes)
+
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    console.print(
+        "This diff is generated from static ProjectSpec comparison only. "
+        "RoboPilot did not modify either spec file."
+    )
+
+
+def _print_named_items(title: str, items: tuple[dict[str, str], ...]) -> None:
+    console.print(Panel.fit(title, style="bold cyan"))
+    if not items:
+        console.print("[green]None.[/green]")
+        return
+    for item in items:
+        console.print(f"- {item.get('name', 'unknown')}")
+
+
+def _print_scalar_group(label: str, values: tuple[str, ...]) -> None:
+    console.print(f"[bold]{label}:[/bold]")
+    _print_scalar_values(values)
+
+
+def _print_scalar_values(values: tuple[str, ...]) -> None:
+    if not values:
+        console.print("- none")
+        return
+    for value in values:
+        console.print(f"- {value}")
 
 
 @app.command()

@@ -12,6 +12,7 @@ RoboPilot helps robotics learners and developers scaffold ROS-style Python packa
 
 - `plan`: convert a robotics task into a readable `robopilot.yaml` ProjectSpec.
 - `refine`: update an existing ProjectSpec into a new refined spec using offline rules.
+- `diff`: compare two ProjectSpec files with a static, read-only report.
 - `plan --planner llm`: optional ProjectSpec-only OpenAI planner for configured environments.
 - `validate`: check a saved ProjectSpec before generation.
 - `generate`: create a ROS-style Python package from a task or a saved ProjectSpec.
@@ -76,12 +77,20 @@ Spec-first workflow:
 ```bash
 robopilot plan --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes." --output robopilot.yaml
 robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after the detector" --output refined.yaml
+robopilot diff --old robopilot.yaml --new refined.yaml
 robopilot validate --spec refined.yaml
 robopilot generate --spec refined.yaml
 ```
 
 `refine` writes a new spec by default. It does not modify the original
 `robopilot.yaml`; no `--in-place` mode exists yet.
+
+`diff` is static and read-only. It validates both specs, compares fields,
+nodes, topics, files, and notes, and can also print deterministic JSON:
+
+```bash
+robopilot diff --old robopilot.yaml --new refined.yaml --json
+```
 
 Planner selection:
 
@@ -195,7 +204,7 @@ graph LR
 
 ## Project Status
 
-RoboPilot is an early v0.9.0 MVP focused on lightweight robotics developer workflows with offline defaults. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
+RoboPilot is an early v0.10.0 MVP focused on lightweight robotics developer workflows with offline defaults. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
 
 Implemented:
 
@@ -210,6 +219,7 @@ Implemented:
 - v0.7.0: Planner Interface and Optional LLM Planner
 - v0.8.0: Real OpenAI Provider Integration for ProjectSpec planning
 - v0.9.0: Rule-based ProjectSpec Refinement
+- v0.10.0: Static ProjectSpec Diff
 
 Not included yet:
 
@@ -265,6 +275,7 @@ robopilot/
 |   `-- robopilot/
 |       |-- main.py
 |       |-- generator/
+|       |-- diff/
 |       |-- debugger/
 |       |-- graph/
 |       |-- inspector/
