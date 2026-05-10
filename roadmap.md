@@ -247,9 +247,9 @@ Expected behavior:
 
 This remains static and safe by default.
 
-## Current: v0.6.0 Project Report Export
+## Completed: v0.6.0 Project Report Export
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -278,13 +278,13 @@ Expected behavior:
 
 This remains static and safe by default.
 
-## Future: v0.7.0 Optional LLM Planner
+## Current: v0.7.0 Planner Interface + Optional LLM Planner
 
-Status: Planned
+Status: Current work
 
 Goal:
 
-Add optional LLM-assisted planning without replacing the deterministic spec-first workflow.
+Refactor RoboPilot planning behind a planner interface and add optional LLM-assisted planning without replacing the deterministic spec-first workflow.
 
 The LLM should not directly generate arbitrary project files. Instead, it should generate or refine `ProjectSpec`.
 
@@ -307,17 +307,23 @@ ROS-style package
 Possible command:
 
 ```bash
-robopilot plan --name demo_detector --task "Create an object detection pipeline" --llm
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner rule
+```
+
+```bash
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner llm
 ```
 
 Requirements:
 
 - Offline rule-based planning must remain available.
 - LLM mode must be optional.
-- API keys must be loaded from environment variables.
-- No secrets should be committed.
+- The default planner must remain `rule`.
+- Tests must use fake or injected clients, not real APIs.
+- No secrets should be required or committed.
 - Generated specs should be validated before generation.
 - LLM output should be constrained to RoboPilot's `ProjectSpec` schema.
+- The LLM must not write code or project files directly.
 
 Possible implementation files:
 
@@ -403,9 +409,7 @@ Priority order:
 ## Current Recommended Development Path
 
 ```txt
-v0.6.0 Project Report Export
-        ↓
-v0.7.0 Optional LLM Planner
+v0.7.0 Planner Interface + Optional LLM Planner
         ↓
 v0.8.0 Web Demo
         ↓

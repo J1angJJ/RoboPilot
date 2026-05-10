@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.7.0 planner interface for ProjectSpec generation.
+- Rule-based planner wrapper for the existing offline task classification flow.
+- Optional ProjectSpec-only LLM planner with injectable client support for tests and integrations.
+- `robopilot plan --planner rule` and `robopilot plan --planner llm` planner selection.
+- Validation of LLM-produced ProjectSpec data before generation.
+- Clear CLI error when the optional LLM planner is requested without a configured client.
 - v0.6.0 project report export workflow combining inspection and repair suggestions.
 - `robopilot report` command for printing deterministic Markdown reports.
 - `robopilot report --output` support for writing Markdown reports to disk.

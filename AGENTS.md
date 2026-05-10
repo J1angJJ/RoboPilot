@@ -3,7 +3,7 @@
 
 ## Project Goal
 
-RoboPilot is an AI-native robotics development assistant for ROS-style workflows, debugging, workflow visualization, project inspection, safe repair suggestions, and static project reports.
+RoboPilot is an AI-native robotics development assistant for ROS-style workflows, ProjectSpec planning, debugging, workflow visualization, project inspection, safe repair suggestions, and static project reports.
 
 The project explores how lightweight AI-assisted developer tools can help robotics learners and developers plan, validate, generate, inspect, and debug robotics software projects without requiring a full ROS2 runtime environment.
 
@@ -50,36 +50,36 @@ RoboPilot currently supports:
 9. Project inspection for generated and ROS-style projects.
 10. Project repair suggestions based on inspection issues.
 11. Static Markdown project reports.
-12. English and Chinese documentation.
-13. Pytest test coverage and GitHub Actions CI.
+12. Planner interface with offline rule-based planning and optional ProjectSpec-only LLM planning.
+13. English and Chinese documentation.
+14. Pytest test coverage and GitHub Actions CI.
 
 ## Current Priority
 
 The current priority is:
 
 ```txt
-v0.6.0 Project Report Export
+v0.7.0 Planner Interface + Optional LLM Planner
 ```
 
-The goal is to add a lightweight offline Markdown report exporter based on the existing Project Inspector and repair suggester.
+The goal is to refactor planning behind a planner interface and add an optional LLM planner path that produces ProjectSpec only.
 
 Expected command:
 
 ```bash
-robopilot report examples/generated_projects/demo_detector --output report.md
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner rule
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner llm
 ```
 
-The report exporter should inspect the project directory, generate repair suggestions, and write or print a Markdown report with:
+The planner layer should:
 
-- project path
-- spec status
-- detected files
-- potential issues
-- repair suggestions
-- safety note
-- suggested commands
+- keep `rule` as the default fully offline planner
+- allow an optional injectable LLM client for tests or future integrations
+- require LLM output to be ProjectSpec-compatible structured data
+- validate ProjectSpec before generation
+- never let the LLM write code or project files directly
 
-The report exporter must not run ROS2, launch files, colcon, or generated Python nodes. It must not modify the inspected project.
+The optional LLM planner must not run ROS2, launch files, colcon, or generated Python nodes. It must not modify files or generate arbitrary code directly.
 
 ## Important Constraints
 
@@ -263,6 +263,10 @@ robopilot repair-suggest examples/generated_projects/demo_detector
 robopilot report examples/generated_projects/demo_detector --output report.md
 ```
 
+```bash
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner rule
+```
+
 ## ProjectSpec Rules
 
 `ProjectSpec` is the central intermediate representation.
@@ -345,6 +349,12 @@ For report-related changes, test:
 robopilot report examples/generated_projects/demo_detector --output .pytest_tmp/demo_report.md
 ```
 
+For planner-related changes, test:
+
+```bash
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner rule
+```
+
 ## Preferred Development Workflow
 
 1. Read `README.md`, `README.zh-CN.md`, `roadmap.md`, `CHANGELOG.md`, `pyproject.toml`, and this file first.
@@ -363,29 +373,28 @@ robopilot report examples/generated_projects/demo_detector --output .pytest_tmp/
 Implement:
 
 ```txt
-v0.6.0 Project Report Export
+v0.7.0 Planner Interface + Optional LLM Planner
 ```
 
-The report exporter should support:
+The planner layer should support:
 
 ```bash
-robopilot report examples/generated_projects/demo_detector
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner rule
 ```
 
-Optional Markdown file output should also be supported:
+Optional LLM planner selection should also be supported:
 
 ```bash
-robopilot report examples/generated_projects/demo_detector --output report.md
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner llm
 ```
 
-The report exporter should reuse the inspector and repair suggester and include:
+The planner implementation should include:
 
-- project summary
-- spec status
-- detected files
-- potential issues
-- repair suggestions
-- suggested commands
-- safety note
+- `Planner` interface
+- `RuleBasedPlanner`
+- optional `LLMPlanner`
+- prompt template for structured ProjectSpec output
+- tests with a fake LLM client
+- validation before generation
 
-Do not start LLM orchestration, RAG, Streamlit UI, VSCode integration, real ROS2 runtime execution, `--apply`, or colcon integration until the offline spec-first workflow, project inspector, repair suggestions, and report export are stable.
+Do not start broad LLM orchestration, direct LLM code generation, RAG, Streamlit UI, VSCode integration, real ROS2 runtime execution, `--apply`, or colcon integration until the planner interface and spec-first workflow are stable.

@@ -55,6 +55,20 @@ Validate the spec:
 robopilot validate --spec robopilot.yaml
 ```
 
+Planner selection:
+
+```bash
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner rule
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner llm
+```
+
+Point out:
+
+- `--planner rule` is the default and remains fully offline.
+- `--planner llm` is optional and ProjectSpec-only.
+- The LLM planner must return structured spec data; RoboPilot validates it before generation.
+- The CLI returns a clear configuration error if no LLM client is configured.
+
 ## 4. Demo: Generate a ROS-style Package
 
 Run:
@@ -241,9 +255,10 @@ Current implemented MVPs:
 - MVP 0.6: Project Inspector
 - v0.5.0: Project Repair Suggestions
 - v0.6.0: Project Report Export
+- v0.7.0: Planner Interface and Optional LLM Planner
 
 Next planned work:
 
+- Hardening optional ProjectSpec-only LLM planning
 - Deeper static reports and read-only repair suggestions
-- Optional LLM-assisted generation while preserving offline mode
 - Lightweight demo UI

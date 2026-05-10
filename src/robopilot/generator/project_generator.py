@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -10,11 +9,9 @@ from robopilot.generator import templates
 from robopilot.generator.project_spec import ProjectSpec
 from robopilot.generator.task_classifier import classify_task
 from robopilot.generator.template_registry import build_project_spec
+from robopilot.planner.rule_based_planner import RuleBasedPlanner
 from robopilot.spec.validator import validate_spec
 from robopilot.utils.file_ops import ensure_new_directory, write_text_file
-
-
-PACKAGE_NAME_PATTERN = re.compile(r"^[a-z][a-z0-9_]*$")
 
 
 @dataclass(frozen=True)
@@ -45,17 +42,7 @@ def generate_project(
 
 def create_project_spec(*, name: str, task: str) -> ProjectSpec:
     """Create a ProjectSpec from a natural language robotics task."""
-    package_name = _validate_package_name(name)
-    clean_task = task.strip()
-    if not clean_task:
-        raise ValueError("Task description cannot be empty.")
-
-    selected_template = classify_task(clean_task)
-    return build_project_spec(
-        package_name=package_name,
-        task=clean_task,
-        selected_template=selected_template,
-    )
+    return RuleBasedPlanner().plan(package_name=name, task=task)
 
 
 def generate_project_from_spec(
@@ -113,13 +100,3 @@ def _render_files(spec: ProjectSpec) -> dict[Path, str]:
         Path(spec.package_name) / "__init__.py": "",
         Path(spec.package_name) / spec.node_file_name: templates.node_file(spec),
     }
-
-
-def _validate_package_name(name: str) -> str:
-    package_name = name.strip()
-    if not PACKAGE_NAME_PATTERN.fullmatch(package_name):
-        raise ValueError(
-            "Package name must start with a lowercase letter and contain only "
-            "lowercase letters, numbers, and underscores."
-        )
-    return package_name

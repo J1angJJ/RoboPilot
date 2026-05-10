@@ -11,12 +11,17 @@ from rich.table import Table
 
 from robopilot.debugger.log_analyzer import LogAnalysis, analyze_log
 from robopilot.generator.project_generator import (
-    create_project_spec,
     generate_project,
     generate_project_from_spec,
 )
 from robopilot.graph.mermaid_generator import PipelineParseError, generate_mermaid
 from robopilot.inspector.project_inspector import ProjectInspection, inspect_project
+from robopilot.planner import (
+    LLMPlanner,
+    PlannerConfigurationError,
+    PlannerError,
+    RuleBasedPlanner,
+)
 from robopilot.repair.repair_suggester import RepairSuggestionReport, suggest_repairs
 from robopilot.report.project_report import generate_project_report, write_project_report
 from robopilot.spec.io import load_spec, spec_to_yaml, write_spec
@@ -108,6 +113,13 @@ def plan(
         str,
         typer.Option("--task", "-t", help="Natural language robotics task."),
     ],
+    planner: Annotated[
+        str,
+        typer.Option(
+            "--planner",
+            help="Planner backend to use: rule or llm.",
+        ),
+    ] = "rule",
     output: Annotated[
         Path | None,
         typer.Option("--output", "-o", help="Optional path to write the ProjectSpec."),
@@ -115,8 +127,9 @@ def plan(
 ) -> None:
     """Create and print a robopilot.yaml ProjectSpec without generating files."""
     try:
-        project_spec = create_project_spec(name=name, task=task)
-    except ValueError as exc:
+        selected_planner = _build_planner(planner)
+        project_spec = selected_planner.plan(package_name=name, task=task)
+    except (PlannerError, ValueError) as exc:
         console.print(f"[red]Error:[/red] {exc}")
         raise typer.Exit(code=1) from exc
 
@@ -126,6 +139,17 @@ def plan(
     if output is not None:
         write_spec(project_spec, output)
         console.print(f"[green]Wrote ProjectSpec to[/green] {output}")
+
+
+def _build_planner(planner_name: str) -> RuleBasedPlanner | LLMPlanner:
+    normalized = planner_name.strip().lower()
+    if normalized == "rule":
+        return RuleBasedPlanner()
+    if normalized == "llm":
+        return LLMPlanner()
+    raise PlannerConfigurationError(
+        f"Unknown planner: {planner_name}. Use 'rule' or 'llm'."
+    )
 
 
 @app.command()

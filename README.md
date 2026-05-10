@@ -11,6 +11,7 @@ RoboPilot helps robotics learners and developers scaffold ROS-style Python packa
 ## Core Capabilities
 
 - `plan`: convert a robotics task into a readable `robopilot.yaml` ProjectSpec.
+- `plan --planner llm`: optional ProjectSpec-only LLM planner path for configured clients.
 - `validate`: check a saved ProjectSpec before generation.
 - `generate`: create a ROS-style Python package from a task or a saved ProjectSpec.
 - `inspect`: statically inspect a generated or ROS-style project directory.
@@ -70,6 +71,19 @@ robopilot plan --name demo_detector --task "Create an object detection node subs
 robopilot validate --spec robopilot.yaml
 robopilot generate --spec robopilot.yaml
 ```
+
+Planner selection:
+
+```bash
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner rule
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner llm
+```
+
+The default planner is `rule` and remains fully offline. The optional `llm`
+planner is ProjectSpec-only: it must return structured spec data, and RoboPilot
+validates that spec before generation. The current CLI does not configure a real
+LLM client by default, so `--planner llm` returns a clear configuration error
+unless a client is injected by integration code.
 
 Inspect a generated project:
 
@@ -162,7 +176,7 @@ graph LR
 
 ## Project Status
 
-RoboPilot is an early v0.6.0 MVP focused on offline, lightweight robotics developer workflows. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
+RoboPilot is an early v0.7.0 MVP focused on offline, lightweight robotics developer workflows. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
 
 Implemented:
 
@@ -174,11 +188,12 @@ Implemented:
 - MVP 0.6: Project Inspector
 - v0.5.0: Project Repair Suggestions
 - v0.6.0: Project Report Export
+- v0.7.0: Planner Interface and Optional LLM Planner
 
 Not included yet:
 
 - Real ROS2 runtime execution
-- LLM-powered generation
+- LLM-generated project files or code
 - RAG
 - Streamlit or Gradio UI
 - VSCode extension
@@ -188,8 +203,8 @@ Not included yet:
 
 Near-term roadmap:
 
-1. Deeper static reports and read-only repair guidance
-2. Optional LLM-assisted planning while keeping offline mode
+1. Hardening optional ProjectSpec-only LLM planning
+2. Deeper static reports and read-only repair guidance
 3. Lightweight demo UI
 
 Longer-term direction:
@@ -232,6 +247,7 @@ robopilot/
 |       |-- debugger/
 |       |-- graph/
 |       |-- inspector/
+|       |-- planner/
 |       |-- repair/
 |       |-- report/
 |       `-- utils/
