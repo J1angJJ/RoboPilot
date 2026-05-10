@@ -20,6 +20,7 @@ RoboPilot helps robotics learners and developers scaffold ROS-style Python packa
 - `history`: list project-local confirmed apply and rollback journal entries.
 - `detect`: statically detect RoboPilot, ROS1 catkin, ROS2 ament Python, ROS2 ament C++, mixed ROS-style, non-ROS, or unknown projects.
 - `inspect-ros1`: statically inspect ROS1 catkin package metadata, dependencies, files, and node candidates.
+- `deps`: conservatively analyze declared and detected dependencies in ROS-style projects.
 - `plan --planner llm`: optional ProjectSpec-only OpenAI planner for configured environments.
 - `validate`: check a saved ProjectSpec before generation.
 - `generate`: create a ROS-style Python package from a task or a saved ProjectSpec.
@@ -94,6 +95,7 @@ robopilot rollback --project outputs/demo_detector --backup outputs/demo_detecto
 robopilot history --project outputs/demo_detector
 robopilot detect outputs/demo_detector
 robopilot inspect-ros1 path/to/ros1_package
+robopilot deps path/to/project
 robopilot generate --spec refined.yaml
 ```
 
@@ -207,6 +209,20 @@ candidates, potential issues, and next steps. It does not import project
 modules, execute launch files, run `catkin_make`, run colcon, or execute user
 code.
 
+Analyze dependencies:
+
+```bash
+robopilot deps path/to/project
+robopilot deps path/to/project --json
+```
+
+`deps` is static, conservative, and no-ROS-required. It reads `package.xml`,
+`CMakeLists.txt`, setup files, Python imports, C++ includes, launch references,
+and msg/srv/action directories to report declared dependencies, detected usage,
+possibly missing dependencies, possibly unused dependencies, and hints. It does
+not import project modules, execute launch files, run `catkin_make`, run
+colcon, or execute user code.
+
 Planner selection:
 
 ```bash
@@ -319,7 +335,7 @@ graph LR
 
 ## Project Status
 
-RoboPilot is an early v0.18.0 MVP focused on lightweight robotics developer workflows with offline defaults. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
+RoboPilot is an early v0.19.0 MVP focused on lightweight robotics developer workflows with offline defaults. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
 
 Implemented:
 
@@ -343,6 +359,7 @@ Implemented:
 - v0.16.0: Apply History / Workspace Journal
 - v0.17.0: ROS Project Detector
 - v0.18.0: ROS1 Static Inspector
+- v0.19.0: Dependency Analyzer
 
 Not included yet:
 
@@ -359,9 +376,9 @@ Not included yet:
 
 Near-term roadmap:
 
-1. Dependency Analyzer
-2. ROS1 to ROS2 Migration Plan
-3. Migration Apply Preview
+1. ROS1 to ROS2 Migration Plan
+2. Migration Apply Preview
+3. Optional LLM Report Explanation
 
 Longer-term direction:
 
@@ -407,6 +424,7 @@ robopilot/
 |       |-- generator/
 |       |-- diff/
 |       |-- debugger/
+|       |-- deps/
 |       |-- detector/
 |       |-- ros1/
 |       |-- graph/

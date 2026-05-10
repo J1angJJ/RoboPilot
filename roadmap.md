@@ -665,9 +665,9 @@ Detection signals:
 
 This feature should remain static and should not require ROS, ROS2, catkin, or colcon.
 
-## Current: v0.18.0 ROS1 Static Inspector
+## Completed: v0.18.0 ROS1 Static Inspector
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -703,24 +703,31 @@ Expected analysis:
 This feature should remain static and should not require ROS, run `catkin_make`,
 run colcon, import user modules, execute launch files, or execute ROS1 code.
 
-## Future: v0.19.0 Dependency Analyzer
+## Current: v0.19.0 Dependency Analyzer
 
-Status: Planned
+Status: Current work
 
 Goal:
 
 Analyze declared and used dependencies in ROS-style projects.
 
-Possible command:
+Core commands:
 
 ```bash
 robopilot deps path/to/project
+```
+
+```bash
+robopilot deps path/to/project --json
 ```
 
 Expected output:
 
 - declared dependencies
 - detected imports/includes
+- CMake find_package dependencies
+- catkin components
+- launch file package references
 - possibly missing dependencies
 - possibly unused dependencies
 - ROS1 dependency hints

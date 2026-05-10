@@ -1,0 +1,440 @@
+"""No-ROS-required static dependency analyzer for ROS-style projects."""
+
+from __future__ import annotations
+
+import ast
+import re
+import xml.etree.ElementTree as ET
+from dataclasses import dataclass
+from pathlib import Path
+
+from robopilot.detector.project_detector import detect_project
+
+
+SAFETY_NOTE = (
+    "This dependency analysis is static only. RoboPilot did not require ROS, "
+    "run catkin_make, run colcon, execute launch files, execute generated code, "
+    "or import user project modules."
+)
+
+
+@dataclass(frozen=True)
+class DeclaredDependencies:
+    """Dependencies declared in package.xml."""
+
+    buildtool: tuple[str, ...]
+    build: tuple[str, ...]
+    exec: tuple[str, ...]
+    run: tuple[str, ...]
+    test: tuple[str, ...]
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "buildtool": list(self.buildtool),
+            "build": list(self.build),
+            "exec": list(self.exec),
+            "run": list(self.run),
+            "test": list(self.test),
+        }
+
+
+@dataclass(frozen=True)
+class DetectedUsage:
+    """Dependency usage signals detected from static project files."""
+
+    python_imports: tuple[str, ...]
+    cpp_includes: tuple[str, ...]
+    cmake_find_package: tuple[str, ...]
+    catkin_components: tuple[str, ...]
+    launch_references: tuple[str, ...]
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "python_imports": list(self.python_imports),
+            "cpp_includes": list(self.cpp_includes),
+            "cmake_find_package": list(self.cmake_find_package),
+            "catkin_components": list(self.catkin_components),
+            "launch_references": list(self.launch_references),
+        }
+
+
+@dataclass(frozen=True)
+class DependencyAnalysis:
+    """Static dependency analysis result."""
+
+    project_path: str
+    exists: bool
+    project_type: str
+    declared_dependencies: DeclaredDependencies
+    detected_usage: DetectedUsage
+    inferred_dependencies: tuple[str, ...]
+    possibly_missing: tuple[str, ...]
+    possibly_unused: tuple[str, ...]
+    hints: tuple[str, ...]
+    warnings: tuple[str, ...]
+    suggested_next_steps: tuple[str, ...]
+    safety_note: str
+
+    def to_dict(self) -> dict[str, object]:
+        """Return stable JSON-ready data."""
+        return {
+            "project_path": self.project_path,
+            "exists": self.exists,
+            "project_type": self.project_type,
+            "declared_dependencies": self.declared_dependencies.to_dict(),
+            "detected_usage": self.detected_usage.to_dict(),
+            "inferred_dependencies": list(self.inferred_dependencies),
+            "possibly_missing": list(self.possibly_missing),
+            "possibly_unused": list(self.possibly_unused),
+            "hints": list(self.hints),
+            "warnings": list(self.warnings),
+            "suggested_next_steps": list(self.suggested_next_steps),
+            "safety_note": self.safety_note,
+        }
+
+
+def analyze_dependencies(project_path: Path) -> DependencyAnalysis:
+    """Analyze declared and used dependencies without running ROS tooling."""
+    path = Path(project_path)
+    detection = detect_project(path)
+    if not path.exists() or not path.is_dir():
+        warning = "project path does not exist" if not path.exists() else "project path is not a directory"
+        return DependencyAnalysis(
+            project_path=str(project_path),
+            exists=path.exists(),
+            project_type=detection.project_type,
+            declared_dependencies=_empty_declared_dependencies(),
+            detected_usage=_empty_detected_usage(),
+            inferred_dependencies=(),
+            possibly_missing=(),
+            possibly_unused=(),
+            hints=(),
+            warnings=(warning,),
+            suggested_next_steps=("Check the project path and run robopilot deps again.",),
+            safety_note=SAFETY_NOTE,
+        )
+
+    package_xml = path / "package.xml"
+    declared = _parse_package_xml(package_xml)
+    package_name = _parse_package_name(package_xml)
+    usage = DetectedUsage(
+        python_imports=_detect_python_imports(path),
+        cpp_includes=_detect_cpp_includes(path),
+        cmake_find_package=_detect_cmake_find_packages(path / "CMakeLists.txt"),
+        catkin_components=_detect_catkin_components(path / "CMakeLists.txt"),
+        launch_references=_detect_launch_references(path / "launch"),
+    )
+    inferred = _infer_dependencies(usage, package_name=package_name)
+    declared_all = _declared_dependency_set(declared)
+    possibly_missing = tuple(dep for dep in inferred if dep not in declared_all)
+    possibly_unused = _detect_possibly_unused(declared, inferred, usage)
+    warnings = _warnings_for_project(detection.project_type, path)
+    hints = _build_hints(usage, inferred, possibly_missing, possibly_unused, detection.project_type)
+    return DependencyAnalysis(
+        project_path=str(project_path),
+        exists=True,
+        project_type=detection.project_type,
+        declared_dependencies=declared,
+        detected_usage=usage,
+        inferred_dependencies=inferred,
+        possibly_missing=possibly_missing,
+        possibly_unused=possibly_unused,
+        hints=hints,
+        warnings=warnings,
+        suggested_next_steps=_suggest_next_steps(possibly_missing, possibly_unused, warnings),
+        safety_note=SAFETY_NOTE,
+    )
+
+
+def _parse_package_xml(path: Path) -> DeclaredDependencies:
+    if not path.is_file():
+        return _empty_declared_dependencies()
+    try:
+        root = ET.fromstring(path.read_text(encoding="utf-8", errors="ignore"))
+    except ET.ParseError:
+        return _empty_declared_dependencies()
+
+    def values(*tags: str) -> tuple[str, ...]:
+        deps: list[str] = []
+        for tag in tags:
+            deps.extend(
+                child.text.strip()
+                for child in root.findall(tag)
+                if child.text and child.text.strip()
+            )
+        return tuple(sorted(dict.fromkeys(deps)))
+
+    generic = values("depend")
+    return DeclaredDependencies(
+        buildtool=values("buildtool_depend"),
+        build=tuple(sorted(dict.fromkeys(values("build_depend") + generic))),
+        exec=tuple(sorted(dict.fromkeys(values("exec_depend") + generic))),
+        run=values("run_depend"),
+        test=values("test_depend"),
+    )
+
+
+def _detect_python_imports(path: Path) -> tuple[str, ...]:
+    imports: set[str] = set()
+    for file_path in _relative_files(path, ("*.py",)):
+        text = _read_text(path / file_path)
+        try:
+            tree = ast.parse(text)
+        except SyntaxError:
+            imports.update(_fallback_python_imports(text))
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                for alias in node.names:
+                    imports.add(alias.name.split(".", 1)[0])
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                imports.add(node.module.split(".", 1)[0])
+    return tuple(sorted(imports))
+
+
+def _fallback_python_imports(text: str) -> set[str]:
+    imports: set[str] = set()
+    for match in re.finditer(r"^\s*(?:import|from)\s+([A-Za-z_][\w]*)", text, flags=re.MULTILINE):
+        imports.add(match.group(1))
+    return imports
+
+
+def _detect_cpp_includes(path: Path) -> tuple[str, ...]:
+    includes: set[str] = set()
+    for file_path in _relative_files(path, ("*.cpp", "*.cc", "*.cxx", "*.hpp", "*.h")):
+        text = _read_text(path / file_path)
+        includes.update(
+            match.group(1).strip()
+            for match in re.finditer(r"^\s*#\s*include\s*[<\"]([^>\"]+)[>\"]", text, flags=re.MULTILINE)
+        )
+    return tuple(sorted(includes))
+
+
+def _detect_cmake_find_packages(path: Path) -> tuple[str, ...]:
+    text = _strip_cmake_comments(_read_text(path))
+    packages = [
+        match.group(1)
+        for match in re.finditer(r"\bfind_package\s*\(\s*([A-Za-z_][\w]*)", text, flags=re.IGNORECASE)
+    ]
+    return tuple(sorted(dict.fromkeys(packages)))
+
+
+def _detect_catkin_components(path: Path) -> tuple[str, ...]:
+    text = _strip_cmake_comments(_read_text(path))
+    match = re.search(
+        r"find_package\s*\(\s*catkin\s+REQUIRED(?:\s+COMPONENTS\s+(?P<components>[^)]+))?",
+        text,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    if not match or not match.group("components"):
+        return ()
+    return tuple(
+        sorted(
+            part.strip()
+            for part in re.split(r"\s+", match.group("components"))
+            if part.strip()
+        )
+    )
+
+
+def _detect_launch_references(directory: Path) -> tuple[str, ...]:
+    if not directory.is_dir():
+        return ()
+    refs: set[str] = set()
+    for file_path in sorted(directory.rglob("*")):
+        if not file_path.is_file():
+            continue
+        text = _read_text(file_path)
+        refs.update(re.findall(r"\bpkg\s*=\s*[\"']([^\"']+)[\"']", text))
+        refs.update(re.findall(r"\bpackage\s*=\s*[\"']([^\"']+)[\"']", text))
+        refs.update(re.findall(r"\$\(find\s+([^)]+)\)", text))
+    return tuple(sorted(refs))
+
+
+def _parse_package_name(path: Path) -> str:
+    if not path.is_file():
+        return ""
+    try:
+        root = ET.fromstring(path.read_text(encoding="utf-8", errors="ignore"))
+    except ET.ParseError:
+        return ""
+    return root.findtext("name", default="").strip()
+
+
+def _infer_dependencies(usage: DetectedUsage, *, package_name: str = "") -> tuple[str, ...]:
+    inferred: set[str] = set()
+    for import_name in usage.python_imports:
+        inferred.update(_PYTHON_IMPORT_MAP.get(import_name, ()))
+    for include in usage.cpp_includes:
+        for prefix, deps in _CPP_INCLUDE_MAP.items():
+            if include == prefix or include.startswith(f"{prefix}/"):
+                inferred.update(deps)
+    inferred.update(usage.catkin_components)
+    inferred.update(dep for dep in usage.cmake_find_package if dep not in {"catkin", "ament_cmake"})
+    inferred.update(dep for dep in usage.launch_references if dep != package_name)
+    return tuple(sorted(inferred))
+
+
+def _detect_possibly_unused(
+    declared: DeclaredDependencies,
+    inferred: tuple[str, ...],
+    usage: DetectedUsage,
+) -> tuple[str, ...]:
+    inferred_set = set(inferred)
+    declared_runtime = set(declared.build) | set(declared.exec) | set(declared.run)
+    ignored = {
+        "catkin",
+        "ament_cmake",
+        "ament_python",
+        "message_generation",
+        "message_runtime",
+        "rosidl_default_generators",
+        "rosidl_default_runtime",
+    }
+    possibly_unused = [
+        dep
+        for dep in declared_runtime
+        if dep not in ignored
+        and dep not in inferred_set
+        and dep not in usage.python_imports
+        and dep not in usage.cmake_find_package
+        and dep not in usage.catkin_components
+        and dep not in usage.launch_references
+    ]
+    return tuple(sorted(possibly_unused))
+
+
+def _warnings_for_project(project_type: str, path: Path) -> tuple[str, ...]:
+    warnings: list[str] = []
+    if project_type == "non_ros_project":
+        warnings.append("detector classified this project as non_ros_project; dependency analysis may be limited")
+    if project_type == "unknown":
+        warnings.append("detector classified this project as unknown; dependency analysis may be incomplete")
+    if not (path / "package.xml").is_file():
+        warnings.append("package.xml not found; declared dependency extraction is limited")
+    return tuple(warnings)
+
+
+def _build_hints(
+    usage: DetectedUsage,
+    inferred: tuple[str, ...],
+    possibly_missing: tuple[str, ...],
+    possibly_unused: tuple[str, ...],
+    project_type: str,
+) -> tuple[str, ...]:
+    hints: list[str] = []
+    for import_name in usage.python_imports:
+        deps = _PYTHON_IMPORT_MAP.get(import_name)
+        if deps:
+            hints.append(f"detected_usage: Python import '{import_name}' suggests dependency {', '.join(deps)}")
+    for include in usage.cpp_includes:
+        for prefix, deps in _CPP_INCLUDE_MAP.items():
+            if include == prefix or include.startswith(f"{prefix}/"):
+                hints.append(f"detected_usage: C++ include '{include}' suggests dependency {', '.join(deps)}")
+                break
+    if "cv2" in usage.python_imports:
+        hints.append("hint: cv2 may map to opencv-python for pure Python or vision_opencv in ROS contexts")
+    if project_type.startswith("ros1") and ("rospy" in inferred or "roscpp" in inferred):
+        hints.append("hint: ROS1 usage detected from rospy or roscpp signals")
+    if project_type.startswith("ros2") and ("rclpy" in inferred or "rclcpp" in inferred):
+        hints.append("hint: ROS2 usage detected from rclpy or rclcpp signals")
+    for dep in possibly_missing:
+        hints.append(f"possibly_missing: detected usage suggests declaring '{dep}'")
+    for dep in possibly_unused:
+        hints.append(f"possibly_unused: declared dependency '{dep}' was not matched to simple static usage")
+    if not hints:
+        hints.append("hint: no obvious dependency mismatch detected by conservative static rules")
+    return tuple(dict.fromkeys(hints))
+
+
+def _suggest_next_steps(
+    possibly_missing: tuple[str, ...],
+    possibly_unused: tuple[str, ...],
+    warnings: tuple[str, ...],
+) -> tuple[str, ...]:
+    steps: list[str] = []
+    if possibly_missing:
+        steps.append("Review possibly_missing dependencies and update package metadata if the usage is intentional.")
+    if possibly_unused:
+        steps.append("Review possibly_unused dependencies manually before removing anything.")
+    if warnings:
+        steps.append("Review project type warnings before acting on dependency hints.")
+    if not steps:
+        steps.append("Review declared dependencies and detected usage before running ROS tooling in your own environment.")
+    return tuple(steps)
+
+
+def _declared_dependency_set(declared: DeclaredDependencies) -> set[str]:
+    return (
+        set(declared.buildtool)
+        | set(declared.build)
+        | set(declared.exec)
+        | set(declared.run)
+        | set(declared.test)
+    )
+
+
+def _relative_files(root: Path, patterns: tuple[str, ...]) -> tuple[str, ...]:
+    if not root.is_dir():
+        return ()
+    paths: list[str] = []
+    for pattern in patterns:
+        for file_path in sorted(root.rglob(pattern)):
+            try:
+                relative = file_path.relative_to(root)
+            except ValueError:
+                continue
+            if file_path.is_file() and not _is_ignored(relative):
+                paths.append(relative.as_posix())
+    return tuple(sorted(dict.fromkeys(paths)))
+
+
+def _read_text(path: Path) -> str:
+    if not path.is_file():
+        return ""
+    return path.read_text(encoding="utf-8", errors="ignore")
+
+
+def _strip_cmake_comments(text: str) -> str:
+    return "\n".join(line.split("#", 1)[0] for line in text.splitlines())
+
+
+def _is_ignored(path: Path) -> bool:
+    ignored = {"__pycache__", ".git", ".pytest_tmp", ".robopilot_backups", ".robopilot_history"}
+    return bool(set(path.parts).intersection(ignored))
+
+
+def _empty_declared_dependencies() -> DeclaredDependencies:
+    return DeclaredDependencies(buildtool=(), build=(), exec=(), run=(), test=())
+
+
+def _empty_detected_usage() -> DetectedUsage:
+    return DetectedUsage(
+        python_imports=(),
+        cpp_includes=(),
+        cmake_find_package=(),
+        catkin_components=(),
+        launch_references=(),
+    )
+
+
+_PYTHON_IMPORT_MAP = {
+    "cv2": ("opencv-python",),
+    "numpy": ("python3-numpy",),
+    "rclpy": ("rclpy",),
+    "rospy": ("rospy",),
+    "sensor_msgs": ("sensor_msgs",),
+    "geometry_msgs": ("geometry_msgs",),
+    "std_msgs": ("std_msgs",),
+    "cv_bridge": ("cv_bridge",),
+}
+
+_CPP_INCLUDE_MAP = {
+    "ros/ros.h": ("roscpp",),
+    "rclcpp": ("rclcpp",),
+    "sensor_msgs": ("sensor_msgs",),
+    "geometry_msgs": ("geometry_msgs",),
+    "std_msgs": ("std_msgs",),
+    "cv_bridge": ("cv_bridge",),
+    "image_transport": ("image_transport",),
+}

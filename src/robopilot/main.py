@@ -13,6 +13,7 @@ from robopilot.apply.apply_plan import ApplySummary, apply_from_plan
 from robopilot.apply_plan.plan import export_apply_plan, validate_apply_plan_file
 from robopilot.apply_preview.preview import ApplyPreviewResult, preview_apply
 from robopilot.debugger.log_analyzer import LogAnalysis, analyze_log
+from robopilot.deps.analyzer import DependencyAnalysis, analyze_dependencies
 from robopilot.detector.project_detector import ProjectDetection, detect_project
 from robopilot.diff.spec_diff import SpecDiffResult, diff_spec_files
 from robopilot.generator.project_generator import (
@@ -706,6 +707,62 @@ def _print_ros1_inspection(result: ROS1Inspection) -> None:
 
     console.print(Panel.fit("Potential Issues", style="bold cyan"))
     _print_scalar_values(result.issues)
+
+    console.print(Panel.fit("Suggested Next Steps", style="bold cyan"))
+    _print_scalar_values(result.suggested_next_steps)
+
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    console.print(result.safety_note)
+
+
+@app.command()
+def deps(
+    project_path: Annotated[Path, typer.Argument(help="Project directory to analyze.")],
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Analyze ROS-style dependencies without requiring ROS."""
+    result = analyze_dependencies(project_path)
+    if json_output:
+        print(json.dumps(result.to_dict(), indent=2))
+        return
+
+    _print_dependency_analysis(result)
+
+
+def _print_dependency_analysis(result: DependencyAnalysis) -> None:
+    console.print(Panel.fit("Dependency Analysis Summary", style="bold cyan"))
+    console.print(f"[bold]Project path:[/bold] {result.project_path}")
+    console.print(f"[bold]Exists:[/bold] {result.exists}")
+    console.print(f"[bold]Project type:[/bold] {result.project_type}")
+
+    console.print(Panel.fit("Declared Dependencies", style="bold cyan"))
+    _print_scalar_group("Buildtool", result.declared_dependencies.buildtool)
+    _print_scalar_group("Build", result.declared_dependencies.build)
+    _print_scalar_group("Exec", result.declared_dependencies.exec)
+    _print_scalar_group("Run", result.declared_dependencies.run)
+    _print_scalar_group("Test", result.declared_dependencies.test)
+
+    console.print(Panel.fit("Detected Usage", style="bold cyan"))
+    _print_scalar_group("Python imports", result.detected_usage.python_imports)
+    _print_scalar_group("C++ includes", result.detected_usage.cpp_includes)
+    _print_scalar_group("CMake find_package", result.detected_usage.cmake_find_package)
+    _print_scalar_group("Catkin components", result.detected_usage.catkin_components)
+    _print_scalar_group("Launch references", result.detected_usage.launch_references)
+
+    console.print(Panel.fit("Possibly Missing Dependencies", style="bold cyan"))
+    _print_scalar_values(result.possibly_missing)
+
+    console.print(Panel.fit("Possibly Unused Dependencies", style="bold cyan"))
+    _print_scalar_values(result.possibly_unused)
+
+    console.print(Panel.fit("Dependency Hints", style="bold cyan"))
+    _print_scalar_values(result.hints)
+
+    console.print(Panel.fit("Warnings", style="bold cyan"))
+    _print_scalar_values(result.warnings)
 
     console.print(Panel.fit("Suggested Next Steps", style="bold cyan"))
     _print_scalar_values(result.suggested_next_steps)

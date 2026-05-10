@@ -27,6 +27,7 @@ Current core commands:
 - `robopilot history`
 - `robopilot detect`
 - `robopilot inspect-ros1`
+- `robopilot deps`
 - `robopilot generate`
 - `robopilot inspect`
 - `robopilot repair-suggest`
@@ -43,7 +44,7 @@ robopilot --help
 
 Expected result:
 
-The CLI lists the available commands, including `plan`, `refine`, `diff`, `validate`, `apply-preview`, `apply-plan`, `apply-plan-validate`, `apply`, `rollback`, `history`, `detect`, `inspect-ros1`, `generate`, `inspect`, `repair-suggest`, `report`, `debug`, and `graph`.
+The CLI lists the available commands, including `plan`, `refine`, `diff`, `validate`, `apply-preview`, `apply-plan`, `apply-plan-validate`, `apply`, `rollback`, `history`, `detect`, `inspect-ros1`, `deps`, `generate`, `inspect`, `repair-suggest`, `report`, `debug`, and `graph`.
 
 ## 3. Demo: Plan a ProjectSpec
 
@@ -128,6 +129,13 @@ robopilot inspect-ros1 .pytest_tmp/ros1_demo
 robopilot inspect-ros1 .pytest_tmp/ros1_demo --json
 ```
 
+Analyze dependencies statically:
+
+```bash
+robopilot deps .pytest_tmp/ros1_dep_demo
+robopilot deps .pytest_tmp/ros1_dep_demo --json
+```
+
 Point out:
 
 - `refine` loads an existing ProjectSpec and writes a new refined spec.
@@ -147,6 +155,8 @@ Point out:
 - Detection is static: it does not import user modules, execute launch files, run catkin, or run colcon.
 - v0.18.0 inspect-ros1 extracts ROS1 package metadata, dependencies, catkin signals, files, node candidates, and package issues.
 - ROS1 inspection is static: it does not require ROS, import user modules, execute launch files, run `catkin_make`, or run colcon.
+- v0.19.0 deps reports declared dependencies, detected usage, possibly missing dependencies, possibly unused dependencies, and conservative hints.
+- Dependency analysis is static: it does not require ROS, import user modules, execute launch files, run `catkin_make`, or run colcon.
 - Real LLM refinement requires `OPENAI_API_KEY`.
 - Run `robopilot diff` before generating from an LLM-refined spec.
 
@@ -278,8 +288,6 @@ Write to a file:
 robopilot report examples/generated_projects/demo_detector --output .pytest_tmp/demo_report.md
 ```
 
-## 8. Demo: Analyze an Error Log
-
 ## 8. Demo: Inspect a ROS1 Catkin Package
 
 Use a temporary ROS1-style package for the demo, then run:
@@ -297,7 +305,24 @@ Point out:
 - It reports dependencies, catkin components, `catkin_package()`, ROS1 node candidates, issues, and suggested next steps.
 - It never imports project modules, runs ROS, runs `catkin_make`, executes launch files, or executes user code.
 
-## 9. Demo: Analyze an Error Log
+## 9. Demo: Analyze Dependencies
+
+Use a temporary ROS-style package for the demo, then run:
+
+```bash
+robopilot deps .pytest_tmp/ros1_dep_demo
+robopilot deps .pytest_tmp/ros1_dep_demo --json
+```
+
+Point out:
+
+- The analyzer reuses static project detection for project type context.
+- It reads `package.xml`, `CMakeLists.txt`, setup files, Python imports, C++ includes, launch references, and msg/srv/action directories.
+- It reports declared dependencies, detected usage, inferred dependencies, possibly missing dependencies, possibly unused dependencies, and hints.
+- It uses conservative wording and does not claim certainty from weak static signals.
+- It never imports project modules, runs ROS, runs `catkin_make`, runs colcon, executes launch files, or executes user code.
+
+## 10. Demo: Analyze an Error Log
 
 Run:
 
@@ -319,7 +344,7 @@ Inline mode:
 robopilot debug --text "ModuleNotFoundError: No module named 'cv_bridge'"
 ```
 
-## 10. Demo: Generate a Workflow Graph
+## 11. Demo: Generate a Workflow Graph
 
 Run:
 
@@ -343,7 +368,7 @@ Write to a file:
 robopilot graph --pipeline "camera -> detector -> tracker" --output examples/graphs/demo_pipeline.mmd
 ```
 
-## 11. Show Example Assets
+## 12. Show Example Assets
 
 Useful files to open during a demo:
 
@@ -354,7 +379,7 @@ Useful files to open during a demo:
 - `examples/error_logs/cv_bridge_missing.txt`
 - `examples/graphs/demo_pipeline.mmd`
 
-## 12. Run Tests
+## 13. Run Tests
 
 ```bash
 pytest
@@ -367,7 +392,7 @@ New-Item -ItemType Directory -Path .pytest_tmp -Force
 python -m pytest --basetemp=".pytest_tmp" -p no:cacheprovider
 ```
 
-## 13. Close with Roadmap
+## 14. Close with Roadmap
 
 Current implemented MVPs:
 
@@ -391,8 +416,9 @@ Current implemented MVPs:
 - v0.16.0: Apply History / Workspace Journal
 - v0.17.0: ROS Project Detector
 - v0.18.0: ROS1 Static Inspector
+- v0.19.0: Dependency Analyzer
 
 Next planned work:
 
-- Dependency Analyzer
 - ROS1 to ROS2 Migration Plan
+- Migration Apply Preview

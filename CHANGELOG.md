@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.19.0 no-ROS-required static dependency analyzer for ROS-style projects.
+- `robopilot deps path/to/project` command.
+- `robopilot deps --json` deterministic JSON output.
+- Static extraction of `package.xml` buildtool, build, exec, run, and test dependencies.
+- Static extraction of CMake `find_package(...)` dependencies and catkin components.
+- Static detection of Python imports, C++ includes, and launch file package references.
+- Conservative inferred dependency hints for common ROS and robotics imports/includes such as `rospy`, `roscpp`, `rclpy`, `rclcpp`, `sensor_msgs`, `geometry_msgs`, `std_msgs`, `cv_bridge`, `image_transport`, `numpy`, and `cv2`.
+- Reporting for possibly missing and possibly unused dependencies with conservative wording.
 - v0.18.0 no-ROS-required static ROS1 catkin package inspector.
 - `robopilot inspect-ros1 path/to/ros1_package` command.
 - `robopilot inspect-ros1 --json` deterministic JSON output.

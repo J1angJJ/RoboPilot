@@ -107,36 +107,37 @@ RoboPilot currently supports:
 20. English and Chinese documentation.
 21. ROS project detection without requiring ROS.
 22. ROS1 static inspection without requiring ROS.
-23. Pytest test coverage and GitHub Actions CI.
+23. Dependency analysis without requiring ROS.
+24. Pytest test coverage and GitHub Actions CI.
 
 ## Current Priority
 
 The current priority is:
 
 ```txt
-v0.18.0 ROS1 Static Inspector
+v0.19.0 Dependency Analyzer
 ```
 
-The goal is to add a no-ROS-required static inspector for ROS1 catkin packages that extracts package metadata, dependencies, catkin signals, files, node candidates, issues, and suggested next steps.
+The goal is to add a no-ROS-required static dependency analyzer for ROS-style projects.
 
 Expected commands:
 
 ```bash
-robopilot inspect-ros1 path/to/ros1_package
+robopilot deps path/to/project
 ```
 
 Optional JSON output:
 
 ```bash
-robopilot inspect-ros1 path/to/ros1_package --json
+robopilot deps path/to/project --json
 ```
 
 Expected behavior:
 
-- Reuse project detection context when useful.
-- Inspect `package.xml`, `CMakeLists.txt`, `launch/`, `scripts/`, `src/`, `msg/`, `srv/`, `action/`, Python files, and C++ files.
-- Extract package name, package format, declared dependencies, catkin components, catkin package signals, file lists, and ROS1 node candidates.
-- Report potential issues and suggested next steps.
+- Reuse project detection context.
+- Inspect `package.xml`, `CMakeLists.txt`, `setup.py`, `setup.cfg`, Python files, C++ files, launch files, and msg/srv/action directories.
+- Extract declared dependencies, CMake packages, catkin components, Python imports, C++ includes, and launch references.
+- Conservatively infer possibly missing dependencies, possibly unused dependencies, dependency hints, and ROS version hints.
 - Support deterministic JSON output.
 - Do not require ROS or ROS2.
 - Do not run `catkin_make` or colcon.
@@ -411,6 +412,10 @@ robopilot inspect-ros1 path/to/ros1_package
 ```
 
 ```bash
+robopilot deps path/to/project
+```
+
+```bash
 robopilot inspect outputs/demo_detector
 ```
 
@@ -433,7 +438,7 @@ robopilot graph --pipeline "camera -> detector -> tracker -> planner -> controll
 The next planned command is:
 
 ```bash
-robopilot deps path/to/project
+robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.yaml
 ```
 
 ## ProjectSpec Rules
@@ -516,18 +521,26 @@ python -m pytest --basetemp=".pytest_tmp" -p no:cacheprovider
 
 For CLI-related changes, also run relevant commands manually.
 
-For the current ROS1 inspection work, manually verify commands similar to:
+For the current dependency analyzer work, manually verify commands similar to:
 
 ```bash
-robopilot detect .pytest_tmp/ros1_demo
+robopilot deps .pytest_tmp/ros1_dep_demo
 ```
 
 ```bash
-robopilot inspect-ros1 .pytest_tmp/ros1_demo
+robopilot deps .pytest_tmp/ros1_dep_demo --json
 ```
 
 ```bash
-robopilot inspect-ros1 .pytest_tmp/ros1_demo --json
+robopilot deps .pytest_tmp/ros2_py_dep_demo
+```
+
+```bash
+robopilot deps .pytest_tmp/ros2_cpp_dep_demo
+```
+
+```bash
+robopilot deps .pytest_tmp/non_ros_demo
 ```
 
 ## Preferred Development Workflow
@@ -548,35 +561,35 @@ robopilot inspect-ros1 .pytest_tmp/ros1_demo --json
 Implement:
 
 ```txt
-v0.18.0 ROS1 Static Inspector
+v0.19.0 Dependency Analyzer
 ```
 
-The ROS1 inspector should support:
+The dependency analyzer should support:
 
 ```bash
-robopilot inspect-ros1 path/to/ros1_package
+robopilot deps path/to/project
 ```
 
 Optional JSON output:
 
 ```bash
-robopilot inspect-ros1 path/to/ros1_package --json
+robopilot deps path/to/project --json
 ```
 
 Suggested implementation files:
 
 ```txt
-src/robopilot/ros1/
+src/robopilot/deps/
 ├─ __init__.py
-└─ inspector.py
+└─ analyzer.py
 ```
 
 Suggested tests:
 
 ```txt
-tests/test_ros1_inspector.py
+tests/test_dependency_analyzer.py
 ```
 
-The inspector should be static, deterministic, and testable. It must not require ROS, ROS2, catkin, colcon, launch execution, generated code execution, or user module imports.
+The analyzer should be static, deterministic, conservative, and testable. It must not require ROS, ROS2, catkin, colcon, launch execution, generated code execution, or user module imports.
 
-Do not start dependency analysis, ROS1-to-ROS2 migration, VSCode integration, RAG, Streamlit UI, or broad multi-agent orchestration until ROS1 static inspection is stable.
+Do not start ROS1-to-ROS2 migration, VSCode integration, RAG, Streamlit UI, or broad multi-agent orchestration until dependency analysis is stable.
