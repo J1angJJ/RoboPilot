@@ -19,6 +19,10 @@ validate spec
 generate ROS-style package
         ↓
 inspect generated or existing project
+        ↓
+repair suggestions
+        ↓
+Markdown report export
 ```
 
 The long-term goal is to make RoboPilot a practical robotics developer assistant that can plan, validate, generate, inspect, visualize, and debug robotics software workflows without requiring a full ROS2 runtime environment.
@@ -212,9 +216,9 @@ Test cases:
 - JSON output structure
 - Validating `robopilot.yaml` through the existing validator
 
-## Current: v0.5.0 Project Repair Suggestions
+## Completed: v0.5.0 Project Repair Suggestions
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -243,7 +247,38 @@ Expected behavior:
 
 This remains static and safe by default.
 
-## Future: v0.6.0 Optional LLM Planner
+## Current: v0.6.0 Project Report Export
+
+Status: Current work
+
+Goal:
+
+Export a deterministic Markdown report that combines static project inspection and repair suggestions.
+
+Command:
+
+```bash
+robopilot report path/to/project --output report.md
+```
+
+Terminal output mode:
+
+```bash
+robopilot report path/to/project
+```
+
+Expected behavior:
+
+- Inspect project files with the existing inspector
+- Generate repair suggestions with the existing repair suggester
+- Render a deterministic Markdown report
+- Write the report to `--output` when provided
+- Never modify the inspected project
+- Never execute ROS2, launch files, colcon, or generated Python code
+
+This remains static and safe by default.
+
+## Future: v0.7.0 Optional LLM Planner
 
 Status: Planned
 
@@ -293,7 +328,7 @@ src/robopilot/planner/
 └─ llm_planner.py
 ```
 
-## Future: v0.7.0 Web Demo
+## Future: v0.8.0 Web Demo
 
 Status: Planned
 
@@ -368,11 +403,11 @@ Priority order:
 ## Current Recommended Development Path
 
 ```txt
-v0.5.0 Project Repair Suggestions
+v0.6.0 Project Report Export
         ↓
-v0.6.0 Optional LLM Planner
+v0.7.0 Optional LLM Planner
         ↓
-v0.7.0 Web Demo
+v0.8.0 Web Demo
         ↓
 VSCode Integration
 ```

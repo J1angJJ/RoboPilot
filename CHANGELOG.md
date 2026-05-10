@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.6.0 project report export workflow combining inspection and repair suggestions.
+- `robopilot report` command for printing deterministic Markdown reports.
+- `robopilot report --output` support for writing Markdown reports to disk.
+- Static report sections for project summary, spec status, detected files, potential issues, repair suggestions, suggested commands, and safety notes.
 - v0.5.0 project repair suggestion workflow based on the Project Inspector.
 - `robopilot repair-suggest` command with structured terminal output.
 - `robopilot repair-suggest --json` deterministic JSON output for tests and integrations.

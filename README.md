@@ -15,6 +15,7 @@ RoboPilot helps robotics learners and developers scaffold ROS-style Python packa
 - `generate`: create a ROS-style Python package from a task or a saved ProjectSpec.
 - `inspect`: statically inspect a generated or ROS-style project directory.
 - `repair-suggest`: suggest safe repairs from inspection issues without modifying files.
+- `report`: export a static Markdown report combining inspection and repair suggestions.
 - `debug`: analyze robotics-related error logs with offline rule-based diagnostics.
 - `graph`: convert arrow-based robotics pipelines into Mermaid diagrams.
 
@@ -84,6 +85,16 @@ robopilot repair-suggest examples/generated_projects/demo_detector
 robopilot repair-suggest examples/generated_projects/demo_detector --json
 ```
 
+Export a static Markdown report:
+
+```bash
+robopilot report examples/generated_projects/demo_detector
+robopilot report examples/generated_projects/demo_detector --output report.md
+```
+
+Report generation is static and read-only. RoboPilot does not execute ROS2,
+launch files, colcon, or generated Python code.
+
 Generate other template types:
 
 ```bash
@@ -151,7 +162,7 @@ graph LR
 
 ## Project Status
 
-RoboPilot is an early v0.5.0 MVP focused on offline, lightweight robotics developer workflows. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
+RoboPilot is an early v0.6.0 MVP focused on offline, lightweight robotics developer workflows. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
 
 Implemented:
 
@@ -162,6 +173,7 @@ Implemented:
 - MVP 0.5: Spec-first Generation
 - MVP 0.6: Project Inspector
 - v0.5.0: Project Repair Suggestions
+- v0.6.0: Project Report Export
 
 Not included yet:
 
@@ -176,7 +188,7 @@ Not included yet:
 
 Near-term roadmap:
 
-1. Deeper repair suggestions while keeping `repair-suggest` read-only by default
+1. Deeper static reports and read-only repair guidance
 2. Optional LLM-assisted planning while keeping offline mode
 3. Lightweight demo UI
 
@@ -221,6 +233,7 @@ robopilot/
 |       |-- graph/
 |       |-- inspector/
 |       |-- repair/
+|       |-- report/
 |       `-- utils/
 |-- examples/
 |-- tests/

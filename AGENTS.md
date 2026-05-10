@@ -3,7 +3,7 @@
 
 ## Project Goal
 
-RoboPilot is an AI-native robotics development assistant for ROS-style workflows, debugging, workflow visualization, project inspection, and safe repair suggestions.
+RoboPilot is an AI-native robotics development assistant for ROS-style workflows, debugging, workflow visualization, project inspection, safe repair suggestions, and static project reports.
 
 The project explores how lightweight AI-assisted developer tools can help robotics learners and developers plan, validate, generate, inspect, and debug robotics software projects without requiring a full ROS2 runtime environment.
 
@@ -30,7 +30,7 @@ The central design principle is:
 ```txt
 LLM or rule-based planner should produce or refine ProjectSpec.
 RoboPilot should validate ProjectSpec.
-RoboPilot should deterministically generate, inspect, and suggest repairs for project files.
+RoboPilot should deterministically generate, inspect, suggest repairs, and export reports for project files.
 ```
 
 Do not bypass the `ProjectSpec` workflow when adding generation-related features.
@@ -49,34 +49,37 @@ RoboPilot currently supports:
 8. Static generated examples.
 9. Project inspection for generated and ROS-style projects.
 10. Project repair suggestions based on inspection issues.
-11. English and Chinese documentation.
-12. Pytest test coverage and GitHub Actions CI.
+11. Static Markdown project reports.
+12. English and Chinese documentation.
+13. Pytest test coverage and GitHub Actions CI.
 
 ## Current Priority
 
 The current priority is:
 
 ```txt
-v0.5.0 Project Repair Suggestions
+v0.6.0 Project Report Export
 ```
 
-The goal is to add a lightweight offline repair suggestion system based on the existing Project Inspector.
+The goal is to add a lightweight offline Markdown report exporter based on the existing Project Inspector and repair suggester.
 
 Expected command:
 
 ```bash
-robopilot repair-suggest examples/generated_projects/demo_detector
+robopilot report examples/generated_projects/demo_detector --output report.md
 ```
 
-The repair suggester should inspect the project directory, map issues to safe suggestions, and report:
+The report exporter should inspect the project directory, generate repair suggestions, and write or print a Markdown report with:
 
 - project path
+- spec status
+- detected files
 - potential issues
 - repair suggestions
 - safety note
 - suggested commands
 
-The repair suggester must not run ROS2, launch files, colcon, or generated Python nodes. It must not modify user files automatically.
+The report exporter must not run ROS2, launch files, colcon, or generated Python nodes. It must not modify the inspected project.
 
 ## Important Constraints
 
@@ -256,6 +259,10 @@ robopilot inspect examples/generated_projects/demo_detector
 robopilot repair-suggest examples/generated_projects/demo_detector
 ```
 
+```bash
+robopilot report examples/generated_projects/demo_detector --output report.md
+```
+
 ## ProjectSpec Rules
 
 `ProjectSpec` is the central intermediate representation.
@@ -332,6 +339,12 @@ For repair-suggest-related changes, test:
 robopilot repair-suggest examples/generated_projects/demo_detector
 ```
 
+For report-related changes, test:
+
+```bash
+robopilot report examples/generated_projects/demo_detector --output .pytest_tmp/demo_report.md
+```
+
 ## Preferred Development Workflow
 
 1. Read `README.md`, `README.zh-CN.md`, `roadmap.md`, `CHANGELOG.md`, `pyproject.toml`, and this file first.
@@ -350,33 +363,29 @@ robopilot repair-suggest examples/generated_projects/demo_detector
 Implement:
 
 ```txt
-v0.5.0 Project Repair Suggestions
+v0.6.0 Project Report Export
 ```
 
-The repair suggester should support:
+The report exporter should support:
 
 ```bash
-robopilot repair-suggest examples/generated_projects/demo_detector
+robopilot report examples/generated_projects/demo_detector
 ```
 
-Optional JSON output should also be supported:
+Optional Markdown file output should also be supported:
 
 ```bash
-robopilot repair-suggest examples/generated_projects/demo_detector --json
+robopilot report examples/generated_projects/demo_detector --output report.md
 ```
 
-The repair suggester should reuse the inspector and suggest safe repairs for common issues such as:
+The report exporter should reuse the inspector and repair suggester and include:
 
-- missing `package.xml`
-- missing `setup.py`
-- missing `setup.cfg`
-- missing `README.md`
-- missing launch directory
-- missing config directory
-- missing Python package directory
-- missing `robopilot.yaml`
-- invalid `robopilot.yaml`
-- empty project directory
-- non-existent project path
+- project summary
+- spec status
+- detected files
+- potential issues
+- repair suggestions
+- suggested commands
+- safety note
 
-Do not start LLM orchestration, RAG, Streamlit UI, VSCode integration, real ROS2 runtime execution, `--apply`, or colcon integration until the offline spec-first workflow, project inspector, and repair suggestions are stable.
+Do not start LLM orchestration, RAG, Streamlit UI, VSCode integration, real ROS2 runtime execution, `--apply`, or colcon integration until the offline spec-first workflow, project inspector, repair suggestions, and report export are stable.

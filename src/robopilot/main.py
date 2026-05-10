@@ -18,6 +18,7 @@ from robopilot.generator.project_generator import (
 from robopilot.graph.mermaid_generator import PipelineParseError, generate_mermaid
 from robopilot.inspector.project_inspector import ProjectInspection, inspect_project
 from robopilot.repair.repair_suggester import RepairSuggestionReport, suggest_repairs
+from robopilot.report.project_report import generate_project_report, write_project_report
 from robopilot.spec.io import load_spec, spec_to_yaml, write_spec
 from robopilot.spec.validator import validate_spec
 from robopilot.utils.file_ops import OutputPathExistsError
@@ -264,6 +265,28 @@ def _print_repair_suggestions(report: RepairSuggestionReport) -> None:
 
     console.print(Panel.fit("Safety Note", style="bold cyan"))
     console.print(report.safety_note)
+
+
+@app.command()
+def report(
+    project_path: Annotated[Path, typer.Argument(help="Project directory to report on.")],
+    output: Annotated[
+        Path | None,
+        typer.Option("--output", "-o", help="Optional Markdown report output path."),
+    ] = None,
+) -> None:
+    """Export a static Markdown report for a project inspection."""
+    try:
+        if output is None:
+            print(generate_project_report(project_path))
+            return
+
+        write_project_report(project_path, output)
+    except OSError as exc:
+        console.print(f"[red]Error:[/red] Could not write report: {exc}")
+        raise typer.Exit(code=1) from exc
+
+    console.print(f"[green]Wrote project report to[/green] {output}")
 
 
 @app.command()

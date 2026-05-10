@@ -20,6 +20,7 @@ Current core commands:
 - `robopilot generate`
 - `robopilot inspect`
 - `robopilot repair-suggest`
+- `robopilot report`
 - `robopilot debug`
 - `robopilot graph`
 
@@ -32,7 +33,7 @@ robopilot --help
 
 Expected result:
 
-The CLI lists the available commands, including `plan`, `validate`, `generate`, `inspect`, `repair-suggest`, `debug`, and `graph`.
+The CLI lists the available commands, including `plan`, `validate`, `generate`, `inspect`, `repair-suggest`, `report`, `debug`, and `graph`.
 
 ## 3. Demo: Plan a ProjectSpec
 
@@ -138,7 +139,27 @@ JSON mode:
 robopilot repair-suggest examples/generated_projects/demo_detector --json
 ```
 
-## 7. Demo: Analyze an Error Log
+## 7. Demo: Export a Project Report
+
+Run:
+
+```bash
+robopilot report examples/generated_projects/demo_detector
+```
+
+Point out:
+
+- The report combines static inspection and repair suggestions.
+- It is deterministic Markdown for demos, reviews, or issue sharing.
+- It is static and read-only; RoboPilot does not execute ROS2, launch files, colcon, or generated Python code.
+
+Write to a file:
+
+```bash
+robopilot report examples/generated_projects/demo_detector --output .pytest_tmp/demo_report.md
+```
+
+## 8. Demo: Analyze an Error Log
 
 Run:
 
@@ -160,7 +181,7 @@ Inline mode:
 robopilot debug --text "ModuleNotFoundError: No module named 'cv_bridge'"
 ```
 
-## 8. Demo: Generate a Workflow Graph
+## 9. Demo: Generate a Workflow Graph
 
 Run:
 
@@ -184,7 +205,7 @@ Write to a file:
 robopilot graph --pipeline "camera -> detector -> tracker" --output examples/graphs/demo_pipeline.mmd
 ```
 
-## 9. Show Example Assets
+## 10. Show Example Assets
 
 Useful files to open during a demo:
 
@@ -195,7 +216,7 @@ Useful files to open during a demo:
 - `examples/error_logs/cv_bridge_missing.txt`
 - `examples/graphs/demo_pipeline.mmd`
 
-## 10. Run Tests
+## 11. Run Tests
 
 ```bash
 pytest
@@ -208,7 +229,7 @@ New-Item -ItemType Directory -Path .pytest_tmp -Force
 python -m pytest --basetemp=".pytest_tmp" -p no:cacheprovider
 ```
 
-## 11. Close with Roadmap
+## 12. Close with Roadmap
 
 Current implemented MVPs:
 
@@ -219,9 +240,10 @@ Current implemented MVPs:
 - MVP 0.5: Spec-first Generation
 - MVP 0.6: Project Inspector
 - v0.5.0: Project Repair Suggestions
+- v0.6.0: Project Report Export
 
 Next planned work:
 
-- Deeper read-only repair suggestions
+- Deeper static reports and read-only repair suggestions
 - Optional LLM-assisted generation while preserving offline mode
 - Lightweight demo UI
