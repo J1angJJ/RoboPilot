@@ -1,182 +1,334 @@
+
 # Roadmap
 
-RoboPilot is developed as a lightweight AI-native robotics development assistant.
+RoboPilot is developed as a lightweight AI-native robotics development assistant for ROS-style workflows.
 
-The project will be built step by step, starting from an offline local generator and gradually evolving into an AI-assisted robotics workflow tool.
+The project is moving from a simple template generator toward a spec-first robotics developer toolchain.
 
-## MVP 0.1: Offline ROS-style Package Generator
+## Design Direction
+
+RoboPilot follows a spec-first architecture:
+
+```txt
+natural language task
+        ↓
+ProjectSpec
+        ↓
+validate spec
+        ↓
+generate ROS-style package
+        ↓
+inspect generated or existing project
+```
+
+The long-term goal is to make RoboPilot a practical robotics developer assistant that can plan, validate, generate, inspect, visualize, and debug robotics software workflows without requiring a full ROS2 runtime environment.
+
+## Completed: v0.1.0 Basic Offline MVP
+
+Status: Completed
 
 Goal:
 
-Build a local command-line tool that generates a ROS-style Python package skeleton from a task description.
+Build the first runnable offline MVP.
 
-Input example:
+Completed features:
 
-```txt
-Create an object detection node subscribing to camera images and publishing bounding boxes.
-```
+- Offline ROS-style package generator
+- Robotics error log debugger
+- Pipeline-to-Mermaid workflow graph generator
+- English README
+- Chinese README
+- Demo script
+- Static generated example project
+- Pytest tests
+- GitHub Actions CI
+- GitHub Release
 
-Output example:
-
-```txt
-outputs/demo_detector/
-├─ package.xml
-├─ setup.py
-├─ setup.cfg
-├─ README.md
-├─ launch/
-│  └─ demo_detector.launch.py
-├─ config/
-│  └─ params.yaml
-└─ demo_detector/
-   ├─ __init__.py
-   └─ detector_node.py
-```
-
-Requirements:
-
-- No real ROS2 installation required
-- No OpenAI API required
-- No GPU required
-- CLI command available
-- Basic pytest coverage
-
-Target command:
+Core commands:
 
 ```bash
 robopilot generate --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes."
 ```
 
-## MVP 0.2: Robotics Error Log Debugger
-
-Goal:
-
-Analyze pasted robotics-related error logs and provide structured debugging suggestions.
-
-Supported examples:
-
-- Python import errors
-- OpenCV camera errors
-- PyTorch CUDA errors
-- ROS-style dependency errors
-- colcon-like build errors
-- missing package errors
-
-Expected command:
-
 ```bash
 robopilot debug --log examples/error_logs/cv_bridge_missing.txt
 ```
-
-Expected output:
-
-```txt
-Diagnosis:
-The error suggests that cv_bridge is missing or not visible in the current Python environment.
-
-Possible causes:
-1. ROS environment not sourced.
-2. cv_bridge not installed.
-3. Python environment mismatch.
-
-Suggested fixes:
-1. Check ROS setup script.
-2. Verify package installation.
-3. Check Python interpreter path.
-```
-
-## MVP 0.3: Workflow Diagram Generator
-
-Goal:
-
-Generate Mermaid diagrams from robotics pipeline descriptions.
-
-Input example:
-
-```txt
-camera -> detector -> tracker -> planner -> controller
-```
-
-Output example:
-
-```mermaid
-graph LR
-    camera --> detector
-    detector --> tracker
-    tracker --> planner
-    planner --> controller
-```
-
-Expected command:
 
 ```bash
 robopilot graph --pipeline "camera -> detector -> tracker -> planner -> controller"
 ```
 
-## MVP 0.4: Prompt-driven Template Selection
+## Completed: v0.2.0 Prompt-driven Template Selection
+
+Status: Completed
 
 Goal:
 
-Improve the generator so that it selects different node templates based on the task description.
+Upgrade the generator from a fixed template generator to a prompt-driven template selection system.
 
-Possible templates:
+Completed features:
 
-- camera subscriber
-- object detector
-- topic publisher
-- controller node
-- sensor processing node
-- robot workflow package
+- Rule-based task classifier
+- Multiple ROS-style generation templates
+- Template registry
+- `ProjectSpec` intermediate structure
+- Generated `robopilot.yaml` metadata
+- Refreshed static generated demo project
+- Expanded tests
+- Updated documentation
 
-This stage may still be offline and rule-based.
+Supported template types:
 
-## MVP 0.5: LLM-assisted Generation
+- `camera_subscriber`
+- `object_detection`
+- `velocity_controller`
+- `perception_pipeline`
+- `generic_node`
+
+Example commands:
+
+```bash
+robopilot generate --name camera_reader --task "Create a camera subscriber for webcam frames."
+```
+
+```bash
+robopilot generate --name base_controller --task "Create a velocity controller publishing cmd_vel motion commands."
+```
+
+```bash
+robopilot generate --name perception_stack --task "Create a camera -> detector -> tracker perception workflow."
+```
+
+## Completed: v0.3.0 Spec-first Generation
+
+Status: Completed
 
 Goal:
 
-Add optional LLM-powered project generation.
+Upgrade RoboPilot from prompt-driven direct generation into a spec-first generation workflow.
 
-Requirements:
+Completed features:
 
-- Keep offline mode available
-- Use environment variables for API keys
-- Never commit secrets
-- Store prompts separately
-- Make generated output reproducible where possible
+- `robopilot plan`
+- `robopilot validate`
+- `robopilot generate --spec`
+- Spec serialization and loading
+- Spec validation before generation
+- Generation from `robopilot.yaml`
+- Backward compatibility with `generate --name --task`
+- Expanded tests
+- Updated documentation
+
+Core workflow:
+
+```bash
+robopilot plan --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes." --output robopilot.yaml
+```
+
+```bash
+robopilot validate --spec robopilot.yaml
+```
+
+```bash
+robopilot generate --spec robopilot.yaml
+```
+
+The existing command still works:
+
+```bash
+robopilot generate --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes."
+```
+
+## Current: v0.4.0 Project Inspector
+
+Status: Current work
+
+Goal:
+
+Add a lightweight offline project inspector that analyzes existing RoboPilot-generated or ROS-style project directories.
+
+The inspector should not execute generated code, ROS2, launch files, or `colcon`. It should only inspect files statically.
+
+Planned command:
+
+```bash
+robopilot inspect examples/generated_projects/demo_detector
+```
+
+Optional JSON output:
+
+```bash
+robopilot inspect examples/generated_projects/demo_detector --json
+```
+
+Expected report:
+
+- Project path
+- Package name if detectable
+- Whether `robopilot.yaml` exists
+- Selected template if `robopilot.yaml` exists
+- Detected package files
+- Detected launch files
+- Detected config files
+- Detected Python node files
+- Detected README file
+- Potential issues
+- Suggested next steps
+
+Common issues to detect:
+
+- Missing `package.xml`
+- Missing `setup.py`
+- Missing `setup.cfg`
+- Missing `README.md`
+- Missing launch directory
+- Missing config directory
+- Missing Python package directory
+- Missing `robopilot.yaml`
+- Invalid `robopilot.yaml`
+- Empty project directory
+- Non-existent project path
+
+Suggested implementation files:
+
+```txt
+src/robopilot/inspector/
+├─ __init__.py
+└─ project_inspector.py
+```
+
+Suggested tests:
+
+```txt
+tests/test_project_inspector.py
+```
+
+Test cases:
+
+- Inspecting a valid generated project
+- Detecting missing `package.xml`
+- Detecting missing `robopilot.yaml`
+- Handling non-existent project path
+- JSON output structure
+- Validating `robopilot.yaml` through the existing validator
+
+## Future: v0.5.0 Optional LLM Planner
+
+Status: Planned
+
+Goal:
+
+Add optional LLM-assisted planning without replacing the deterministic spec-first workflow.
+
+The LLM should not directly generate arbitrary project files. Instead, it should generate or refine `ProjectSpec`.
+
+Target architecture:
+
+```txt
+natural language task
+        ↓
+optional LLM planner
+        ↓
+ProjectSpec
+        ↓
+validate spec
+        ↓
+deterministic generator
+        ↓
+ROS-style package
+```
 
 Possible command:
 
 ```bash
-robopilot generate --name demo_detector --task "..." --llm
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --llm
 ```
 
-## MVP 0.6: Streamlit Demo
+Requirements:
+
+- Offline rule-based planning must remain available.
+- LLM mode must be optional.
+- API keys must be loaded from environment variables.
+- No secrets should be committed.
+- Generated specs should be validated before generation.
+- LLM output should be constrained to RoboPilot's `ProjectSpec` schema.
+
+Possible implementation files:
+
+```txt
+src/robopilot/planner/
+├─ __init__.py
+├─ rule_based_planner.py
+└─ llm_planner.py
+```
+
+## Future: v0.6.0 Project Repair Suggestions
+
+Status: Planned
 
 Goal:
 
-Create a lightweight web demo for showcasing RoboPilot.
+Use the project inspector and debugger together to provide repair suggestions for incomplete or inconsistent ROS-style projects.
 
-Features:
+Possible command:
+
+```bash
+robopilot repair-suggest path/to/project
+```
+
+Expected behavior:
+
+- Inspect project files
+- Detect missing files or inconsistent spec fields
+- Suggest safe fixes
+- Optionally generate a patch plan
+- Do not modify user files automatically without explicit confirmation
+
+This should remain static and safe by default.
+
+## Future: v0.7.0 Web Demo
+
+Status: Planned
+
+Goal:
+
+Create a lightweight web demo for showcasing RoboPilot workflows.
+
+Possible features:
 
 - Task input box
-- Generate project button
-- Preview generated files
+- ProjectSpec preview
+- Spec validation panel
+- Project generation preview
 - Error log analysis panel
-- Workflow graph preview
+- Mermaid workflow preview
+- Project inspection report viewer
 
-## Future Direction: Robotics Developer Copilot
+Possible frameworks:
 
-Possible future features:
+- Streamlit
+- Gradio
 
-- VSCode extension
-- Multi-file project editing
-- AI-assisted patch generation
-- Local project inspection
-- ROS graph explanation
-- Robotics paper-to-code scaffolding
-- Vision-language robotics workflow support
-- Integration with simulation tools
-- Integration with real ROS2 projects
+This should be optional and should not become a required dependency for CLI usage.
+
+## Future: VSCode Integration
+
+Status: Long-term idea
+
+Goal:
+
+Explore a VSCode extension or VSCode-friendly workflow.
+
+Possible features:
+
+- Generate RoboPilot spec from selected text
+- Validate `robopilot.yaml`
+- Generate project from spec
+- Inspect current workspace
+- Show Mermaid workflow preview
+- Provide repair suggestions
+
+This should only be considered after the CLI workflow becomes stable.
 
 ## Non-goals for Early Versions
 
@@ -185,20 +337,39 @@ RoboPilot will not focus on the following in early versions:
 - Real robot deployment
 - Heavy model training
 - Full ROS2 runtime execution
+- Automatic `colcon build`
 - SLAM implementation
 - Reinforcement learning training
 - Large-scale VLA model inference
 - Embedded low-level driver development
+- Complex multi-agent orchestration
+- RAG system before the core workflow is stable
 
 ## Development Priorities
 
 Priority order:
 
-1. Make it runnable.
-2. Make it understandable.
-3. Make it testable.
-4. Make it easy to demo.
-5. Make it AI-assisted.
-6. Make it extensible.
+1. Keep the CLI runnable.
+2. Keep the spec-first workflow stable.
+3. Keep behavior deterministic and testable.
+4. Avoid unnecessary dependencies.
+5. Reuse existing validation and spec logic.
+6. Make generated and inspected outputs easy to understand.
+7. Keep documentation concise and current.
+8. Add optional AI features only after deterministic workflows are reliable.
 
-The project should grow like a real developer tool, not like a one-time demo script.
+## Current Recommended Development Path
+
+```txt
+v0.4.0 Project Inspector
+        ↓
+v0.5.0 Optional LLM Planner
+        ↓
+v0.6.0 Project Repair Suggestions
+        ↓
+v0.7.0 Web Demo
+        ↓
+VSCode Integration
+```
+
+RoboPilot should grow as a practical robotics developer toolchain, not as a one-time demo script.

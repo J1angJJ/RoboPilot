@@ -3,63 +3,126 @@
 
 ## Project Goal
 
-RoboPilot is an AI-native robotics development assistant for ROS-style workflows, debugging, and code generation.
+RoboPilot is an AI-native robotics development assistant for ROS-style workflows, debugging, workflow visualization, and project inspection.
 
-The project explores how lightweight AI-assisted developer tools can help robotics learners and developers scaffold projects, analyze errors, generate workflow diagrams, and accelerate robotics software development without requiring a full ROS2 runtime environment.
+The project explores how lightweight AI-assisted developer tools can help robotics learners and developers plan, validate, generate, inspect, and debug robotics software projects without requiring a full ROS2 runtime environment.
 
-## Current MVP Scope
+RoboPilot should grow as a real developer tool, not as a one-time demo script.
 
-The current MVP focuses on lightweight, local, and reproducible functionality.
+## Current Architecture
 
-### MVP Features
+RoboPilot currently follows a spec-first workflow:
 
-1. Generate ROS-style Python package skeletons from natural language task descriptions.
-2. Generate common robotics development files:
-   - `package.xml`
-   - `setup.py`
-   - `setup.cfg`
-   - launch files
-   - config files
-   - Python node templates
-   - README files
-3. Analyze pasted robotics-related error logs and provide debugging suggestions.
-4. Generate Mermaid workflow diagrams for robot software pipelines.
-5. Provide a clean CLI interface for local use.
+```txt
+natural language task
+        ↓
+ProjectSpec
+        ↓
+validate spec
+        ↓
+generate ROS-style package
+        ↓
+inspect generated or existing project
+```
+
+The central design principle is:
+
+```txt
+LLM or rule-based planner should produce or refine ProjectSpec.
+RoboPilot should validate ProjectSpec.
+RoboPilot should deterministically generate and inspect project files.
+```
+
+Do not bypass the `ProjectSpec` workflow when adding generation-related features.
+
+## Current Capabilities
+
+RoboPilot currently supports:
+
+1. Offline ROS-style project generation.
+2. Prompt-driven template selection.
+3. Structured `ProjectSpec` generation.
+4. Spec validation.
+5. Generation from `robopilot.yaml`.
+6. Robotics error log debugging.
+7. Mermaid workflow graph generation.
+8. Static generated examples.
+9. English and Chinese documentation.
+10. Pytest test coverage and GitHub Actions CI.
+
+## Current Priority
+
+The current priority is:
+
+```txt
+v0.4.0 Project Inspector
+```
+
+The goal is to add a lightweight offline project inspector that can analyze an existing RoboPilot-generated or ROS-style project directory.
+
+Expected command:
+
+```bash
+robopilot inspect examples/generated_projects/demo_detector
+```
+
+The inspector should statically analyze the project directory and report:
+
+- project path
+- package name if detectable
+- whether `robopilot.yaml` exists
+- selected template if `robopilot.yaml` exists
+- detected package files
+- detected launch files
+- detected config files
+- detected Python node files
+- detected README file
+- potential issues
+- suggested next steps
+
+The inspector must not run ROS2, launch files, colcon, or generated Python nodes. It should only inspect files statically.
 
 ## Important Constraints
 
 - Do NOT require a real ROS2 installation.
 - Do NOT require a GPU.
-- Do NOT require Docker for the MVP.
+- Do NOT require Docker.
 - Do NOT run heavy model training.
-- Do NOT depend on large frameworks unless clearly necessary.
+- Do NOT execute generated ROS nodes.
+- Do NOT execute launch files.
+- Do NOT run `colcon build`.
+- Do NOT call OpenAI API or any LLM API unless the task explicitly asks for a future optional LLM mode.
+- Do NOT add LangChain, Streamlit, Gradio, RAG, VSCode extension, or large frameworks unless explicitly requested.
 - Prefer pure Python implementations.
-- Keep the project lightweight and easy to clone, install, and test.
+- Keep the project lightweight and easy to clone, install, test, and understand.
 - Generated code may be ROS2-style pseudocode if real ROS2 runtime support is not available.
 
 ## Development Philosophy
 
-RoboPilot should feel like a real developer tool, not a course assignment.
+RoboPilot should feel like a real developer tool.
 
 Prioritize:
 
-- Clear project structure
-- Small and testable features
-- Good CLI experience
-- Readable generated code
-- Good README examples
-- Useful demo outputs
-- Minimal dependencies
-- Safe file operations
+- clear architecture
+- stable `ProjectSpec` workflow
+- deterministic behavior
+- safe file operations
+- testable modules
+- readable generated files
+- useful CLI output
+- concise documentation
+- minimal dependencies
+- backward compatibility with existing commands
 
 Avoid:
 
-- Overengineering
-- Unnecessary multi-agent architecture
-- Heavy framework lock-in
-- Large dependencies in the MVP
-- Unclear generated files
-- Features that require unavailable hardware or runtime environments
+- overengineering
+- unnecessary multi-agent architecture
+- heavy framework lock-in
+- unstable LLM-only behavior
+- features that require unavailable hardware or runtime environments
+- changing public CLI behavior without updating tests and documentation
+- duplicating validation logic instead of reusing existing modules
 
 ## Recommended Tech Stack
 
@@ -68,29 +131,34 @@ Avoid:
 - Rich for terminal output
 - Pytest for tests
 - pathlib for file operations
+- built-in serialization helpers for RoboPilot's limited YAML schema
 
 Optional future dependencies:
 
-- OpenAI SDK for LLM-powered generation
-- Streamlit or Gradio for lightweight UI
+- OpenAI SDK for optional LLM-powered planning
+- Streamlit or Gradio for optional lightweight UI
 - Mermaid for workflow visualization
 - Ruff or Black for formatting
+
+Do not add optional dependencies unless they are required for the current task.
 
 ## Code Style
 
 - Use type hints.
 - Prefer `pathlib.Path` over `os.path`.
 - Keep functions small and focused.
-- Separate business logic from CLI code.
+- Separate CLI code from business logic.
 - Separate templates from file-writing logic.
+- Reuse existing spec loader and validator where possible.
 - Use clear function and variable names.
 - Add docstrings for public functions.
 - Avoid hidden side effects.
 - Avoid global mutable state.
+- Keep output deterministic for tests.
 
-## Expected Project Structure
+## Expected Core Package Structure
 
-Core package:
+Current and expected package structure:
 
 ```txt
 src/robopilot/
@@ -99,12 +167,23 @@ src/robopilot/
 ├─ generator/
 │  ├─ __init__.py
 │  ├─ project_generator.py
+│  ├─ project_spec.py
+│  ├─ task_classifier.py
+│  ├─ template_registry.py
 │  └─ templates.py
+├─ spec/
+│  ├─ __init__.py
+│  ├─ io.py
+│  └─ validator.py
 ├─ debugger/
 │  ├─ __init__.py
 │  └─ log_analyzer.py
-├─ prompts/
-│  └─ templates.py
+├─ graph/
+│  ├─ __init__.py
+│  └─ mermaid_generator.py
+├─ inspector/
+│  ├─ __init__.py
+│  └─ project_inspector.py
 └─ utils/
    └─ file_ops.py
 ```
@@ -120,20 +199,92 @@ docs/
 examples/
 ├─ prompts/
 ├─ error_logs/
+├─ pipelines/
+├─ graphs/
 └─ generated_projects/
 
 tests/
 ```
 
+If a directory does not exist yet, create it only when needed by the current task.
+
 ## Safety Rules
 
 - Never delete user files automatically.
 - Never overwrite existing files unless explicitly allowed.
-- When overwriting is necessary, create a backup or ask for confirmation.
+- When overwriting is necessary, create a backup or require an explicit overwrite flag.
 - Generated projects should be written to `outputs/` by default.
-- Never commit API keys, tokens, private paths, or local environment files.
+- Do not commit generated temporary outputs from `outputs/`.
+- Never commit API keys, tokens, private paths, local environment files, or logs.
 - Never assume the user has ROS2 installed.
 - Never require external services for offline MVP features.
+- Static inspection must not execute user code.
+
+## Existing CLI Commands
+
+The following commands should remain supported:
+
+```bash
+robopilot generate --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes."
+```
+
+```bash
+robopilot plan --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes." --output robopilot.yaml
+```
+
+```bash
+robopilot validate --spec robopilot.yaml
+```
+
+```bash
+robopilot generate --spec robopilot.yaml
+```
+
+```bash
+robopilot debug --log examples/error_logs/cv_bridge_missing.txt
+```
+
+```bash
+robopilot debug --text "ModuleNotFoundError: No module named 'cv_bridge'"
+```
+
+```bash
+robopilot graph --pipeline "camera -> detector -> tracker -> planner -> controller"
+```
+
+The next planned command is:
+
+```bash
+robopilot inspect examples/generated_projects/demo_detector
+```
+
+## ProjectSpec Rules
+
+`ProjectSpec` is the central intermediate representation.
+
+Generation-related features should flow through `ProjectSpec`.
+
+A valid spec should include at least:
+
+- package name
+- original task
+- selected template
+- nodes
+- topics or topic-like fields when applicable
+- config files
+- launch files
+- generator name
+- notes
+
+Generated projects should include a `robopilot.yaml` file.
+
+`robopilot.yaml` should be usable as input for:
+
+```bash
+robopilot generate --spec robopilot.yaml
+```
+
+Validation logic should live in the spec validation module and should be reused by other modules such as generator and inspector.
 
 ## Testing
 
@@ -143,11 +294,13 @@ Before finalizing a change, run:
 pytest
 ```
 
-If the CLI exists, also run:
+On Windows, if pytest cannot access the default temporary directory, run:
 
 ```bash
-robopilot --help
+pytest --basetemp=".pytest_tmp" -p no:cacheprovider
 ```
+
+For CLI-related changes, also run relevant commands manually.
 
 For generator-related changes, test:
 
@@ -155,52 +308,71 @@ For generator-related changes, test:
 robopilot generate --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes."
 ```
 
-## Preferred Development Workflow
-
-1. Read `README.md`, `roadmap.md`, and this file first.
-2. Implement one small feature at a time.
-3. Add or update tests.
-4. Run tests.
-5. Update README usage examples when behavior changes.
-6. Summarize changed files and design decisions.
-
-## Current Priority
-
-The current priority is to build a working offline MVP:
-
-```txt
-natural language task description
-        ↓
-ROS-style project skeleton
-        ↓
-generated files in outputs/
-```
-
-Do not start LLM orchestration, RAG, Streamlit UI, or complex agent planning until the offline generator is stable.
-
-## First Implementation Target
-
-Implement the first command:
+For spec-related changes, test:
 
 ```bash
-robopilot generate --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes."
+robopilot plan --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes." --output .pytest_tmp/robopilot.yaml
 ```
 
-The command should create:
+```bash
+robopilot validate --spec .pytest_tmp/robopilot.yaml
+```
+
+```bash
+robopilot generate --spec .pytest_tmp/robopilot.yaml --output-root .pytest_tmp/spec_generated --overwrite
+```
+
+For inspector-related changes, test:
+
+```bash
+robopilot inspect examples/generated_projects/demo_detector
+```
+
+## Preferred Development Workflow
+
+1. Read `README.md`, `README.zh-CN.md`, `roadmap.md`, `CHANGELOG.md`, `pyproject.toml`, and this file first.
+2. Understand the existing architecture before editing.
+3. Implement one small feature at a time.
+4. Reuse existing modules instead of duplicating logic.
+5. Add or update tests.
+6. Run tests.
+7. Run relevant CLI commands manually.
+8. Update README and demo docs when behavior changes.
+9. Update `CHANGELOG.md` under `Unreleased`.
+10. Summarize changed files, design decisions, and test results.
+
+## Current Implementation Target
+
+Implement:
 
 ```txt
-outputs/demo_detector/
-├─ package.xml
-├─ setup.py
-├─ setup.cfg
-├─ README.md
-├─ launch/
-│  └─ demo_detector.launch.py
-├─ config/
-│  └─ params.yaml
-└─ demo_detector/
-   ├─ __init__.py
-   └─ detector_node.py
+v0.4.0 Project Inspector
 ```
 
-This first implementation should be offline and template-based.
+The inspector should support:
+
+```bash
+robopilot inspect examples/generated_projects/demo_detector
+```
+
+Optional JSON output should also be supported:
+
+```bash
+robopilot inspect examples/generated_projects/demo_detector --json
+```
+
+The inspector should detect common issues such as:
+
+- missing `package.xml`
+- missing `setup.py`
+- missing `setup.cfg`
+- missing `README.md`
+- missing launch directory
+- missing config directory
+- missing Python package directory
+- missing `robopilot.yaml`
+- invalid `robopilot.yaml`
+- empty project directory
+- non-existent project path
+
+Do not start LLM orchestration, RAG, Streamlit UI, VSCode integration, real ROS2 runtime execution, or colcon integration until the offline spec-first workflow and project inspector are stable.
