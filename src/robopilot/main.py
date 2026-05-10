@@ -17,6 +17,7 @@ from robopilot.generator.project_generator import (
 )
 from robopilot.graph.mermaid_generator import PipelineParseError, generate_mermaid
 from robopilot.inspector.project_inspector import ProjectInspection, inspect_project
+from robopilot.repair.repair_suggester import RepairSuggestionReport, suggest_repairs
 from robopilot.spec.io import load_spec, spec_to_yaml, write_spec
 from robopilot.spec.validator import validate_spec
 from robopilot.utils.file_ops import OutputPathExistsError
@@ -211,6 +212,58 @@ def _print_inspection(report: ProjectInspection) -> None:
 
 def _join_or_none(values: tuple[str, ...]) -> str:
     return ", ".join(values) if values else "none"
+
+
+@app.command("repair-suggest")
+def repair_suggest(
+    project_path: Annotated[Path, typer.Argument(help="Project directory to inspect.")],
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Suggest safe offline repairs for an inspected project."""
+    report = suggest_repairs(project_path)
+    if json_output:
+        print(json.dumps(report.to_dict(), indent=2))
+        return
+
+    _print_repair_suggestions(report)
+
+
+def _print_repair_suggestions(report: RepairSuggestionReport) -> None:
+    console.print(Panel.fit("Repair Suggestion Report", style="bold cyan"))
+    console.print(f"[bold]Project path:[/bold] {report.project_path}")
+
+    console.print(Panel.fit("Detected Issues", style="bold cyan"))
+    if report.issues:
+        for issue in report.issues:
+            console.print(f"- {issue}")
+    else:
+        console.print("[green]No structural issues detected.[/green]")
+
+    console.print(Panel.fit("Repair Suggestions", style="bold cyan"))
+    if report.repair_suggestions:
+        table = Table()
+        table.add_column("Severity")
+        table.add_column("Issue")
+        table.add_column("Suggestion")
+        for suggestion in report.repair_suggestions:
+            table.add_row(
+                suggestion.severity,
+                suggestion.issue,
+                suggestion.suggestion,
+            )
+        console.print(table)
+    else:
+        console.print("[green]No repair suggestions needed.[/green]")
+
+    console.print(Panel.fit("Suggested Commands", style="bold cyan"))
+    for command in report.suggested_commands:
+        console.print(f"- {command}")
+
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    console.print(report.safety_note)
 
 
 @app.command()

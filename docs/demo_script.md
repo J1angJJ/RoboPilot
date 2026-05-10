@@ -19,6 +19,7 @@ Current core commands:
 - `robopilot validate`
 - `robopilot generate`
 - `robopilot inspect`
+- `robopilot repair-suggest`
 - `robopilot debug`
 - `robopilot graph`
 
@@ -31,7 +32,7 @@ robopilot --help
 
 Expected result:
 
-The CLI lists the available commands, including `generate`, `debug`, and `graph`.
+The CLI lists the available commands, including `plan`, `validate`, `generate`, `inspect`, `repair-suggest`, `debug`, and `graph`.
 
 ## 3. Demo: Plan a ProjectSpec
 
@@ -117,7 +118,27 @@ JSON mode:
 robopilot inspect examples/generated_projects/demo_detector --json
 ```
 
-## 6. Demo: Analyze an Error Log
+## 6. Demo: Suggest Safe Repairs
+
+Run:
+
+```bash
+robopilot repair-suggest examples/generated_projects/demo_detector
+```
+
+Point out:
+
+- The repair suggester reuses the Project Inspector.
+- It maps detected issues to deterministic suggestions and commands.
+- It does not modify files automatically and does not implement `--apply`.
+
+JSON mode:
+
+```bash
+robopilot repair-suggest examples/generated_projects/demo_detector --json
+```
+
+## 7. Demo: Analyze an Error Log
 
 Run:
 
@@ -139,7 +160,7 @@ Inline mode:
 robopilot debug --text "ModuleNotFoundError: No module named 'cv_bridge'"
 ```
 
-## 7. Demo: Generate a Workflow Graph
+## 8. Demo: Generate a Workflow Graph
 
 Run:
 
@@ -163,7 +184,7 @@ Write to a file:
 robopilot graph --pipeline "camera -> detector -> tracker" --output examples/graphs/demo_pipeline.mmd
 ```
 
-## 8. Show Example Assets
+## 9. Show Example Assets
 
 Useful files to open during a demo:
 
@@ -174,7 +195,7 @@ Useful files to open during a demo:
 - `examples/error_logs/cv_bridge_missing.txt`
 - `examples/graphs/demo_pipeline.mmd`
 
-## 9. Run Tests
+## 10. Run Tests
 
 ```bash
 pytest
@@ -187,7 +208,7 @@ New-Item -ItemType Directory -Path .pytest_tmp -Force
 python -m pytest --basetemp=".pytest_tmp" -p no:cacheprovider
 ```
 
-## 10. Close with Roadmap
+## 11. Close with Roadmap
 
 Current implemented MVPs:
 
@@ -197,9 +218,10 @@ Current implemented MVPs:
 - MVP 0.4: Prompt-driven Template Selection
 - MVP 0.5: Spec-first Generation
 - MVP 0.6: Project Inspector
+- v0.5.0: Project Repair Suggestions
 
 Next planned work:
 
-- Better rule-based template selection
+- Deeper read-only repair suggestions
 - Optional LLM-assisted generation while preserving offline mode
 - Lightweight demo UI

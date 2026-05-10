@@ -22,7 +22,7 @@ def package_xml(spec: ProjectSpec) -> str:
         <?xml version="1.0"?>
         <package format="3">
           <name>{spec.package_name}</name>
-          <version>0.4.0</version>
+          <version>0.5.0</version>
           <description>{spec.description}</description>
           <maintainer email="developer@example.com">RoboPilot User</maintainer>
           <license>MIT</license>
@@ -53,7 +53,7 @@ def setup_py(spec: ProjectSpec) -> str:
 
         setup(
             name=package_name,
-            version="0.4.0",
+            version="0.5.0",
             packages=find_packages(exclude=["test"]),
             data_files=[
                 (f"share/{{package_name}}", ["package.xml", "robopilot.yaml"]),
@@ -539,4 +539,3 @@ def _generic_params(spec: ProjectSpec) -> str:
           enabled: true
           update_rate_hz: 10
     """
-

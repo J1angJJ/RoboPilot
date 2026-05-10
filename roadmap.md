@@ -139,9 +139,9 @@ The existing command still works:
 robopilot generate --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes."
 ```
 
-## Current: v0.4.0 Project Inspector
+## Completed: v0.4.0 Project Inspector
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -149,7 +149,7 @@ Add a lightweight offline project inspector that analyzes existing RoboPilot-gen
 
 The inspector should not execute generated code, ROS2, launch files, or `colcon`. It should only inspect files statically.
 
-Planned command:
+Implemented command:
 
 ```bash
 robopilot inspect examples/generated_projects/demo_detector
@@ -189,7 +189,7 @@ Common issues to detect:
 - Empty project directory
 - Non-existent project path
 
-Suggested implementation files:
+Implementation files:
 
 ```txt
 src/robopilot/inspector/
@@ -197,7 +197,7 @@ src/robopilot/inspector/
 └─ project_inspector.py
 ```
 
-Suggested tests:
+Tests:
 
 ```txt
 tests/test_project_inspector.py
@@ -212,7 +212,38 @@ Test cases:
 - JSON output structure
 - Validating `robopilot.yaml` through the existing validator
 
-## Future: v0.5.0 Optional LLM Planner
+## Current: v0.5.0 Project Repair Suggestions
+
+Status: Current work
+
+Goal:
+
+Use the project inspector to provide safe repair suggestions for incomplete or inconsistent ROS-style projects.
+
+Command:
+
+```bash
+robopilot repair-suggest path/to/project
+```
+
+Optional JSON output:
+
+```bash
+robopilot repair-suggest path/to/project --json
+```
+
+Expected behavior:
+
+- Inspect project files with the existing inspector
+- Detect missing files or invalid specs
+- Map issues to deterministic repair suggestions
+- Print suggested commands
+- Never modify user files automatically
+- Do not implement `--apply` yet
+
+This remains static and safe by default.
+
+## Future: v0.6.0 Optional LLM Planner
 
 Status: Planned
 
@@ -261,30 +292,6 @@ src/robopilot/planner/
 ├─ rule_based_planner.py
 └─ llm_planner.py
 ```
-
-## Future: v0.6.0 Project Repair Suggestions
-
-Status: Planned
-
-Goal:
-
-Use the project inspector and debugger together to provide repair suggestions for incomplete or inconsistent ROS-style projects.
-
-Possible command:
-
-```bash
-robopilot repair-suggest path/to/project
-```
-
-Expected behavior:
-
-- Inspect project files
-- Detect missing files or inconsistent spec fields
-- Suggest safe fixes
-- Optionally generate a patch plan
-- Do not modify user files automatically without explicit confirmation
-
-This should remain static and safe by default.
 
 ## Future: v0.7.0 Web Demo
 
@@ -361,11 +368,9 @@ Priority order:
 ## Current Recommended Development Path
 
 ```txt
-v0.4.0 Project Inspector
+v0.5.0 Project Repair Suggestions
         ↓
-v0.5.0 Optional LLM Planner
-        ↓
-v0.6.0 Project Repair Suggestions
+v0.6.0 Optional LLM Planner
         ↓
 v0.7.0 Web Demo
         ↓

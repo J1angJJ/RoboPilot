@@ -14,6 +14,7 @@ RoboPilot helps robotics learners and developers scaffold ROS-style Python packa
 - `validate`: check a saved ProjectSpec before generation.
 - `generate`: create a ROS-style Python package from a task or a saved ProjectSpec.
 - `inspect`: statically inspect a generated or ROS-style project directory.
+- `repair-suggest`: suggest safe repairs from inspection issues without modifying files.
 - `debug`: analyze robotics-related error logs with offline rule-based diagnostics.
 - `graph`: convert arrow-based robotics pipelines into Mermaid diagrams.
 
@@ -74,6 +75,13 @@ Inspect a generated project:
 ```bash
 robopilot inspect examples/generated_projects/demo_detector
 robopilot inspect examples/generated_projects/demo_detector --json
+```
+
+Suggest safe repairs without modifying files:
+
+```bash
+robopilot repair-suggest examples/generated_projects/demo_detector
+robopilot repair-suggest examples/generated_projects/demo_detector --json
 ```
 
 Generate other template types:
@@ -143,7 +151,7 @@ graph LR
 
 ## Project Status
 
-RoboPilot is an early v0.4.0 MVP focused on offline, lightweight robotics developer workflows. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
+RoboPilot is an early v0.5.0 MVP focused on offline, lightweight robotics developer workflows. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
 
 Implemented:
 
@@ -153,6 +161,7 @@ Implemented:
 - MVP 0.4: Prompt-driven Template Selection
 - MVP 0.5: Spec-first Generation
 - MVP 0.6: Project Inspector
+- v0.5.0: Project Repair Suggestions
 
 Not included yet:
 
@@ -167,13 +176,12 @@ Not included yet:
 
 Near-term roadmap:
 
-1. Optional LLM-assisted generation while keeping offline mode
-2. Lightweight demo UI
-3. Project inspection for ROS-style workspaces
+1. Deeper repair suggestions while keeping `repair-suggest` read-only by default
+2. Optional LLM-assisted planning while keeping offline mode
+3. Lightweight demo UI
 
 Longer-term direction:
 
-- Project inspection for ROS-style workspaces
 - Better debugging suggestions for robotics learners
 - AI-assisted patch generation
 - Workflow visualization and explanation
@@ -212,6 +220,7 @@ robopilot/
 |       |-- debugger/
 |       |-- graph/
 |       |-- inspector/
+|       |-- repair/
 |       `-- utils/
 |-- examples/
 |-- tests/

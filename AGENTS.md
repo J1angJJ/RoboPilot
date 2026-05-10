@@ -3,7 +3,7 @@
 
 ## Project Goal
 
-RoboPilot is an AI-native robotics development assistant for ROS-style workflows, debugging, workflow visualization, and project inspection.
+RoboPilot is an AI-native robotics development assistant for ROS-style workflows, debugging, workflow visualization, project inspection, and safe repair suggestions.
 
 The project explores how lightweight AI-assisted developer tools can help robotics learners and developers plan, validate, generate, inspect, and debug robotics software projects without requiring a full ROS2 runtime environment.
 
@@ -30,7 +30,7 @@ The central design principle is:
 ```txt
 LLM or rule-based planner should produce or refine ProjectSpec.
 RoboPilot should validate ProjectSpec.
-RoboPilot should deterministically generate and inspect project files.
+RoboPilot should deterministically generate, inspect, and suggest repairs for project files.
 ```
 
 Do not bypass the `ProjectSpec` workflow when adding generation-related features.
@@ -47,40 +47,36 @@ RoboPilot currently supports:
 6. Robotics error log debugging.
 7. Mermaid workflow graph generation.
 8. Static generated examples.
-9. English and Chinese documentation.
-10. Pytest test coverage and GitHub Actions CI.
+9. Project inspection for generated and ROS-style projects.
+10. Project repair suggestions based on inspection issues.
+11. English and Chinese documentation.
+12. Pytest test coverage and GitHub Actions CI.
 
 ## Current Priority
 
 The current priority is:
 
 ```txt
-v0.4.0 Project Inspector
+v0.5.0 Project Repair Suggestions
 ```
 
-The goal is to add a lightweight offline project inspector that can analyze an existing RoboPilot-generated or ROS-style project directory.
+The goal is to add a lightweight offline repair suggestion system based on the existing Project Inspector.
 
 Expected command:
 
 ```bash
-robopilot inspect examples/generated_projects/demo_detector
+robopilot repair-suggest examples/generated_projects/demo_detector
 ```
 
-The inspector should statically analyze the project directory and report:
+The repair suggester should inspect the project directory, map issues to safe suggestions, and report:
 
 - project path
-- package name if detectable
-- whether `robopilot.yaml` exists
-- selected template if `robopilot.yaml` exists
-- detected package files
-- detected launch files
-- detected config files
-- detected Python node files
-- detected README file
 - potential issues
-- suggested next steps
+- repair suggestions
+- safety note
+- suggested commands
 
-The inspector must not run ROS2, launch files, colcon, or generated Python nodes. It should only inspect files statically.
+The repair suggester must not run ROS2, launch files, colcon, or generated Python nodes. It must not modify user files automatically.
 
 ## Important Constraints
 
@@ -252,10 +248,12 @@ robopilot debug --text "ModuleNotFoundError: No module named 'cv_bridge'"
 robopilot graph --pipeline "camera -> detector -> tracker -> planner -> controller"
 ```
 
-The next planned command is:
-
 ```bash
 robopilot inspect examples/generated_projects/demo_detector
+```
+
+```bash
+robopilot repair-suggest examples/generated_projects/demo_detector
 ```
 
 ## ProjectSpec Rules
@@ -328,6 +326,12 @@ For inspector-related changes, test:
 robopilot inspect examples/generated_projects/demo_detector
 ```
 
+For repair-suggest-related changes, test:
+
+```bash
+robopilot repair-suggest examples/generated_projects/demo_detector
+```
+
 ## Preferred Development Workflow
 
 1. Read `README.md`, `README.zh-CN.md`, `roadmap.md`, `CHANGELOG.md`, `pyproject.toml`, and this file first.
@@ -346,22 +350,22 @@ robopilot inspect examples/generated_projects/demo_detector
 Implement:
 
 ```txt
-v0.4.0 Project Inspector
+v0.5.0 Project Repair Suggestions
 ```
 
-The inspector should support:
+The repair suggester should support:
 
 ```bash
-robopilot inspect examples/generated_projects/demo_detector
+robopilot repair-suggest examples/generated_projects/demo_detector
 ```
 
 Optional JSON output should also be supported:
 
 ```bash
-robopilot inspect examples/generated_projects/demo_detector --json
+robopilot repair-suggest examples/generated_projects/demo_detector --json
 ```
 
-The inspector should detect common issues such as:
+The repair suggester should reuse the inspector and suggest safe repairs for common issues such as:
 
 - missing `package.xml`
 - missing `setup.py`
@@ -375,4 +379,4 @@ The inspector should detect common issues such as:
 - empty project directory
 - non-existent project path
 
-Do not start LLM orchestration, RAG, Streamlit UI, VSCode integration, real ROS2 runtime execution, or colcon integration until the offline spec-first workflow and project inspector are stable.
+Do not start LLM orchestration, RAG, Streamlit UI, VSCode integration, real ROS2 runtime execution, `--apply`, or colcon integration until the offline spec-first workflow, project inspector, and repair suggestions are stable.

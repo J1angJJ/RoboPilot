@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.5.0 project repair suggestion workflow based on the Project Inspector.
+- `robopilot repair-suggest` command with structured terminal output.
+- `robopilot repair-suggest --json` deterministic JSON output for tests and integrations.
+- Safe issue-to-suggestion mapping for missing package files, missing directories, missing or invalid `robopilot.yaml`, empty directories, and non-existent paths.
+- Read-only repair guidance with no automatic file modification and no `--apply` mode.
 - v0.4.0 project inspector for RoboPilot-generated and ROS-style project directories.
 - `robopilot inspect` command with structured terminal output.
 - `robopilot inspect --json` deterministic JSON output for tests and integrations.
