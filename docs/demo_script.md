@@ -18,6 +18,7 @@ Current core commands:
 - `robopilot plan`
 - `robopilot validate`
 - `robopilot generate`
+- `robopilot inspect`
 - `robopilot debug`
 - `robopilot graph`
 
@@ -96,7 +97,27 @@ Static showcase version:
 examples/generated_projects/demo_detector/
 ```
 
-## 5. Demo: Analyze an Error Log
+## 5. Demo: Inspect the Generated Project
+
+Run:
+
+```bash
+robopilot inspect examples/generated_projects/demo_detector
+```
+
+Point out:
+
+- The inspector does not run ROS2, launch files, colcon, or generated Python code.
+- It reports package files, launch files, config files, Python node files, README status, and spec status.
+- It reuses the existing `robopilot.yaml` loader and validator.
+
+JSON mode:
+
+```bash
+robopilot inspect examples/generated_projects/demo_detector --json
+```
+
+## 6. Demo: Analyze an Error Log
 
 Run:
 
@@ -118,7 +139,7 @@ Inline mode:
 robopilot debug --text "ModuleNotFoundError: No module named 'cv_bridge'"
 ```
 
-## 6. Demo: Generate a Workflow Graph
+## 7. Demo: Generate a Workflow Graph
 
 Run:
 
@@ -142,17 +163,18 @@ Write to a file:
 robopilot graph --pipeline "camera -> detector -> tracker" --output examples/graphs/demo_pipeline.mmd
 ```
 
-## 7. Show Example Assets
+## 8. Show Example Assets
 
 Useful files to open during a demo:
 
 - `examples/prompts/demo_detector.txt`
 - `examples/generated_projects/demo_detector/robopilot.yaml`
 - `examples/generated_projects/demo_detector/demo_detector/detector_node.py`
+- `examples/generated_projects/demo_detector/package.xml`
 - `examples/error_logs/cv_bridge_missing.txt`
 - `examples/graphs/demo_pipeline.mmd`
 
-## 8. Run Tests
+## 9. Run Tests
 
 ```bash
 pytest
@@ -165,7 +187,7 @@ New-Item -ItemType Directory -Path .pytest_tmp -Force
 python -m pytest --basetemp=".pytest_tmp" -p no:cacheprovider
 ```
 
-## 9. Close with Roadmap
+## 10. Close with Roadmap
 
 Current implemented MVPs:
 
@@ -174,6 +196,7 @@ Current implemented MVPs:
 - MVP 0.3: Workflow Diagram Generator
 - MVP 0.4: Prompt-driven Template Selection
 - MVP 0.5: Spec-first Generation
+- MVP 0.6: Project Inspector
 
 Next planned work:
 

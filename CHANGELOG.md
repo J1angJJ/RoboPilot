@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.4.0 project inspector for RoboPilot-generated and ROS-style project directories.
+- `robopilot inspect` command with structured terminal output.
+- `robopilot inspect --json` deterministic JSON output for tests and integrations.
+- Static checks for missing package files, launch/config directories, Python package directories, and `robopilot.yaml`.
+- Inspector reuse of existing ProjectSpec loader and validator.
 - v0.3.0 spec-first generation workflow.
 - `robopilot plan` command for creating and printing `robopilot.yaml` specs.
 - `robopilot validate --spec` command for checking ProjectSpec files before generation.

@@ -13,6 +13,7 @@ RoboPilot helps robotics learners and developers scaffold ROS-style Python packa
 - `plan`: convert a robotics task into a readable `robopilot.yaml` ProjectSpec.
 - `validate`: check a saved ProjectSpec before generation.
 - `generate`: create a ROS-style Python package from a task or a saved ProjectSpec.
+- `inspect`: statically inspect a generated or ROS-style project directory.
 - `debug`: analyze robotics-related error logs with offline rule-based diagnostics.
 - `graph`: convert arrow-based robotics pipelines into Mermaid diagrams.
 
@@ -66,6 +67,13 @@ Spec-first workflow:
 robopilot plan --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes." --output robopilot.yaml
 robopilot validate --spec robopilot.yaml
 robopilot generate --spec robopilot.yaml
+```
+
+Inspect a generated project:
+
+```bash
+robopilot inspect examples/generated_projects/demo_detector
+robopilot inspect examples/generated_projects/demo_detector --json
 ```
 
 Generate other template types:
@@ -135,7 +143,7 @@ graph LR
 
 ## Project Status
 
-RoboPilot is an early v0.3.0 MVP focused on offline, lightweight robotics developer workflows. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
+RoboPilot is an early v0.4.0 MVP focused on offline, lightweight robotics developer workflows. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
 
 Implemented:
 
@@ -144,6 +152,7 @@ Implemented:
 - MVP 0.3: Workflow Diagram Generator
 - MVP 0.4: Prompt-driven Template Selection
 - MVP 0.5: Spec-first Generation
+- MVP 0.6: Project Inspector
 
 Not included yet:
 
@@ -202,6 +211,7 @@ robopilot/
 |       |-- generator/
 |       |-- debugger/
 |       |-- graph/
+|       |-- inspector/
 |       `-- utils/
 |-- examples/
 |-- tests/

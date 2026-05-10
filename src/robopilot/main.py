@@ -1,5 +1,6 @@
 """Command-line interface for RoboPilot."""
 
+import json
 from pathlib import Path
 from typing import Annotated
 
@@ -15,6 +16,7 @@ from robopilot.generator.project_generator import (
     generate_project_from_spec,
 )
 from robopilot.graph.mermaid_generator import PipelineParseError, generate_mermaid
+from robopilot.inspector.project_inspector import ProjectInspection, inspect_project
 from robopilot.spec.io import load_spec, spec_to_yaml, write_spec
 from robopilot.spec.validator import validate_spec
 from robopilot.utils.file_ops import OutputPathExistsError
@@ -147,6 +149,68 @@ def validate(
     for error in result.errors:
         console.print(f"- {error}")
     raise typer.Exit(code=1)
+
+
+@app.command()
+def inspect(
+    project_path: Annotated[Path, typer.Argument(help="Project directory to inspect.")],
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Statically inspect a RoboPilot-generated or ROS-style project."""
+    report = inspect_project(project_path)
+    if json_output:
+        print(json.dumps(report.to_dict(), indent=2))
+        return
+
+    _print_inspection(report)
+
+
+def _print_inspection(report: ProjectInspection) -> None:
+    console.print(Panel.fit("Project Summary", style="bold cyan"))
+    console.print(f"[bold]Project path:[/bold] {report.project_path}")
+    console.print(f"[bold]Exists:[/bold] {report.exists}")
+    console.print(f"[bold]Empty:[/bold] {report.is_empty}")
+    console.print(f"[bold]Package name:[/bold] {report.package_name or 'unknown'}")
+
+    console.print(Panel.fit("Spec Status", style="bold cyan"))
+    console.print(f"[bold]robopilot.yaml exists:[/bold] {report.spec.exists}")
+    console.print(f"[bold]Valid spec:[/bold] {report.spec.valid}")
+    console.print(
+        f"[bold]Selected template:[/bold] {report.spec.selected_template or 'unknown'}"
+    )
+    if report.spec.errors:
+        for error in report.spec.errors:
+            console.print(f"- {error}")
+
+    files_table = Table(title="Detected Files")
+    files_table.add_column("Type")
+    files_table.add_column("Detected")
+    files_table.add_row("package.xml", str(report.files.package_xml))
+    files_table.add_row("setup.py", str(report.files.setup_py))
+    files_table.add_row("setup.cfg", str(report.files.setup_cfg))
+    files_table.add_row("README.md", str(report.files.readme))
+    files_table.add_row("Launch files", _join_or_none(report.files.launch_files))
+    files_table.add_row("Config files", _join_or_none(report.files.config_files))
+    files_table.add_row("Python node files", _join_or_none(report.files.python_node_files))
+    console.print(files_table)
+
+    console.print(Panel.fit("Potential Issues", style="bold cyan"))
+    if report.issues:
+        for issue in report.issues:
+            console.print(f"- {issue}")
+    else:
+        console.print("[green]No obvious structural issues detected.[/green]")
+
+    console.print(Panel.fit("Suggested Next Steps", style="bold cyan"))
+    for step in report.suggested_next_steps:
+        console.print(f"- {step}")
+
+
+def _join_or_none(values: tuple[str, ...]) -> str:
+    return ", ".join(values) if values else "none"
 
 
 @app.command()

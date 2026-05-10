@@ -11,6 +11,9 @@ from pathlib import Path
 from robopilot.generator.project_spec import NodeSpec, ProjectSpec, TopicSpec
 
 
+LIST_SECTIONS = {"nodes", "topics", "config_files", "launch_files", "notes"}
+
+
 def spec_to_yaml(spec: ProjectSpec) -> str:
     """Serialize a ProjectSpec to RoboPilot's readable YAML subset."""
     lines = [
@@ -75,7 +78,7 @@ def spec_from_yaml(content: str) -> ProjectSpec:
 
         if not raw_line.startswith(" "):
             key, value = _split_key_value(raw_line)
-            if value == "":
+            if value == "" and key in LIST_SECTIONS:
                 current_section = key
                 data[current_section] = []
                 current_item = None
@@ -173,4 +176,3 @@ def _list_of_scalars(value: object) -> list[str]:
     if not isinstance(value, list):
         return []
     return [str(item) for item in value if not isinstance(item, dict)]
-
