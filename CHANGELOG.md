@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.15.0 safe apply rollback workflow.
+- `robopilot rollback --project ... --backup ...` dry-run command.
+- `robopilot rollback --confirm` confirmed restore mode for RoboPilot backups.
+- `robopilot rollback --json` deterministic JSON summary output.
+- Safety checks for missing project paths, invalid backup paths, unsafe relative paths, path traversal, and non-RoboPilot backup locations.
+- Rollback behavior that restores only files contained in the backup directory and does not delete newly created files.
 - v0.14.0 safe apply-from-plan workflow.
 - `robopilot apply --plan ...` dry-run command.
 - `robopilot apply --plan ... --confirm` confirmed file-writing mode.

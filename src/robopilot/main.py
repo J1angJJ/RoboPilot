@@ -32,6 +32,7 @@ from robopilot.repair.repair_suggester import RepairSuggestionReport, suggest_re
 from robopilot.refiner.llm_refiner import LLMRefiner
 from robopilot.refiner.spec_refiner import refine_spec
 from robopilot.report.project_report import generate_project_report, write_project_report
+from robopilot.rollback.rollback import RollbackSummary, rollback_project
 from robopilot.spec.io import load_spec, spec_to_yaml, write_spec
 from robopilot.spec.validator import validate_spec
 from robopilot.utils.file_ops import OutputPathExistsError
@@ -491,6 +492,65 @@ def _print_apply_summary(summary: ApplySummary) -> None:
 
     console.print(Panel.fit("Conflicts", style="bold cyan"))
     _print_scalar_values(summary.conflicts)
+
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    console.print(summary.safety_note)
+
+
+@app.command()
+def rollback(
+    project: Annotated[
+        Path,
+        typer.Option("--project", "-p", help="Project directory to restore into."),
+    ],
+    backup: Annotated[
+        Path,
+        typer.Option("--backup", "-b", help="RoboPilot backup directory to restore from."),
+    ],
+    confirm: Annotated[
+        bool,
+        typer.Option("--confirm", help="Actually restore files from backup."),
+    ] = False,
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Dry-run or restore files from a RoboPilot backup directory."""
+    try:
+        summary = rollback_project(
+            project_path=project,
+            backup_path=backup,
+            confirm=confirm,
+        )
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    if json_output:
+        print(json.dumps(summary.to_dict(), indent=2))
+        return
+
+    _print_rollback_summary(summary)
+
+
+def _print_rollback_summary(summary: RollbackSummary) -> None:
+    console.print(Panel.fit("Rollback Summary", style="bold cyan"))
+    console.print(f"[bold]Project path:[/bold] {summary.project_path}")
+    console.print(f"[bold]Backup path:[/bold] {summary.backup_path}")
+    console.print(f"[bold]Dry run:[/bold] {summary.dry_run}")
+
+    console.print(Panel.fit("Files to Restore", style="bold cyan"))
+    _print_scalar_values(summary.files_to_restore)
+
+    console.print(Panel.fit("Files Restored", style="bold cyan"))
+    _print_scalar_values(summary.files_restored)
+
+    console.print(Panel.fit("Skipped Files", style="bold cyan"))
+    _print_scalar_values(summary.skipped_files)
+
+    console.print(Panel.fit("Errors", style="bold cyan"))
+    _print_scalar_values(summary.errors)
 
     console.print(Panel.fit("Safety Note", style="bold cyan"))
     console.print(summary.safety_note)

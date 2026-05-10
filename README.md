@@ -16,6 +16,7 @@ RoboPilot helps robotics learners and developers scaffold ROS-style Python packa
 - `apply-preview`: preview generated file changes against an existing project without modifying files.
 - `apply-plan`: export and validate a read-only apply plan from an apply preview.
 - `apply`: dry-run or safely apply a validated apply plan with explicit confirmation.
+- `rollback`: dry-run or restore files from a RoboPilot backup with explicit confirmation.
 - `plan --planner llm`: optional ProjectSpec-only OpenAI planner for configured environments.
 - `validate`: check a saved ProjectSpec before generation.
 - `generate`: create a ROS-style Python package from a task or a saved ProjectSpec.
@@ -86,6 +87,7 @@ robopilot apply-preview --spec refined.yaml --project outputs/demo_detector
 robopilot apply-plan --spec refined.yaml --project outputs/demo_detector --output apply_plan.yaml
 robopilot apply-plan-validate --plan apply_plan.yaml
 robopilot apply --plan apply_plan.yaml
+robopilot rollback --project outputs/demo_detector --backup outputs/demo_detector/.robopilot_backups/<timestamp>
 robopilot generate --spec refined.yaml
 ```
 
@@ -147,6 +149,19 @@ writing, RoboPilot validates the plan, loads and validates the referenced spec,
 re-runs apply-preview, rejects stale plans, and refuses to apply if conflicts
 are present. It only writes files listed in the plan's create/update lists, and
 backs up existing files before update under `.robopilot_backups/<timestamp>/`.
+
+Rollback from a saved backup:
+
+```bash
+robopilot rollback --project outputs/demo_detector --backup outputs/demo_detector/.robopilot_backups/<timestamp>
+robopilot rollback --project outputs/demo_detector --backup outputs/demo_detector/.robopilot_backups/<timestamp> --confirm
+robopilot rollback --project outputs/demo_detector --backup outputs/demo_detector/.robopilot_backups/<timestamp> --confirm --json
+```
+
+`rollback` is dry-run by default. `--confirm` is required to restore files. It
+only restores files contained in a RoboPilot backup directory, preserves their
+relative paths, does not delete newly created files in this version, and does
+not execute ROS2, launch files, colcon, or generated Python code.
 
 Planner selection:
 
@@ -260,7 +275,7 @@ graph LR
 
 ## Project Status
 
-RoboPilot is an early v0.14.0 MVP focused on lightweight robotics developer workflows with offline defaults. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
+RoboPilot is an early v0.15.0 MVP focused on lightweight robotics developer workflows with offline defaults. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
 
 Implemented:
 
@@ -280,12 +295,14 @@ Implemented:
 - v0.12.0: Read-only Apply Preview
 - v0.13.0: Read-only Apply Plan Export
 - v0.14.0: Safe Apply from Plan
+- v0.15.0: Safe Apply Rollback
 
 Not included yet:
 
 - Real ROS2 runtime execution
 - LLM-generated project files or code
 - Unconfirmed automatic apply
+- Automatic deletion of files created by apply during rollback
 - RAG
 - Streamlit or Gradio UI
 - VSCode extension
@@ -295,7 +312,7 @@ Not included yet:
 
 Near-term roadmap:
 
-1. Hardening apply safety controls and conflict reporting
+1. Hardening apply and rollback safety controls
 2. Provider-backed ProjectSpec planning and refinement improvements
 3. Lightweight demo UI
 
@@ -338,6 +355,7 @@ robopilot/
 |       |-- apply/
 |       |-- apply_plan/
 |       |-- apply_preview/
+|       |-- rollback/
 |       |-- generator/
 |       |-- diff/
 |       |-- debugger/

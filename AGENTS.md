@@ -56,34 +56,37 @@ RoboPilot currently supports:
 15. Read-only apply preview.
 16. Read-only apply plan export.
 17. Safe apply from plan with dry-run default and backups.
-18. English and Chinese documentation.
-19. Pytest test coverage and GitHub Actions CI.
+18. Safe rollback from RoboPilot backup directories.
+19. English and Chinese documentation.
+20. Pytest test coverage and GitHub Actions CI.
 
 ## Current Priority
 
 The current priority is:
 
 ```txt
-v0.14.0 Apply from Plan
+v0.15.0 Apply Rollback
 ```
 
-The goal is to safely apply a previously exported apply plan with dry-run as the default.
+The goal is to safely restore files from a RoboPilot backup directory with dry-run as the default.
 
 Expected command:
 
 ```bash
-robopilot apply --plan apply_plan.yaml --confirm
+robopilot rollback --project outputs/demo_detector --backup outputs/demo_detector/.robopilot_backups/<timestamp> --confirm
 ```
 
-The apply layer should:
+The rollback layer should:
 
 - dry-run by default
-- require `--confirm` before writing files
-- validate the plan and referenced ProjectSpec
-- re-run apply-preview and reject stale plans
-- refuse conflicts
-- only write files listed in create/update lists
-- back up existing files before updates
+- require `--confirm` before restoring files
+- require the project path to exist
+- require the backup path to exist and be a directory
+- require the backup to be inside `.robopilot_backups`
+- refuse unsafe relative paths and path traversal
+- restore only files contained in the selected backup
+- preserve relative paths
+- not delete newly created files in this version
 
 The optional LLM planner must not run ROS2, launch files, colcon, or generated Python nodes. It must not modify files or generate arbitrary code directly.
 
@@ -297,6 +300,10 @@ robopilot apply-plan --spec refined.yaml --project outputs/demo_detector --outpu
 robopilot apply --plan apply_plan.yaml --confirm
 ```
 
+```bash
+robopilot rollback --project outputs/demo_detector --backup outputs/demo_detector/.robopilot_backups/<timestamp> --confirm
+```
+
 ## ProjectSpec Rules
 
 `ProjectSpec` is the central intermediate representation.
@@ -403,7 +410,7 @@ robopilot plan --name demo_detector --task "Create an object detection pipeline"
 Implement:
 
 ```txt
-v0.14.0 Apply from Plan
+v0.15.0 Apply Rollback
 ```
 
 The planner layer should continue to support:
@@ -465,5 +472,16 @@ The apply implementation should include:
 - conflict rejection
 - backup creation before updating existing files
 - strict create/update/keep/conflict boundaries
+
+The rollback implementation should include:
+
+- dry-run default
+- explicit `--confirm` for restores
+- project and backup path validation
+- `.robopilot_backups` location checks
+- unsafe relative path and path traversal protection
+- restore-only behavior for files contained in the backup
+- no deletion of newly created files
+- readable terminal output and stable JSON output
 
 Do not start broad LLM orchestration, direct LLM code generation, RAG, Streamlit UI, VSCode integration, real ROS2 runtime execution, `--apply`, automatic unconfirmed apply, or colcon integration until the spec-first workflow is stable.
