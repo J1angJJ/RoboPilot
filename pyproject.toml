@@ -1,6 +1,6 @@
 [project]
 name = "robopilot"
-version = "0.7.0"
+version = "0.8.0"
 description = "AI-native robotics development assistant for ROS-style workflows, debugging, and code generation."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -35,6 +35,9 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0.0"
+]
+llm = [
+    "openai>=1.0.0"
 ]
 
 [project.scripts]

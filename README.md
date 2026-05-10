@@ -6,12 +6,12 @@
 
 Lightweight offline developer tooling for ROS-style robotics workflows.
 
-RoboPilot helps robotics learners and developers scaffold ROS-style Python packages, analyze common robotics error logs, and turn simple software pipelines into Mermaid workflow diagrams. The current MVP is intentionally local, reproducible, and hardware-friendly: no ROS2 installation, GPU, Docker, OpenAI API, or heavy framework is required.
+RoboPilot helps robotics learners and developers scaffold ROS-style Python packages, analyze common robotics error logs, and turn simple software pipelines into Mermaid workflow diagrams. The default workflow is intentionally local, reproducible, and hardware-friendly: no ROS2 installation, GPU, Docker, OpenAI API, or heavy framework is required.
 
 ## Core Capabilities
 
 - `plan`: convert a robotics task into a readable `robopilot.yaml` ProjectSpec.
-- `plan --planner llm`: optional ProjectSpec-only LLM planner path for configured clients.
+- `plan --planner llm`: optional ProjectSpec-only OpenAI planner for configured environments.
 - `validate`: check a saved ProjectSpec before generation.
 - `generate`: create a ROS-style Python package from a task or a saved ProjectSpec.
 - `inspect`: statically inspect a generated or ROS-style project directory.
@@ -50,6 +50,12 @@ Install in editable mode:
 pip install -e ".[dev]"
 ```
 
+Optional LLM planning support:
+
+```bash
+pip install -e ".[dev,llm]"
+```
+
 Check the CLI:
 
 ```bash
@@ -77,13 +83,21 @@ Planner selection:
 ```bash
 robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner rule
 robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner llm
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner llm --model gpt-4.1-mini
 ```
 
 The default planner is `rule` and remains fully offline. The optional `llm`
-planner is ProjectSpec-only: it must return structured spec data, and RoboPilot
-validates that spec before generation. The current CLI does not configure a real
-LLM client by default, so `--planner llm` returns a clear configuration error
-unless a client is injected by integration code.
+planner reads `OPENAI_API_KEY` from the environment and uses
+`ROBOPILOT_LLM_MODEL` or `--model` for the model name. It is ProjectSpec-only:
+the model must return structured JSON or YAML, RoboPilot validates that spec
+before generation, and the model never writes generated files or code directly.
+
+Example environment file:
+
+```bash
+OPENAI_API_KEY=
+ROBOPILOT_LLM_MODEL=gpt-4.1-mini
+```
 
 Inspect a generated project:
 
@@ -176,7 +190,7 @@ graph LR
 
 ## Project Status
 
-RoboPilot is an early v0.7.0 MVP focused on offline, lightweight robotics developer workflows. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
+RoboPilot is an early v0.8.0 MVP focused on lightweight robotics developer workflows with offline defaults. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
 
 Implemented:
 
@@ -189,6 +203,7 @@ Implemented:
 - v0.5.0: Project Repair Suggestions
 - v0.6.0: Project Report Export
 - v0.7.0: Planner Interface and Optional LLM Planner
+- v0.8.0: Real OpenAI Provider Integration for ProjectSpec planning
 
 Not included yet:
 
@@ -203,7 +218,7 @@ Not included yet:
 
 Near-term roadmap:
 
-1. Hardening optional ProjectSpec-only LLM planning
+1. Hardening provider-backed ProjectSpec planning
 2. Deeper static reports and read-only repair guidance
 3. Lightweight demo UI
 

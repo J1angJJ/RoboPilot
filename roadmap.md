@@ -278,9 +278,9 @@ Expected behavior:
 
 This remains static and safe by default.
 
-## Current: v0.7.0 Planner Interface + Optional LLM Planner
+## Completed: v0.7.0 Planner Interface + Optional LLM Planner
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -334,7 +334,35 @@ src/robopilot/planner/
 └─ llm_planner.py
 ```
 
-## Future: v0.8.0 Web Demo
+## Current: v0.8.0 Real LLM Provider Integration
+
+Status: Current work
+
+Goal:
+
+Make the optional LLM planner usable with a real OpenAI provider while preserving the spec-first architecture.
+
+Commands:
+
+```bash
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner llm
+```
+
+```bash
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner llm --model gpt-4.1-mini
+```
+
+Requirements:
+
+- `rule` remains the default planner.
+- `OPENAI_API_KEY` is required only for real LLM planning.
+- `ROBOPILOT_LLM_MODEL` or `--model` selects the model.
+- LLM output must be ProjectSpec-compatible JSON or YAML.
+- ProjectSpec validation must run before generation.
+- The LLM must not generate project files or arbitrary code directly.
+- Tests must use fake or mocked provider responses.
+
+## Future: v0.9.0 Web Demo
 
 Status: Planned
 
@@ -409,9 +437,9 @@ Priority order:
 ## Current Recommended Development Path
 
 ```txt
-v0.7.0 Planner Interface + Optional LLM Planner
+v0.8.0 Real LLM Provider Integration
         ↓
-v0.8.0 Web Demo
+v0.9.0 Web Demo
         ↓
 VSCode Integration
 ```

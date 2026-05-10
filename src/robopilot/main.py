@@ -17,7 +17,9 @@ from robopilot.generator.project_generator import (
 from robopilot.graph.mermaid_generator import PipelineParseError, generate_mermaid
 from robopilot.inspector.project_inspector import ProjectInspection, inspect_project
 from robopilot.planner import (
+    LLMProviderConfig,
     LLMPlanner,
+    OpenAIPlannerClient,
     PlannerConfigurationError,
     PlannerError,
     RuleBasedPlanner,
@@ -120,6 +122,13 @@ def plan(
             help="Planner backend to use: rule or llm.",
         ),
     ] = "rule",
+    model: Annotated[
+        str | None,
+        typer.Option(
+            "--model",
+            help="Optional model name for --planner llm.",
+        ),
+    ] = None,
     output: Annotated[
         Path | None,
         typer.Option("--output", "-o", help="Optional path to write the ProjectSpec."),
@@ -127,7 +136,7 @@ def plan(
 ) -> None:
     """Create and print a robopilot.yaml ProjectSpec without generating files."""
     try:
-        selected_planner = _build_planner(planner)
+        selected_planner = _build_planner(planner, model=model)
         project_spec = selected_planner.plan(package_name=name, task=task)
     except (PlannerError, ValueError) as exc:
         console.print(f"[red]Error:[/red] {exc}")
@@ -141,12 +150,17 @@ def plan(
         console.print(f"[green]Wrote ProjectSpec to[/green] {output}")
 
 
-def _build_planner(planner_name: str) -> RuleBasedPlanner | LLMPlanner:
+def _build_planner(
+    planner_name: str,
+    *,
+    model: str | None = None,
+) -> RuleBasedPlanner | LLMPlanner:
     normalized = planner_name.strip().lower()
     if normalized == "rule":
         return RuleBasedPlanner()
     if normalized == "llm":
-        return LLMPlanner()
+        config = LLMProviderConfig.from_env(model_override=model)
+        return LLMPlanner(client=OpenAIPlannerClient(config))
     raise PlannerConfigurationError(
         f"Unknown planner: {planner_name}. Use 'rule' or 'llm'."
     )

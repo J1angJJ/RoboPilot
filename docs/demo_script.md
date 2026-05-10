@@ -60,14 +60,17 @@ Planner selection:
 ```bash
 robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner rule
 robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner llm
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner llm --model gpt-4.1-mini
 ```
 
 Point out:
 
 - `--planner rule` is the default and remains fully offline.
-- `--planner llm` is optional and ProjectSpec-only.
-- The LLM planner must return structured spec data; RoboPilot validates it before generation.
-- The CLI returns a clear configuration error if no LLM client is configured.
+- `--planner llm` is optional, provider-backed, and ProjectSpec-only.
+- Real LLM planning requires `OPENAI_API_KEY`.
+- `ROBOPILOT_LLM_MODEL` or `--model` controls the model name.
+- The provider must return structured JSON or YAML; RoboPilot validates it before generation.
+- The LLM never writes project files or generated code directly.
 
 ## 4. Demo: Generate a ROS-style Package
 
@@ -256,9 +259,10 @@ Current implemented MVPs:
 - v0.5.0: Project Repair Suggestions
 - v0.6.0: Project Report Export
 - v0.7.0: Planner Interface and Optional LLM Planner
+- v0.8.0: Real OpenAI Provider Integration
 
 Next planned work:
 
-- Hardening optional ProjectSpec-only LLM planning
+- Hardening provider-backed ProjectSpec planning
 - Deeper static reports and read-only repair suggestions
 - Lightweight demo UI

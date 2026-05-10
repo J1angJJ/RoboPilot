@@ -50,7 +50,7 @@ RoboPilot currently supports:
 9. Project inspection for generated and ROS-style projects.
 10. Project repair suggestions based on inspection issues.
 11. Static Markdown project reports.
-12. Planner interface with offline rule-based planning and optional ProjectSpec-only LLM planning.
+12. Planner interface with offline rule-based planning and optional OpenAI-backed ProjectSpec-only LLM planning.
 13. English and Chinese documentation.
 14. Pytest test coverage and GitHub Actions CI.
 
@@ -59,23 +59,24 @@ RoboPilot currently supports:
 The current priority is:
 
 ```txt
-v0.7.0 Planner Interface + Optional LLM Planner
+v0.8.0 Real LLM Provider Integration
 ```
 
-The goal is to refactor planning behind a planner interface and add an optional LLM planner path that produces ProjectSpec only.
+The goal is to make the optional LLM planner usable with a real provider while preserving spec-first generation.
 
 Expected command:
 
 ```bash
 robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner rule
-robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner llm
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner llm --model gpt-4.1-mini
 ```
 
 The planner layer should:
 
 - keep `rule` as the default fully offline planner
-- allow an optional injectable LLM client for tests or future integrations
-- require LLM output to be ProjectSpec-compatible structured data
+- read `OPENAI_API_KEY` only when `--planner llm` is requested
+- allow `ROBOPILOT_LLM_MODEL` or `--model` model selection
+- require LLM output to be ProjectSpec-compatible JSON or YAML
 - validate ProjectSpec before generation
 - never let the LLM write code or project files directly
 
@@ -373,7 +374,7 @@ robopilot plan --name demo_detector --task "Create an object detection pipeline"
 Implement:
 
 ```txt
-v0.7.0 Planner Interface + Optional LLM Planner
+v0.8.0 Real LLM Provider Integration
 ```
 
 The planner layer should support:
@@ -385,7 +386,7 @@ robopilot plan --name demo_detector --task "Create an object detection pipeline"
 Optional LLM planner selection should also be supported:
 
 ```bash
-robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner llm
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --planner llm --model gpt-4.1-mini
 ```
 
 The planner implementation should include:
@@ -393,6 +394,8 @@ The planner implementation should include:
 - `Planner` interface
 - `RuleBasedPlanner`
 - optional `LLMPlanner`
+- OpenAI provider client
+- provider config from environment variables
 - prompt template for structured ProjectSpec output
 - tests with a fake LLM client
 - validation before generation

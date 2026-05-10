@@ -24,3 +24,7 @@ class PlannerConfigurationError(PlannerError):
 
 class PlannerValidationError(PlannerError):
     """Raised when a planner returns an invalid ProjectSpec."""
+
+
+class PlannerProviderError(PlannerError):
+    """Raised when a configured LLM provider call fails."""

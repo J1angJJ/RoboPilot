@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.8.0 real OpenAI provider integration for optional ProjectSpec-only planning.
+- Provider configuration from `OPENAI_API_KEY` and `ROBOPILOT_LLM_MODEL`.
+- `robopilot plan --planner llm --model ...` model override support.
+- Optional `llm` extra for installing the official OpenAI Python package.
+- OpenAI provider wrapper with clear missing-key, missing-SDK, and provider-call errors.
+- Parsing of LLM ProjectSpec output from JSON or RoboPilot's limited YAML schema.
+- Minimal `.env.example` with placeholder LLM environment variables.
 - v0.7.0 planner interface for ProjectSpec generation.
 - Rule-based planner wrapper for the existing offline task classification flow.
 - Optional ProjectSpec-only LLM planner with injectable client support for tests and integrations.

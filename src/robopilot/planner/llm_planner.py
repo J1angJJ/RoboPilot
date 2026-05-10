@@ -8,6 +8,7 @@ from typing import Any, Protocol
 from robopilot.generator.project_spec import NodeSpec, ProjectSpec, TopicSpec
 from robopilot.planner.base import PlannerConfigurationError, PlannerValidationError
 from robopilot.planner.prompts import build_project_spec_prompt
+from robopilot.spec.io import spec_from_yaml
 from robopilot.spec.validator import validate_spec
 
 
@@ -46,12 +47,16 @@ class LLMPlanner:
 
 def _parse_project_spec(raw_response: str | dict[str, Any]) -> ProjectSpec:
     if isinstance(raw_response, str):
+        cleaned_response = _strip_code_fence(raw_response.strip())
         try:
-            data = json.loads(raw_response)
+            data = json.loads(cleaned_response)
         except json.JSONDecodeError as exc:
-            raise PlannerValidationError(
-                "LLM planner returned non-JSON structured output."
-            ) from exc
+            try:
+                return spec_from_yaml(cleaned_response)
+            except ValueError as yaml_exc:
+                raise PlannerValidationError(
+                    "LLM planner returned output that is not valid ProjectSpec JSON or YAML."
+                ) from yaml_exc
     elif isinstance(raw_response, dict):
         data = raw_response
     else:
@@ -62,6 +67,15 @@ def _parse_project_spec(raw_response: str | dict[str, Any]) -> ProjectSpec:
     if not isinstance(data, dict):
         raise PlannerValidationError("LLM planner output must be a mapping.")
     return _project_spec_from_mapping(data)
+
+
+def _strip_code_fence(text: str) -> str:
+    if not text.startswith("```"):
+        return text
+    lines = text.splitlines()
+    if len(lines) >= 2 and lines[-1].strip() == "```":
+        return "\n".join(lines[1:-1]).strip()
+    return text
 
 
 def _project_spec_from_mapping(data: dict[str, Any]) -> ProjectSpec:
