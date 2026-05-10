@@ -10,6 +10,7 @@ from robopilot.generator import templates
 from robopilot.generator.project_spec import ProjectSpec
 from robopilot.generator.task_classifier import classify_task
 from robopilot.generator.template_registry import build_project_spec
+from robopilot.spec.validator import validate_spec
 from robopilot.utils.file_ops import ensure_new_directory, write_text_file
 
 
@@ -34,20 +35,42 @@ def generate_project(
     overwrite: bool = False,
 ) -> GeneratedProject:
     """Generate an offline ROS-style Python package skeleton."""
+    spec = create_project_spec(name=name, task=task)
+    return generate_project_from_spec(
+        spec=spec,
+        output_root=output_root,
+        overwrite=overwrite,
+    )
+
+
+def create_project_spec(*, name: str, task: str) -> ProjectSpec:
+    """Create a ProjectSpec from a natural language robotics task."""
     package_name = _validate_package_name(name)
     clean_task = task.strip()
     if not clean_task:
         raise ValueError("Task description cannot be empty.")
 
     selected_template = classify_task(clean_task)
-    spec = build_project_spec(
+    return build_project_spec(
         package_name=package_name,
         task=clean_task,
         selected_template=selected_template,
     )
 
+
+def generate_project_from_spec(
+    *,
+    spec: ProjectSpec,
+    output_root: Path | str = Path("outputs"),
+    overwrite: bool = False,
+) -> GeneratedProject:
+    """Generate an offline ROS-style Python package skeleton from a ProjectSpec."""
+    validation = validate_spec(spec)
+    if not validation.is_valid:
+        raise ValueError("Invalid ProjectSpec: " + "; ".join(validation.errors))
+
     root = Path(output_root)
-    project_dir = root / package_name
+    project_dir = root / spec.package_name
     ensure_new_directory(project_dir, overwrite=overwrite)
 
     files = _render_files(spec)
@@ -58,7 +81,7 @@ def generate_project(
         written_files.append(target_path)
 
     return GeneratedProject(
-        package_name=package_name,
+        package_name=spec.package_name,
         output_dir=project_dir,
         files=tuple(written_files),
         selected_template=spec.selected_template,

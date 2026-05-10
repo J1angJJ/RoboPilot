@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.3.0 spec-first generation workflow.
+- `robopilot plan` command for creating and printing `robopilot.yaml` specs.
+- `robopilot validate --spec` command for checking ProjectSpec files before generation.
+- `robopilot generate --spec` support for generating packages from saved specs.
+- Lightweight built-in ProjectSpec YAML serialization and validation.
 - v0.2.0 prompt-driven template selection for `robopilot generate`.
 - Offline task classification for `camera_subscriber`, `object_detection`,
   `velocity_controller`, `perception_pipeline`, and `generic_node` templates.

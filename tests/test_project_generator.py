@@ -51,7 +51,9 @@ def test_generator_writes_robopilot_metadata(tmp_path: Path) -> None:
     assert "package_name: demo_detector" in content
     assert "selected_template: object_detection" in content
     assert "generated_by: RoboPilot" in content
-    assert "  - Uses placeholder bounding box data" in content
+    assert "nodes:" in content
+    assert "topics:" in content
+    assert "  - \"Uses placeholder bounding box data" in content
 
 
 def test_generator_does_not_overwrite_existing_directory_by_default(

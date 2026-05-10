@@ -10,7 +10,9 @@ RoboPilot helps robotics learners and developers scaffold ROS-style Python packa
 
 ## Core Capabilities
 
-- `generate`: create a ROS-style Python package skeleton from a natural language task description, with offline template selection.
+- `plan`: convert a robotics task into a readable `robopilot.yaml` ProjectSpec.
+- `validate`: check a saved ProjectSpec before generation.
+- `generate`: create a ROS-style Python package from a task or a saved ProjectSpec.
 - `debug`: analyze robotics-related error logs with offline rule-based diagnostics.
 - `graph`: convert arrow-based robotics pipelines into Mermaid diagrams.
 
@@ -56,6 +58,14 @@ Generate a ROS-style package:
 
 ```bash
 robopilot generate --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes."
+```
+
+Spec-first workflow:
+
+```bash
+robopilot plan --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes." --output robopilot.yaml
+robopilot validate --spec robopilot.yaml
+robopilot generate --spec robopilot.yaml
 ```
 
 Generate other template types:
@@ -125,7 +135,7 @@ graph LR
 
 ## Project Status
 
-RoboPilot is an early v0.2.0 MVP focused on offline, lightweight robotics developer workflows. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
+RoboPilot is an early v0.3.0 MVP focused on offline, lightweight robotics developer workflows. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
 
 Implemented:
 
@@ -133,6 +143,7 @@ Implemented:
 - MVP 0.2: Robotics Error Log Debugger
 - MVP 0.3: Workflow Diagram Generator
 - MVP 0.4: Prompt-driven Template Selection
+- MVP 0.5: Spec-first Generation
 
 Not included yet:
 
@@ -147,8 +158,8 @@ Not included yet:
 
 Near-term roadmap:
 
-1. MVP 0.5: Optional LLM-assisted generation while keeping offline mode
-2. MVP 0.6: Lightweight demo UI
+1. Optional LLM-assisted generation while keeping offline mode
+2. Lightweight demo UI
 3. Project inspection for ROS-style workspaces
 
 Longer-term direction:

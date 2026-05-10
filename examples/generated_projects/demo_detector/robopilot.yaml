@@ -2,6 +2,26 @@ package_name: demo_detector
 task: "Create an object detection node subscribing to camera images and publishing bounding boxes."
 selected_template: object_detection
 generated_by: RoboPilot
+nodes:
+  - name: detector_node
+    executable: detector_node
+    module: detector_node
+    class_name: DetectorNode
+    file_name: detector_node.py
+    description: "ROS-style object detection node skeleton."
+topics:
+  - name: /camera/image_raw
+    direction: subscribe
+    message_type: sensor_msgs/Image
+    description: "Input image stream for detection."
+  - name: /detections/bounding_boxes
+    direction: publish
+    message_type: std_msgs/String
+    description: "Placeholder bounding box detections."
+config_files:
+  - config/params.yaml
+launch_files:
+  - launch/demo_detector.launch.py
 notes:
-  - Uses placeholder bounding box data for offline inspection.
-  - Designed for detect, object, YOLO, bbox, and bounding box tasks.
+  - "Uses placeholder bounding box data for offline inspection."
+  - "Designed for detect, object, YOLO, bbox, and bounding box tasks."

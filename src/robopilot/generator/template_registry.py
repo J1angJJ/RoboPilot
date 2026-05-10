@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from robopilot.generator.project_spec import ProjectSpec
+from robopilot.generator.project_spec import NodeSpec, ProjectSpec, TopicSpec
 from robopilot.generator.task_classifier import (
     CAMERA_SUBSCRIBER,
     GENERIC_NODE,
@@ -24,6 +24,7 @@ class TemplateDefinition:
     node_name: str
     class_name: str
     description: str
+    topics: tuple[TopicSpec, ...]
     notes: tuple[str, ...]
 
 
@@ -35,6 +36,14 @@ TEMPLATE_REGISTRY: dict[str, TemplateDefinition] = {
         node_name="camera_subscriber_node",
         class_name="CameraSubscriberNode",
         description="ROS-style camera subscriber node skeleton.",
+        topics=(
+            TopicSpec(
+                name="/camera/image_raw",
+                direction="subscribe",
+                message_type="sensor_msgs/Image",
+                description="Input camera image stream.",
+            ),
+        ),
         notes=(
             "Subscribes to an image-like topic in ROS2-style pseudocode.",
             "Designed for camera, webcam, video, and frame-processing tasks.",
@@ -47,6 +56,20 @@ TEMPLATE_REGISTRY: dict[str, TemplateDefinition] = {
         node_name="detector_node",
         class_name="DetectorNode",
         description="ROS-style object detection node skeleton.",
+        topics=(
+            TopicSpec(
+                name="/camera/image_raw",
+                direction="subscribe",
+                message_type="sensor_msgs/Image",
+                description="Input image stream for detection.",
+            ),
+            TopicSpec(
+                name="/detections/bounding_boxes",
+                direction="publish",
+                message_type="std_msgs/String",
+                description="Placeholder bounding box detections.",
+            ),
+        ),
         notes=(
             "Uses placeholder bounding box data for offline inspection.",
             "Designed for detect, object, YOLO, bbox, and bounding box tasks.",
@@ -59,6 +82,14 @@ TEMPLATE_REGISTRY: dict[str, TemplateDefinition] = {
         node_name="velocity_controller_node",
         class_name="VelocityControllerNode",
         description="ROS-style velocity controller node skeleton.",
+        topics=(
+            TopicSpec(
+                name="/cmd_vel",
+                direction="publish",
+                message_type="geometry_msgs/Twist",
+                description="Velocity command output.",
+            ),
+        ),
         notes=(
             "Shows cmd_vel-style command publishing in offline pseudocode.",
             "Designed for velocity, controller, control, and motion tasks.",
@@ -71,6 +102,26 @@ TEMPLATE_REGISTRY: dict[str, TemplateDefinition] = {
         node_name="perception_pipeline_node",
         class_name="PerceptionPipelineNode",
         description="ROS-style perception pipeline node skeleton.",
+        topics=(
+            TopicSpec(
+                name="/camera/image_raw",
+                direction="subscribe",
+                message_type="sensor_msgs/Image",
+                description="Input camera stream.",
+            ),
+            TopicSpec(
+                name="/detections/bounding_boxes",
+                direction="publish",
+                message_type="std_msgs/String",
+                description="Intermediate detector output.",
+            ),
+            TopicSpec(
+                name="/tracks",
+                direction="publish",
+                message_type="std_msgs/String",
+                description="Placeholder tracking output.",
+            ),
+        ),
         notes=(
             "Represents camera-to-detector-to-tracker workflow stages.",
             "Designed for pipeline, tracker, tracking, and perception workflow tasks.",
@@ -83,6 +134,7 @@ TEMPLATE_REGISTRY: dict[str, TemplateDefinition] = {
         node_name="generic_node",
         class_name="GenericNode",
         description="Generic ROS-style Python node skeleton.",
+        topics=(),
         notes=(
             "Fallback template for tasks that do not match a specific rule.",
             "Keeps the generated project useful without guessing hardware behavior.",
@@ -104,15 +156,22 @@ def build_project_spec(
 ) -> ProjectSpec:
     """Build a concrete project specification from a selected template."""
     template = get_template_definition(selected_template)
+    node = NodeSpec(
+        name=template.node_name,
+        executable=template.executable_name,
+        module=template.node_file_name.removesuffix(".py"),
+        class_name=template.class_name,
+        file_name=template.node_file_name,
+        description=template.description,
+    )
     return ProjectSpec(
         package_name=package_name,
         task=task,
         selected_template=template.template_type,
-        node_file_name=template.node_file_name,
-        executable_name=template.executable_name,
-        node_name=template.node_name,
-        class_name=template.class_name,
-        description=template.description,
+        nodes=(node,),
+        topics=template.topics,
+        config_files=("config/params.yaml",),
+        launch_files=(f"launch/{package_name}.launch.py",),
+        generated_by="RoboPilot",
         notes=template.notes,
     )
-

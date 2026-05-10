@@ -15,6 +15,8 @@ Key message:
 
 Current core commands:
 
+- `robopilot plan`
+- `robopilot validate`
 - `robopilot generate`
 - `robopilot debug`
 - `robopilot graph`
@@ -30,12 +32,38 @@ Expected result:
 
 The CLI lists the available commands, including `generate`, `debug`, and `graph`.
 
-## 3. Demo: Generate a ROS-style Package
+## 3. Demo: Plan a ProjectSpec
+
+Run:
+
+```bash
+robopilot plan --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes." --output robopilot.yaml
+```
+
+Point out:
+
+- RoboPilot first converts the task into a structured ProjectSpec.
+- The spec records the package name, selected template, nodes, topics, config files, launch files, and notes.
+- The spec is saved as `robopilot.yaml` and can be reviewed before generation.
+
+Validate the spec:
+
+```bash
+robopilot validate --spec robopilot.yaml
+```
+
+## 4. Demo: Generate a ROS-style Package
 
 Run:
 
 ```bash
 robopilot generate --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes."
+```
+
+Spec-first generation:
+
+```bash
+robopilot generate --spec robopilot.yaml
 ```
 
 Point out:
@@ -68,7 +96,7 @@ Static showcase version:
 examples/generated_projects/demo_detector/
 ```
 
-## 4. Demo: Analyze an Error Log
+## 5. Demo: Analyze an Error Log
 
 Run:
 
@@ -90,7 +118,7 @@ Inline mode:
 robopilot debug --text "ModuleNotFoundError: No module named 'cv_bridge'"
 ```
 
-## 5. Demo: Generate a Workflow Graph
+## 6. Demo: Generate a Workflow Graph
 
 Run:
 
@@ -114,16 +142,17 @@ Write to a file:
 robopilot graph --pipeline "camera -> detector -> tracker" --output examples/graphs/demo_pipeline.mmd
 ```
 
-## 6. Show Example Assets
+## 7. Show Example Assets
 
 Useful files to open during a demo:
 
 - `examples/prompts/demo_detector.txt`
+- `examples/generated_projects/demo_detector/robopilot.yaml`
 - `examples/generated_projects/demo_detector/demo_detector/detector_node.py`
 - `examples/error_logs/cv_bridge_missing.txt`
 - `examples/graphs/demo_pipeline.mmd`
 
-## 7. Run Tests
+## 8. Run Tests
 
 ```bash
 pytest
@@ -136,13 +165,15 @@ New-Item -ItemType Directory -Path .pytest_tmp -Force
 python -m pytest --basetemp=".pytest_tmp" -p no:cacheprovider
 ```
 
-## 8. Close with Roadmap
+## 9. Close with Roadmap
 
 Current implemented MVPs:
 
 - MVP 0.1: Offline ROS-style Package Generator
 - MVP 0.2: Robotics Error Log Debugger
 - MVP 0.3: Workflow Diagram Generator
+- MVP 0.4: Prompt-driven Template Selection
+- MVP 0.5: Spec-first Generation
 
 Next planned work:
 

@@ -9,8 +9,14 @@ from rich.panel import Panel
 from rich.table import Table
 
 from robopilot.debugger.log_analyzer import LogAnalysis, analyze_log
-from robopilot.generator.project_generator import generate_project
+from robopilot.generator.project_generator import (
+    create_project_spec,
+    generate_project,
+    generate_project_from_spec,
+)
 from robopilot.graph.mermaid_generator import PipelineParseError, generate_mermaid
+from robopilot.spec.io import load_spec, spec_to_yaml, write_spec
+from robopilot.spec.validator import validate_spec
 from robopilot.utils.file_ops import OutputPathExistsError
 
 
@@ -28,11 +34,18 @@ def main() -> None:
 
 @app.command()
 def generate(
-    name: Annotated[str, typer.Option("--name", "-n", help="Package name to create.")],
+    name: Annotated[
+        str | None,
+        typer.Option("--name", "-n", help="Package name to create."),
+    ] = None,
     task: Annotated[
-        str,
+        str | None,
         typer.Option("--task", "-t", help="Natural language robotics task."),
-    ],
+    ] = None,
+    spec: Annotated[
+        Path | None,
+        typer.Option("--spec", "-s", help="Path to a robopilot.yaml ProjectSpec."),
+    ] = None,
     output_root: Annotated[
         Path,
         typer.Option(
@@ -51,12 +64,24 @@ def generate(
 ) -> None:
     """Generate an offline ROS-style Python package skeleton."""
     try:
-        project = generate_project(
-            name=name,
-            task=task,
-            output_root=output_root,
-            overwrite=overwrite,
-        )
+        if spec is not None:
+            if name is not None or task is not None:
+                raise ValueError("Use either --spec or --name/--task, not both.")
+            project_spec = load_spec(spec)
+            project = generate_project_from_spec(
+                spec=project_spec,
+                output_root=output_root,
+                overwrite=overwrite,
+            )
+        else:
+            if name is None or task is None:
+                raise ValueError("Provide --name and --task, or provide --spec.")
+            project = generate_project(
+                name=name,
+                task=task,
+                output_root=output_root,
+                overwrite=overwrite,
+            )
     except (OutputPathExistsError, ValueError) as exc:
         console.print(f"[red]Error:[/red] {exc}")
         raise typer.Exit(code=1) from exc
@@ -70,6 +95,58 @@ def generate(
     for file_path in project.files:
         table.add_row(str(file_path.relative_to(project.output_dir)))
     console.print(table)
+
+
+@app.command()
+def plan(
+    name: Annotated[str, typer.Option("--name", "-n", help="Package name to plan.")],
+    task: Annotated[
+        str,
+        typer.Option("--task", "-t", help="Natural language robotics task."),
+    ],
+    output: Annotated[
+        Path | None,
+        typer.Option("--output", "-o", help="Optional path to write the ProjectSpec."),
+    ] = None,
+) -> None:
+    """Create and print a robopilot.yaml ProjectSpec without generating files."""
+    try:
+        project_spec = create_project_spec(name=name, task=task)
+    except ValueError as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    yaml_text = spec_to_yaml(project_spec)
+    console.print(yaml_text)
+
+    if output is not None:
+        write_spec(project_spec, output)
+        console.print(f"[green]Wrote ProjectSpec to[/green] {output}")
+
+
+@app.command()
+def validate(
+    spec: Annotated[
+        Path,
+        typer.Option("--spec", "-s", help="Path to a robopilot.yaml ProjectSpec."),
+    ],
+) -> None:
+    """Validate a robopilot.yaml ProjectSpec."""
+    try:
+        project_spec = load_spec(spec)
+        result = validate_spec(project_spec)
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Invalid ProjectSpec:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    if result.is_valid:
+        console.print(f"[green]Valid ProjectSpec:[/green] {spec}")
+        return
+
+    console.print(f"[red]Invalid ProjectSpec:[/red] {spec}")
+    for error in result.errors:
+        console.print(f"- {error}")
+    raise typer.Exit(code=1)
 
 
 @app.command()

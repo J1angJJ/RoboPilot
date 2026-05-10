@@ -12,6 +12,7 @@ from robopilot.generator.task_classifier import (
     PERCEPTION_PIPELINE,
     VELOCITY_CONTROLLER,
 )
+from robopilot.spec.io import spec_to_yaml
 
 
 def package_xml(spec: ProjectSpec) -> str:
@@ -21,7 +22,7 @@ def package_xml(spec: ProjectSpec) -> str:
         <?xml version="1.0"?>
         <package format="3">
           <name>{spec.package_name}</name>
-          <version>0.2.0</version>
+          <version>0.3.0</version>
           <description>{spec.description}</description>
           <maintainer email="developer@example.com">RoboPilot User</maintainer>
           <license>MIT</license>
@@ -52,7 +53,7 @@ def setup_py(spec: ProjectSpec) -> str:
 
         setup(
             name=package_name,
-            version="0.2.0",
+            version="0.3.0",
             packages=find_packages(exclude=["test"]),
             data_files=[
                 (f"share/{{package_name}}", ["package.xml", "robopilot.yaml"]),
@@ -178,15 +179,7 @@ def params_yaml(spec: ProjectSpec) -> str:
 
 def robopilot_yaml(spec: ProjectSpec) -> str:
     """Render RoboPilot generation metadata."""
-    lines = [
-        f"package_name: {spec.package_name}",
-        f'task: "{_yaml_quote(spec.task)}"',
-        f"selected_template: {spec.selected_template}",
-        "generated_by: RoboPilot",
-        "notes:",
-    ]
-    lines.extend(f"  - {note}" for note in spec.notes)
-    return "\n".join(lines) + "\n"
+    return spec_to_yaml(spec)
 
 
 def node_file(spec: ProjectSpec) -> str:
@@ -546,9 +539,5 @@ def _generic_params(spec: ProjectSpec) -> str:
           enabled: true
           update_rate_hz: 10
     """
-
-
-def _yaml_quote(value: str) -> str:
-    return value.replace("\\", "\\\\").replace('"', '\\"')
 
 
