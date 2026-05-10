@@ -1,0 +1,7 @@
+package_name: demo_detector
+task: "Create an object detection node subscribing to camera images and publishing bounding boxes."
+selected_template: object_detection
+generated_by: RoboPilot
+notes:
+  - Uses placeholder bounding box data for offline inspection.
+  - Designed for detect, object, YOLO, bbox, and bounding box tasks.

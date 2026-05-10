@@ -63,6 +63,7 @@ def generate(
 
     console.print(f"[green]Generated[/green] {project.package_name}")
     console.print(f"Output: [bold]{project.output_dir}[/bold]")
+    console.print(f"Selected template: [bold]{project.selected_template}[/bold]")
 
     table = Table(title="Created files")
     table.add_column("Path", style="cyan")

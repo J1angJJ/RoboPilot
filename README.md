@@ -10,7 +10,7 @@ RoboPilot helps robotics learners and developers scaffold ROS-style Python packa
 
 ## Core Capabilities
 
-- `generate`: create a ROS-style Python package skeleton from a natural language task description.
+- `generate`: create a ROS-style Python package skeleton from a natural language task description, with offline template selection.
 - `debug`: analyze robotics-related error logs with offline rule-based diagnostics.
 - `graph`: convert arrow-based robotics pipelines into Mermaid diagrams.
 
@@ -58,6 +58,15 @@ Generate a ROS-style package:
 robopilot generate --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes."
 ```
 
+Generate other template types:
+
+```bash
+robopilot generate --name camera_reader --task "Create a camera subscriber for webcam frames."
+robopilot generate --name base_controller --task "Create a velocity controller publishing cmd_vel motion commands."
+robopilot generate --name perception_stack --task "Create a camera -> detector -> tracker perception workflow."
+robopilot generate --name helper_node --task "Create a simple heartbeat node."
+```
+
 Analyze a robotics error log:
 
 ```bash
@@ -96,6 +105,7 @@ examples/generated_projects/demo_detector/
 |-- setup.py
 |-- setup.cfg
 |-- README.md
+|-- robopilot.yaml
 |-- launch/
 |   `-- demo_detector.launch.py
 |-- config/
@@ -115,13 +125,14 @@ graph LR
 
 ## Project Status
 
-RoboPilot is an early v0.1.0 MVP focused on offline, lightweight robotics developer workflows. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
+RoboPilot is an early v0.2.0 MVP focused on offline, lightweight robotics developer workflows. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
 
 Implemented:
 
 - MVP 0.1: Offline ROS-style Package Generator
 - MVP 0.2: Robotics Error Log Debugger
 - MVP 0.3: Workflow Diagram Generator
+- MVP 0.4: Prompt-driven Template Selection
 
 Not included yet:
 
@@ -136,9 +147,9 @@ Not included yet:
 
 Near-term roadmap:
 
-1. MVP 0.4: Prompt-driven template selection
-2. MVP 0.5: Optional LLM-assisted generation while keeping offline mode
-3. MVP 0.6: Lightweight demo UI
+1. MVP 0.5: Optional LLM-assisted generation while keeping offline mode
+2. MVP 0.6: Lightweight demo UI
+3. Project inspection for ROS-style workspaces
 
 Longer-term direction:
 

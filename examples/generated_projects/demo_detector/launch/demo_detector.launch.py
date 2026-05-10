@@ -1,8 +1,8 @@
 """ROS2-style launch pseudocode for demo_detector."""
 
 # This file mirrors a common ROS2 launch structure.
-# It is generated for learning and planning; RoboPilot MVP does not
-# require launch_ros or a ROS2 runtime to be installed.
+# It is generated for learning and planning; RoboPilot does not require
+# launch_ros or a ROS2 runtime to be installed.
 
 
 def generate_launch_description():
@@ -13,6 +13,7 @@ def generate_launch_description():
         return {
             "package": "demo_detector",
             "node": "detector_node",
+            "selected_template": "object_detection",
             "note": "ROS2 launch modules are not installed; this is pseudocode.",
         }
 

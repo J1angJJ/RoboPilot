@@ -7,10 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Planned
+### Added
 
-- Improve offline template selection for generated ROS-style packages.
-- Keep offline mode as the default while exploring optional AI-assisted workflows.
+- v0.2.0 prompt-driven template selection for `robopilot generate`.
+- Offline task classification for `camera_subscriber`, `object_detection`,
+  `velocity_controller`, `perception_pipeline`, and `generic_node` templates.
+- Generated `robopilot.yaml` metadata with package name, task, selected template,
+  generator name, and notes.
+- Template registry and project specification layer for deterministic generation.
 
 ## [0.1.0] - 2026-05-09
 
@@ -24,4 +28,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Static generated example project for GitHub showcase demos.
 - Example prompts, error logs, and Mermaid graph assets.
 - Pytest coverage for generator, debugger, and graph modules.
-

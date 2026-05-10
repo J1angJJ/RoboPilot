@@ -52,6 +52,7 @@ outputs/demo_detector/
 |-- setup.py
 |-- setup.cfg
 |-- README.md
+|-- robopilot.yaml
 |-- launch/
 |   `-- demo_detector.launch.py
 |-- config/
