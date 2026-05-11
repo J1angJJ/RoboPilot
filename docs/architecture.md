@@ -103,6 +103,7 @@ ROS1-to-ROS2 migration support is currently planning and preview only:
 - `migrate-plan-validate` checks plan shape and supported target values.
 - `migrate-plan-diff` compares two migration plan revisions.
 - `migrate-preview` turns a plan into conservative file-level preview categories.
+- `migrate-scaffold-preview` turns a plan into a read-only ROS2 target scaffold preview for future generation.
 
 Migration modules do not generate migrated files, modify the source project, or run ROS tooling.
 

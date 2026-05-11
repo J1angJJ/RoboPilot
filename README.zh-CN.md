@@ -95,6 +95,7 @@ ROS1 到 ROS2 迁移规划：
 robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.yaml
 robopilot migrate-plan-validate --plan migration_plan.yaml
 robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_package
+robopilot migrate-scaffold-preview --plan migration_plan.yaml
 ```
 
 ## 文档
@@ -140,7 +141,7 @@ examples/generated_projects/demo_detector/
 
 ## 项目状态
 
-当前版本线：`v1.6.0`。
+当前版本线：`v1.7.0`。
 
 RoboPilot 的 v1 基线仍然是不依赖 ROS 的静态工程工作流：
 
@@ -150,6 +151,7 @@ plan -> refine -> diff -> validate -> generate
       -> inspect -> repair-suggest -> report
       -> detect -> inspect-ros1 -> inspect-ros2 -> deps
       -> migrate-plan -> migrate-plan-validate -> migrate-plan-diff -> migrate-preview
+      -> migrate-scaffold-preview
 ```
 
 CLI 仍是主要用户界面；Python API、JSON contracts、增强的依赖分析器和 VSCode extension MVP 用于后续集成。

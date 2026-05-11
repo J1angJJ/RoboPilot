@@ -104,6 +104,7 @@ ROS1 to ROS2 migration planning:
 robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.yaml
 robopilot migrate-plan-validate --plan migration_plan.yaml
 robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_package
+robopilot migrate-scaffold-preview --plan migration_plan.yaml
 ```
 
 ## Documentation
@@ -151,7 +152,7 @@ Transient generated projects should go under `outputs/`, which is intentionally 
 
 ## Project Status
 
-Current release line: `v1.6.0`.
+Current release line: `v1.7.0`.
 
 RoboPilot's no-ROS-required static engineering workflow remains the stable v1 baseline:
 
@@ -161,6 +162,7 @@ plan -> refine -> diff -> validate -> generate
       -> inspect -> repair-suggest -> report
       -> detect -> inspect-ros1 -> inspect-ros2 -> deps
       -> migrate-plan -> migrate-plan-validate -> migrate-plan-diff -> migrate-preview
+      -> migrate-scaffold-preview
 ```
 
 The Python API layer, documented CLI JSON contracts, ROS2 static inspector, enhanced dependency analyzer, and VSCode extension MVP source are available for integration work while the CLI remains the primary user interface.

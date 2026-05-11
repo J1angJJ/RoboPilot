@@ -57,6 +57,7 @@ print(validation["is_valid"])
 from robopilot.api.migration import (
     create_ros1_to_ros2_migration_plan,
     preview_migration_plan,
+    preview_migration_scaffold,
 )
 
 plan = create_ros1_to_ros2_migration_plan(
@@ -69,6 +70,9 @@ preview = preview_migration_plan(
     "path/to/ros1_package",
 )
 print(preview["files_requiring_manual_migration"])
+
+scaffold = preview_migration_scaffold("migration_plan.yaml")
+print(scaffold["target_style"])
 ```
 
 ## Apply Example

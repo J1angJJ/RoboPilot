@@ -946,9 +946,9 @@ JSON output:
 robopilot inspect-ros2 path/to/ros2_package --json
 ```
 
-## Current: v1.6.0 Dependency Analyzer Enhancement
+## Completed: v1.6.0 Dependency Analyzer Enhancement
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -973,9 +973,9 @@ tf         → tf2_ros
 dynamic_reconfigure → ROS2 parameters / lifecycle review
 ```
 
-## Future: v1.7.0 Migration Scaffold Preview
+## Current: v1.7.0 Migration Scaffold Preview
 
-Status: Planned
+Status: Current work
 
 Goal:
 

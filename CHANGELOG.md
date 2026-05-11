@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v1.7.0 read-only migration scaffold preview workflow.
+- `robopilot migrate-scaffold-preview --plan migration_plan.yaml` command with readable terminal output.
+- `robopilot migrate-scaffold-preview --json` deterministic JSON output for integrations.
+- Static target-style inference for future ROS2 scaffold planning across `ament_python`, `ament_cmake`, and mixed Python/C++ review cases.
+- `robopilot.api.migration.preview_migration_scaffold` API wrapper.
 - v1.6.0 dependency analyzer enhancement for richer static ROS1/ROS2 dependency hints.
 - Conservative ROS1-to-ROS2 dependency mapping hints for common packages such as `rospy`, `roscpp`, `catkin`, `message_generation`, `message_runtime`, `dynamic_reconfigure`, `actionlib`, `nodelet`, and launch-related dependencies.
 - ROS/package-manager style hints for Python imports, C++ includes, and interface files.
@@ -44,6 +49,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated package and generated demo metadata to `1.7.0`.
+- Updated README, command reference, workflow, architecture, API, JSON contract, roadmap, and agent guidance with migration scaffold preview.
 - Updated package and generated demo metadata to `1.6.0`.
 - Updated `robopilot deps --json` documentation and tests with stable `migration_hints` and `rosdep_hints` top-level keys; nested heuristic wording remains experimental.
 - Improved conservative `possibly_unused` behavior to avoid overclaiming common buildtool, runtime, and interface dependencies.

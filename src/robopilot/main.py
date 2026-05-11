@@ -16,6 +16,7 @@ from robopilot.api.apply import (
 from robopilot.api.migration import (
     create_ros1_to_ros2_migration_plan as api_create_ros1_to_ros2_migration_plan,
     preview_migration_plan as api_preview_migration_plan,
+    preview_migration_scaffold as api_preview_migration_scaffold,
     validate_migration_plan_file as api_validate_migration_plan_file,
 )
 from robopilot.api.static_analysis import (
@@ -46,6 +47,7 @@ from robopilot.migration.plan_validator import (
     MigrationPlanValidationReport,
 )
 from robopilot.migration.preview import MigrationPreviewResult
+from robopilot.migration.scaffold_preview import MigrationScaffoldPreviewResult, ScaffoldFile
 from robopilot.planner import (
     LLMProviderConfig,
     LLMPlanner,
@@ -1139,6 +1141,83 @@ def _print_migration_preview(result: MigrationPreviewResult) -> None:
 
     console.print(Panel.fit("Safety Note", style="bold cyan"))
     console.print(result.safety_note)
+
+
+@app.command("migrate-scaffold-preview")
+def migrate_scaffold_preview(
+    plan: Annotated[
+        Path,
+        typer.Option("--plan", "-p", help="Path to a ROS1-to-ROS2 migration plan."),
+    ],
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Preview a future ROS2 scaffold from a migration plan without writing files."""
+    try:
+        result = api_preview_migration_scaffold(plan, as_dict=False)
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    if json_output:
+        print(json.dumps(result.to_dict(), indent=2))
+        return
+
+    _print_migration_scaffold_preview(result)
+
+
+def _print_migration_scaffold_preview(result: MigrationScaffoldPreviewResult) -> None:
+    console.print(Panel.fit("Migration Scaffold Preview Summary", style="bold cyan"))
+    console.print(f"[bold]Plan path:[/bold] {result.plan_path}")
+    console.print(f"[bold]Source Project:[/bold] {result.source_path or 'unknown'}")
+    console.print(f"[bold]Target:[/bold] {result.target}")
+    console.print(f"[bold]Package:[/bold] {result.package_name or 'unknown'}")
+    console.print(f"[bold]Target Style:[/bold] {result.target_style}")
+
+    console.print(Panel.fit("Scaffold Files to Create", style="bold cyan"))
+    _print_scaffold_items(result.scaffold_files_to_create)
+
+    console.print(Panel.fit("Placeholder Files", style="bold cyan"))
+    _print_scaffold_items(result.placeholder_files)
+
+    console.print(Panel.fit("Files Requiring Manual Migration", style="bold cyan"))
+    _print_scalar_values(result.files_requiring_manual_migration)
+
+    console.print(Panel.fit("Interface Files to Review", style="bold cyan"))
+    _print_scalar_values(result.interface_files_to_review)
+
+    console.print(Panel.fit("Dependency Items to Review", style="bold cyan"))
+    _print_scalar_values(result.dependency_items_to_review)
+
+    console.print(Panel.fit("Build System Notes", style="bold cyan"))
+    _print_scalar_values(result.build_system_notes)
+
+    console.print(Panel.fit("Launch Notes", style="bold cyan"))
+    _print_scalar_values(result.launch_notes)
+
+    console.print(Panel.fit("Risks", style="bold cyan"))
+    _print_scalar_values(result.risks)
+
+    console.print(Panel.fit("Conflicts", style="bold cyan"))
+    _print_scalar_values(result.conflicts)
+
+    console.print(Panel.fit("Suggested Next Steps", style="bold cyan"))
+    _print_scalar_values(result.suggested_next_steps)
+
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    console.print(result.safety_note)
+
+
+def _print_scaffold_items(items: tuple[ScaffoldFile, ...]) -> None:
+    if not items:
+        console.print("- none")
+        return
+    for item in items:
+        console.print(f"- {item.path} ({item.status})")
+        console.print(f"  purpose: {item.purpose}")
+        console.print(f"  source_basis: {item.source_basis}")
 
 
 @app.command()

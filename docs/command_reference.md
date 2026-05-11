@@ -284,6 +284,20 @@ Mode: read-only.
 
 Safety notes: does not generate migrated files or modify the source project.
 
+## `migrate-scaffold-preview`
+
+Purpose: preview the future ROS2 target scaffold implied by a migration plan.
+
+Example:
+
+```bash
+robopilot migrate-scaffold-preview --plan migration_plan.yaml
+```
+
+Mode: read-only.
+
+Safety notes: does not generate scaffold files, modify the source project, modify the migration plan, require ROS/ROS2, run build tools, or execute project code.
+
 ## `repair-suggest`
 
 Purpose: suggest read-only repairs based on project inspection issues.
@@ -343,6 +357,6 @@ Safety notes: graph generation is deterministic and offline.
 
 ## JSON Output
 
-Several commands support `--json`, including `diff`, `apply-preview`, `apply`, `rollback`, `history`, `detect`, `inspect`, `inspect-ros1`, `inspect-ros2`, `deps`, `migrate-plan-validate`, `migrate-plan-diff`, `migrate-preview`, and `repair-suggest`. Some commands write JSON files via format options, such as `migrate-plan --format json` and `apply-plan --format json`. JSON keys are intended to be stable for tests and lightweight integrations.
+Several commands support `--json`, including `diff`, `apply-preview`, `apply`, `rollback`, `history`, `detect`, `inspect`, `inspect-ros1`, `inspect-ros2`, `deps`, `migrate-plan-validate`, `migrate-plan-diff`, `migrate-preview`, `migrate-scaffold-preview`, and `repair-suggest`. Some commands write JSON files via format options, such as `migrate-plan --format json` and `apply-plan --format json`. JSON keys are intended to be stable for tests and lightweight integrations.
 
 For documented integration contracts, see [JSON Contracts](json_contracts.md). External tools should prefer `--json` and should not parse Rich human-readable output.

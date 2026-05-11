@@ -534,6 +534,74 @@ Minimal output:
 }
 ```
 
+## `migrate-scaffold-preview --json`
+
+Purpose: preview the future ROS2 target package scaffold implied by a migration plan.
+
+Example:
+
+```bash
+robopilot migrate-scaffold-preview --plan migration_plan.yaml --json
+```
+
+Top-level stable keys:
+
+- `plan_path`
+- `source_path`
+- `target`
+- `package_name`
+- `target_style`
+- `scaffold_files_to_create`
+- `placeholder_files`
+- `files_requiring_manual_migration`
+- `interface_files_to_review`
+- `dependency_items_to_review`
+- `build_system_notes`
+- `launch_notes`
+- `risks`
+- `conflicts`
+- `suggested_next_steps`
+- `safety_note`
+
+Essential nested keys:
+
+- `scaffold_files_to_create` items: `path`, `purpose`, `source_basis`, `status`
+- `placeholder_files` items: `path`, `purpose`, `source_basis`, `status`
+
+Experimental fields: target-style inference, scaffold classification heuristics, advisory wording, and placeholder naming.
+
+Safety notes: read-only; does not generate scaffold files or modify the source project or migration plan.
+
+Minimal output:
+
+```json
+{
+  "plan_path": "migration_plan.yaml",
+  "source_path": "path/to/ros1_package",
+  "target": "ros2",
+  "package_name": "demo_pkg",
+  "target_style": "ament_python",
+  "scaffold_files_to_create": [
+    {
+      "path": "package.xml",
+      "purpose": "ROS2 package metadata",
+      "source_basis": "package_xml_migration",
+      "status": "planned"
+    }
+  ],
+  "placeholder_files": [],
+  "files_requiring_manual_migration": ["scripts/talker.py"],
+  "interface_files_to_review": ["msg/Demo.msg"],
+  "dependency_items_to_review": [],
+  "build_system_notes": [],
+  "launch_notes": [],
+  "risks": [],
+  "conflicts": [],
+  "suggested_next_steps": [],
+  "safety_note": "Read-only scaffold preview."
+}
+```
+
 ## `apply-preview --json`
 
 Purpose: compare a ProjectSpec with a project directory before apply.

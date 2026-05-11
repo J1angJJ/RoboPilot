@@ -65,29 +65,29 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v1.6.0 Dependency Analyzer Enhancement
+v1.7.0 Migration Scaffold Preview
 ```
 
-The goal is to improve the existing no-ROS-required dependency analyzer with richer ROS1 / ROS2 dependency hints, migration-oriented mappings, and clearer missing/unused explanations.
+The goal is to preview the future ROS2 target package scaffold implied by an existing ROS1-to-ROS2 migration plan.
 
 This milestone should focus on:
 
-- enhancing `robopilot deps`
-- preserving existing JSON top-level keys while documenting any additions
-- conservative ROS1-to-ROS2 dependency mapping hints
-- rosdep-style hints for Python imports, C++ includes, and interface files
-- clearer `possibly_missing` and `possibly_unused` review guidance
-- no ROS, ROS2, catkin, colcon, launch execution, generated code execution, or user module imports
+- `robopilot migrate-scaffold-preview --plan migration_plan.yaml`
+- deterministic `--json` output
+- target-style inference for `ament_python`, `ament_cmake`, and mixed-review cases
+- planned scaffold file lists and placeholder file lists
+- manual migration, interface, dependency, risk, conflict, and next-step reporting
+- no scaffold generation, source project modification, plan modification, ROS, ROS2, catkin, colcon, launch execution, generated code execution, or user module imports
 
-This milestone should not add new product commands.
+This milestone should remain read-only.
 
 ## Near-term Direction
 
-After v1.6.0, the recommended direction is:
+After v1.7.0, the recommended direction is:
 
 ```txt
-v1.6.0 Dependency Analyzer Enhancement
 v1.7.0 Migration Scaffold Preview
+v1.8.0 Migration Scaffold Generate
 ```
 
 The VSCode extension should be a thin beginner-friendly interface over the CLI / API layer. It should not duplicate RoboPilot core logic.
@@ -431,6 +431,10 @@ robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_pack
 ```
 
 ```bash
+robopilot migrate-scaffold-preview --plan migration_plan.yaml
+```
+
+```bash
 robopilot inspect outputs/demo_detector
 ```
 
@@ -563,17 +567,17 @@ robopilot deps --help
 Implement:
 
 ```txt
-v1.6.0 Dependency Analyzer Enhancement
+v1.7.0 Migration Scaffold Preview
 ```
 
-This milestone should enhance `robopilot deps` with richer static dependency hints while preserving the existing command.
+This milestone should add `robopilot migrate-scaffold-preview --plan migration_plan.yaml` as a read-only preview of future ROS2 scaffold generation.
 
 Suggested implementation items:
 
 ```txt
-src/robopilot/deps/analyzer.py
-tests/test_dependency_analyzer.py
+src/robopilot/migration/scaffold_preview.py
+tests/test_migration_scaffold_preview.py
 docs/json_contracts.md
 ```
 
-Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, new product commands, migration apply, VSCode Marketplace publishing, or new LLM behavior during this milestone unless explicitly requested.
+Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration scaffold generation, migration apply, VSCode Marketplace publishing, or new LLM behavior during this milestone unless explicitly requested.

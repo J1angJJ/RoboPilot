@@ -14,6 +14,10 @@ from robopilot.migration.ros1_to_ros2 import (
     generate_migration_plan,
     write_migration_plan,
 )
+from robopilot.migration.scaffold_preview import (
+    MigrationScaffoldPreviewResult,
+    preview_migration_scaffold as core_preview_migration_scaffold,
+)
 
 
 def create_ros1_to_ros2_migration_plan(
@@ -67,4 +71,14 @@ def preview_migration_plan(
 ) -> StructuredResult | MigrationPreviewResult:
     """Preview file-level migration actions without generating migrated files."""
     result = preview_migration(normalize_path(plan_path), normalize_path(project_path))
+    return to_structured_result(result) if as_dict else result
+
+
+def preview_migration_scaffold(
+    plan_path: PathLike,
+    *,
+    as_dict: bool = True,
+) -> StructuredResult | MigrationScaffoldPreviewResult:
+    """Preview a future ROS2 scaffold from a migration plan without writing files."""
+    result = core_preview_migration_scaffold(normalize_path(plan_path))
     return to_structured_result(result) if as_dict else result
