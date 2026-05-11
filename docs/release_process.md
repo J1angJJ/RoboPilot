@@ -18,6 +18,18 @@ v1.0.0-rc.1
 v1.0.0
 ```
 
+For Python package metadata, release candidates must use the PEP 440 form in `pyproject.toml`:
+
+```toml
+version = "1.0.0rc1"
+```
+
+Use the human-facing git tag form for tags and GitHub Releases:
+
+```txt
+v1.0.0-rc.1
+```
+
 ## Changelog
 
 Update `CHANGELOG.md` under `Unreleased` before cutting a release.
@@ -25,7 +37,7 @@ Update `CHANGELOG.md` under `Unreleased` before cutting a release.
 For a release tag, move relevant notes under a dated release heading when appropriate:
 
 ```md
-## [0.24.0] - YYYY-MM-DD
+## [1.0.0-rc.1] - YYYY-MM-DD
 ```
 
 Keep release notes focused on user-visible changes, documentation, safety behavior, compatibility, and known limitations.
@@ -81,18 +93,20 @@ Do not tag a release until CI is green or the failure is understood and document
 
 ## Tagging
 
-Use annotated tags when cutting a release:
+Use annotated tags when cutting a release.
 
-```bash
-git tag -a v0.24.0 -m "RoboPilot v0.24.0"
-git push origin v0.24.0
-```
-
-Release candidate examples:
+Release candidate example:
 
 ```bash
 git tag -a v1.0.0-rc.1 -m "RoboPilot v1.0.0-rc.1"
 git push origin v1.0.0-rc.1
+```
+
+Stable release example:
+
+```bash
+git tag -a v1.0.0 -m "RoboPilot v1.0.0"
+git push origin v1.0.0
 ```
 
 ## GitHub Release Checklist

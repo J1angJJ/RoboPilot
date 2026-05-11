@@ -58,5 +58,6 @@ Experimental features must still preserve RoboPilot's safety boundaries: no runt
 - Manually verify core CLI help pages.
 - Review `docs/compatibility.md` and `docs/known_limitations.md`.
 - Ensure `CHANGELOG.md` has release-candidate notes.
+- Ensure `pyproject.toml` uses the valid Python package version `1.0.0rc1`.
 - Confirm no API keys, local outputs, backups, or history entries are tracked.
 - Decide whether any experimental JSON schema fields need final pre-v1 adjustments.

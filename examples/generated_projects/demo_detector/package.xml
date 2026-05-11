@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>demo_detector</name>
-  <version>0.24.0</version>
+  <version>1.0.0rc1</version>
   <description>ROS-style object detection node skeleton.</description>
   <maintainer email="developer@example.com">RoboPilot User</maintainer>
   <license>MIT</license>

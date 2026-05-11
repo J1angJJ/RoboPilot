@@ -130,7 +130,7 @@ Transient generated projects should go under `outputs/`, which is intentionally 
 
 ## Project Status
 
-Current release polish target: `v0.24.0` v1.0 Release Candidate Preparation.
+Current release target: `v1.0.0-rc.1`.
 
 RoboPilot is still pre-1.0, but the core no-ROS-required workflow is in place:
 

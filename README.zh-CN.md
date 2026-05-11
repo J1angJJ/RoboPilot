@@ -130,7 +130,7 @@ examples/generated_projects/demo_detector/
 
 ## 项目状态
 
-当前版本打磨目标：`v0.24.0` v1.0 Release Candidate Preparation。
+当前发布目标：`v1.0.0-rc.1`。
 
 RoboPilot 仍处于 1.0 之前，但核心 no-ROS-required 工作流已经成型：
 

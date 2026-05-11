@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-rc.1] - 2026-05-11
+
+### Changed
+
+- Prepared RoboPilot `v1.0.0-rc.1` as a release candidate stabilization pass.
+- Updated package metadata to the valid Python package version `1.0.0rc1`; the corresponding git tag should be `v1.0.0-rc.1`.
+- Reviewed CLI help positioning for the no-ROS-required static engineering toolchain.
+- Audited README and documentation links for release-candidate readiness.
+- Audited stability policy, known limitations, compatibility, testing, release process, command reference, workflows, and architecture docs.
+- Confirmed no new product capabilities, CLI commands, migration file generation, migration apply, ROS runtime execution, ROS2 runtime execution, catkin/colcon execution, RAG, Streamlit, Gradio, VSCode extension, real robot integration, or new LLM behavior were added in this RC pass.
+
+### Verified
+
+- Full pytest suite passes with the documented Windows temp workaround.
+- Major CLI help pages were manually checked for release-candidate readiness.
+
 ### Added
 
 - v0.24.0 v1.0 release candidate preparation documentation.

@@ -499,9 +499,10 @@ Current implemented MVPs:
 - v0.22.0: Migration Plan Validate / Diff
 - v0.23.0: Stability / CLI Polish
 - v0.24.0: v1.0 Release Candidate Preparation
+- v1.0.0-rc.1: Release Candidate Checklist
 
 Next planned work:
 
-- v1.0.0-rc.1 release candidate preparation
+- v1.0.0 stable release preparation
 - Optional LLM Report Explanation as a later, explicitly configured feature
 - Migrated file generation or migration apply-plan safety design as future work
