@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v1.4.0 VSCode Extension MVP source under `vscode-extension/`.
+- VSCode commands for workspace detection, ROS1 inspection, dependency analysis, migration plan generation, migration preview, ProjectSpec validation, and output display.
+- Thin TypeScript CLI runner that calls RoboPilot with argument arrays, parses JSON outputs, and reports missing CLI installation clearly.
+- VSCode OutputChannel and simple Explorer TreeView summaries for RoboPilot results.
+- `docs/vscode_extension.md` with local extension development and safety guidance.
+- GitHub Actions workflow for VSCode extension compile and test checks.
 - v1.3.0 stable JSON contract documentation and top-level key tests for integration-oriented CLI outputs.
 - `docs/json_contracts.md` documenting JSON outputs for detection, inspection, dependency analysis, migration planning, migration validation/diff/preview, apply-preview, apply, rollback, history, and repair suggestions.
 - `docs/integration_notes.md` with guidance for CLI `--json`, Python API use, VSCode extension direction, and file-writing safety.
@@ -29,6 +35,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated package and generated demo metadata to `1.4.0`.
+- Updated integration and developer documentation with VSCode extension MVP guidance.
 - Updated package and generated demo metadata to `1.3.0`.
 - Clarified stability policy for documented JSON top-level keys, human-readable Rich output, and maturing API surface.
 - Updated package and generated demo metadata to `1.2.0`.

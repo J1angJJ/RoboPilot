@@ -91,6 +91,19 @@ print(result["project_type"])
 
 API functions are designed to avoid Rich rendering and direct stdout printing.
 
+## VSCode Extension Development
+
+The extension is a thin wrapper around the RoboPilot CLI JSON outputs:
+
+```bash
+cd vscode-extension
+npm install
+npm run compile
+npm test
+```
+
+Then launch an Extension Development Host from VSCode. The extension requires the `robopilot` CLI to be installed or configured with `robopilot.executablePath`.
+
 ## Packaging Checks
 
 For local package verification:

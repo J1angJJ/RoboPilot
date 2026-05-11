@@ -22,7 +22,7 @@ def package_xml(spec: ProjectSpec) -> str:
         <?xml version="1.0"?>
         <package format="3">
           <name>{spec.package_name}</name>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
           <description>{spec.description}</description>
           <maintainer email="developer@example.com">RoboPilot User</maintainer>
           <license>MIT</license>
@@ -53,7 +53,7 @@ def setup_py(spec: ProjectSpec) -> str:
 
         setup(
             name=package_name,
-    version="1.3.0",
+    version="1.4.0",
             packages=find_packages(exclude=["test"]),
             data_files=[
                 (f"share/{{package_name}}", ["package.xml", "robopilot.yaml"]),

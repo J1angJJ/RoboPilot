@@ -1,0 +1,89 @@
+{
+  "name": "robopilot-vscode",
+  "displayName": "RoboPilot",
+  "description": "VSCode integration for RoboPilot no-ROS-required static tooling",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:robopilot.detectWorkspace",
+    "onCommand:robopilot.inspectRos1",
+    "onCommand:robopilot.analyzeDependencies",
+    "onCommand:robopilot.generateMigrationPlan",
+    "onCommand:robopilot.previewMigration",
+    "onCommand:robopilot.validateProjectSpec",
+    "onCommand:robopilot.showOutput",
+    "workspaceContains:robopilot.yaml",
+    "workspaceContains:package.xml"
+  ],
+  "main": "./out/src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "robopilot.detectWorkspace",
+        "title": "RoboPilot: Detect Workspace"
+      },
+      {
+        "command": "robopilot.inspectRos1",
+        "title": "RoboPilot: Inspect ROS1 Package"
+      },
+      {
+        "command": "robopilot.analyzeDependencies",
+        "title": "RoboPilot: Analyze Dependencies"
+      },
+      {
+        "command": "robopilot.generateMigrationPlan",
+        "title": "RoboPilot: Generate Migration Plan"
+      },
+      {
+        "command": "robopilot.previewMigration",
+        "title": "RoboPilot: Preview Migration"
+      },
+      {
+        "command": "robopilot.validateProjectSpec",
+        "title": "RoboPilot: Validate ProjectSpec"
+      },
+      {
+        "command": "robopilot.showOutput",
+        "title": "RoboPilot: Show Output"
+      }
+    ],
+    "configuration": {
+      "title": "RoboPilot",
+      "properties": {
+        "robopilot.executablePath": {
+          "type": "string",
+          "default": "robopilot",
+          "description": "Path to the RoboPilot CLI executable."
+        },
+        "robopilot.outputDirectory": {
+          "type": "string",
+          "default": ".robopilot_vscode",
+          "description": "Directory for extension-generated migration plans and reports."
+        }
+      }
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "robopilot.projectView",
+          "name": "RoboPilot"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "test": "npm run compile && node --test out/test/robopilotCli.test.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.90.0",
+    "typescript": "^5.5.0"
+  }
+}

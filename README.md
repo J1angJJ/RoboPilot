@@ -23,6 +23,7 @@ It helps robotics learners and developers plan, refine, validate, generate, insp
 - Optionally uses an LLM only to produce or refine validated `ProjectSpec` data.
 - Provides a lightweight Python API layer for scripts and future integrations.
 - Documents stable top-level JSON keys for integration-oriented `--json` outputs.
+- Includes a VSCode extension MVP source tree that wraps the RoboPilot CLI JSON outputs.
 
 RoboPilot does not run ROS, ROS2, launch files, generated code, `catkin_make`, or `colcon`.
 
@@ -112,6 +113,7 @@ robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_pack
 - [Python API](docs/api.md)
 - [JSON Contracts](docs/json_contracts.md)
 - [Integration Notes](docs/integration_notes.md)
+- [VSCode Extension MVP](docs/vscode_extension.md)
 - [Developer Setup](docs/developer_setup.md)
 - [Testing](docs/testing.md)
 - [Release Process](docs/release_process.md)
@@ -148,7 +150,7 @@ Transient generated projects should go under `outputs/`, which is intentionally 
 
 ## Project Status
 
-Current release line: `v1.3.0`.
+Current release line: `v1.4.0`.
 
 RoboPilot's no-ROS-required static engineering workflow remains the stable v1 baseline:
 
@@ -160,7 +162,9 @@ plan -> refine -> diff -> validate -> generate
       -> migrate-plan -> migrate-plan-validate -> migrate-plan-diff -> migrate-preview
 ```
 
-The Python API layer and documented CLI JSON contracts are available for integration work while the CLI remains the primary user interface.
+The Python API layer, documented CLI JSON contracts, and VSCode extension MVP source are available for integration work while the CLI remains the primary user interface.
+
+The VSCode extension lives under `vscode-extension/`, requires the RoboPilot CLI to be installed, and is documented in [docs/vscode_extension.md](docs/vscode_extension.md).
 
 ## Development
 

@@ -53,9 +53,9 @@ External tools must keep RoboPilot's safety model visible:
 - Surface conflicts, skipped files, backup paths, and safety notes to users.
 - Do not bypass ProjectSpec validation, apply-preview, apply-plan, or rollback safety checks.
 
-## VSCode Extension Direction
+## VSCode Extension MVP
 
-The first VSCode extension should be thin:
+The VSCode extension MVP under `vscode-extension/` is thin:
 
 ```txt
 VSCode command
@@ -65,3 +65,5 @@ VSCode command
 ```
 
 This keeps the extension decoupled from RoboPilot internals and avoids duplicating static analysis, migration, or apply logic.
+
+The extension should continue to use documented JSON contracts and should not parse Rich human-readable output.

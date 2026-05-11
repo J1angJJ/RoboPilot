@@ -64,27 +64,27 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v1.3.0 Stable JSON Contracts / Schema Docs
+v1.4.0 VSCode Extension MVP
 ```
 
-The goal is to document and test RoboPilot's JSON output contracts so future integrations, especially the VSCode extension, can safely consume CLI `--json` outputs.
+The goal is to add a lightweight VSCode extension MVP that wraps existing RoboPilot CLI JSON outputs.
 
 This milestone should focus on:
 
-- JSON contract documentation
-- stable top-level JSON key tests
-- guidance for external integrations
-- clear boundaries between machine JSON and human Rich output
-- no product behavior changes
+- a thin VSCode UI layer over the RoboPilot CLI
+- CLI `--json` consumption
+- OutputChannel summaries
+- simple project TreeView state if low risk
+- no TypeScript reimplementation of RoboPilot core logic
+- no Python CLI behavior changes
 
 This milestone should not add new robotics product features.
 
 ## Near-term Direction
 
-After v1.3.0, the recommended direction is:
+After v1.4.0, the recommended direction is:
 
 ```txt
-v1.3.0 Stable JSON Contracts / Schema Docs
 v1.4.0 VSCode Extension MVP
 v1.5.0 ROS2 Static Inspector
 ```
@@ -562,19 +562,21 @@ robopilot deps --help
 Implement:
 
 ```txt
-v1.3.0 Stable JSON Contracts / Schema Docs
+v1.4.0 VSCode Extension MVP
 ```
 
-This milestone should document and test integration-oriented CLI JSON outputs.
+This milestone should add a thin VSCode extension MVP over the existing CLI JSON outputs.
 
 Suggested implementation items:
 
 ```txt
-docs/json_contracts.md
-docs/integration_notes.md
-tests/test_json_contracts.py
-README links
-stability policy updates
+vscode-extension/package.json
+vscode-extension/src/extension.ts
+vscode-extension/src/robopilotCli.ts
+vscode-extension/src/output.ts
+vscode-extension/src/projectTree.ts
+vscode-extension/test/robopilotCli.test.ts
+docs/vscode_extension.md
 ```
 
-Do not add new product commands, VSCode extension code, ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, or new LLM behavior during this milestone unless explicitly requested.
+Do not add new Python product commands, ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, or new LLM behavior during this milestone unless explicitly requested.

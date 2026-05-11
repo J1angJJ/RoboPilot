@@ -819,9 +819,9 @@ apply.py
 - read_project_history
 ```
 
-## Current: v1.3.0 Stable JSON Contracts / Schema Docs
+## Completed: v1.3.0 Stable JSON Contracts / Schema Docs
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -853,9 +853,9 @@ Important commands for JSON contract docs:
 - history
 - report
 
-## Future: v1.4.0 VSCode Extension MVP
+## Current: v1.4.0 VSCode Extension MVP
 
-Status: Planned
+Status: Current work
 
 Goal:
 
