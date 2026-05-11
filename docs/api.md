@@ -10,6 +10,12 @@ The API is useful for integration work, but it is newer than the CLI. Until the 
 
 The API does not add runtime ROS behavior. It does not run ROS, ROS2, launch files, generated code, `catkin_make`, or `colcon`.
 
+## API vs CLI JSON
+
+Use the Python API for Python scripts and in-process integrations. Use CLI `--json` outputs for external tools such as a future VSCode extension, shell scripts, or non-Python clients.
+
+Do not parse Rich human-readable CLI output. See [JSON Contracts](json_contracts.md) and [Integration Notes](integration_notes.md) for integration guidance.
+
 ## Static Analysis Example
 
 ```python

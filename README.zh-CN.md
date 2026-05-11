@@ -108,6 +108,8 @@ robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_pack
 - [工作流](docs/workflows.md)
 - [架构](docs/architecture.md)
 - [Python API](docs/api.md)
+- [JSON Contracts](docs/json_contracts.md)
+- [Integration Notes](docs/integration_notes.md)
 - [开发者设置](docs/developer_setup.md)
 - [测试](docs/testing.md)
 - [发布流程](docs/release_process.md)
@@ -144,7 +146,7 @@ examples/generated_projects/demo_detector/
 
 ## 项目状态
 
-当前稳定版本：`v1.2.0`。
+当前稳定版本：`v1.3.0`。
 
 RoboPilot 的 v1 基线是一个不需要 ROS 的静态工程工作流：
 
@@ -156,7 +158,7 @@ plan -> refine -> diff -> validate -> generate
       -> migrate-plan -> migrate-plan-validate -> migrate-plan-diff -> migrate-preview
 ```
 
-Python API 层可用于脚本和后续集成；CLI 仍然是主要用户界面。
+Python API 层和已记录的 CLI JSON 合约可用于脚本和后续集成；CLI 仍然是主要用户界面。
 
 ## 开发
 

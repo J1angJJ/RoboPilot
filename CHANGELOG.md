@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v1.3.0 stable JSON contract documentation and top-level key tests for integration-oriented CLI outputs.
+- `docs/json_contracts.md` documenting JSON outputs for detection, inspection, dependency analysis, migration planning, migration validation/diff/preview, apply-preview, apply, rollback, history, and repair suggestions.
+- `docs/integration_notes.md` with guidance for CLI `--json`, Python API use, VSCode extension direction, and file-writing safety.
+- `tests/test_json_contracts.py` covering stable top-level JSON keys for key integration commands.
 - v1.2.0 lightweight Python API layer for scripts, future VSCode integration, and possible UI wrappers.
 - `robopilot.api.project` wrappers for ProjectSpec planning, refinement, diff, validation, and generation.
 - `robopilot.api.static_analysis` wrappers for project detection, static inspection, ROS1 inspection, dependency analysis, and report export.
@@ -25,6 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated package and generated demo metadata to `1.3.0`.
+- Clarified stability policy for documented JSON top-level keys, human-readable Rich output, and maturing API surface.
 - Updated package and generated demo metadata to `1.2.0`.
 - Routed selected CLI commands through the new thin API wrappers while preserving CLI output behavior.
 - Updated package and generated demo metadata to `1.1.0`.

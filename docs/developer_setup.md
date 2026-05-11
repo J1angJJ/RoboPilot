@@ -64,6 +64,12 @@ Windows fallback:
 python -m pytest --basetemp=".pytest_tmp" -p no:cacheprovider
 ```
 
+Run JSON contract tests:
+
+```bash
+python -m pytest tests/test_json_contracts.py
+```
+
 ## Run CLI Help
 
 ```bash

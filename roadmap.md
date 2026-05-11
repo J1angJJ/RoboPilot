@@ -754,9 +754,9 @@ Environment: pypi
 
 The exact PyPI availability of the `robopilot` package name is determined by PyPI at publish time.
 
-## Current: v1.2.0 API Layer Refactor
+## Completed: v1.2.0 API Layer Refactor
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -819,9 +819,9 @@ apply.py
 - read_project_history
 ```
 
-## Future: v1.3.0 Stable JSON Contracts / Schema Docs
+## Current: v1.3.0 Stable JSON Contracts / Schema Docs
 
-Status: Planned
+Status: Current work
 
 Goal:
 
