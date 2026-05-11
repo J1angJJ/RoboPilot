@@ -1,146 +1,1109 @@
+
 # Roadmap
 
 RoboPilot is a no-ROS-required static engineering toolchain for ROS-style projects.
 
-It helps users plan, inspect, update, analyze, and migrate ROS/ROS2-style project structure without requiring ROS, ROS2, catkin, colcon, simulator runtimes, robot hardware, launch execution, or generated node execution.
-
-## Design Direction
-
-RoboPilot follows a spec-first and safety-first workflow:
+The project started as a lightweight ROS-style project generator and has now reached its first stable baseline:
 
 ```txt
-task text
-  -> planner
-  -> ProjectSpec
-  -> refine
-  -> diff
-  -> validate
-  -> generate / apply-preview
-  -> apply-plan
-  -> apply
-  -> rollback
-  -> history
-  -> inspect / repair-suggest / report
+v1.0.0
 ```
 
-For existing ROS-style projects, RoboPilot adds static detection, inspection, dependency analysis, and migration planning.
+After v1.0.0, RoboPilot's development should shift from rapid feature expansion to stable public distribution, API layering, beginner-friendly tooling, and carefully scoped ROS/ROS2 static engineering features.
 
-## Completed Milestones
+## Product Direction
 
-- v0.1.0 Basic offline MVP: generator, debugger, graph utility, docs, examples, tests, CI.
-- v0.2.0 Prompt-driven template selection.
-- v0.3.0 Spec-first generation.
-- v0.4.0 Project inspector.
-- v0.5.0 Project repair suggestions.
-- v0.6.0 Project report export.
-- v0.7.0 Planner interface and optional LLM planner.
-- v0.8.0 Real LLM provider integration for ProjectSpec planning.
-- v0.9.0 Rule-based spec refinement.
-- v0.10.0 Spec diff.
-- v0.11.0 LLM-assisted spec refinement.
-- v0.12.0 Apply preview.
-- v0.13.0 Apply plan export and validation.
-- v0.14.0 Safe apply from plan.
-- v0.15.0 Apply rollback.
-- v0.16.0 Apply history / workspace journal.
-- v0.17.0 ROS project detector.
-- v0.18.0 ROS1 static inspector.
-- v0.19.0 Dependency analyzer.
-- v0.20.0 ROS1-to-ROS2 migration plan.
-- v0.21.0 Migration apply preview.
-- v0.22.0 Migration plan validation and diff.
-- v0.23.0 Stability / CLI polish.
-- v0.24.0 v1.0 release candidate preparation docs.
-- v1.0.0-rc.1 Release candidate checklist.
+RoboPilot helps users plan, inspect, update, analyze, and migrate ROS/ROS2-style projects without requiring a local ROS installation.
 
-## Current: v1.0.0 Stable Release
+RoboPilot is not intended to compete directly with general-purpose coding agents or runtime ROS automation tools.
 
-Status: Stable baseline
+Its niche is:
+
+- no-ROS-required project analysis
+- ROS-style project structure understanding
+- ProjectSpec-based planning
+- safe apply / rollback workflows
+- static dependency analysis
+- ROS1 / ROS2 migration assistance
+- beginner-friendly robotics engineering workflows
+- optional LLM-assisted spec workflows
+
+## Core Design Principles
+
+RoboPilot should remain:
+
+- no-ROS-required by default
+- static and deterministic where possible
+- safe for beginners
+- explicit about file-writing operations
+- dry-run-first for risky operations
+- conservative in dependency and migration inference
+- friendly to CLI usage, API integration, and future VSCode UI
+
+RoboPilot should avoid:
+
+- requiring ROS or ROS2
+- running `catkin_make`
+- running `colcon`
+- executing launch files
+- executing generated nodes
+- replacing runtime validation
+- becoming a general-purpose coding agent
+- hiding risky file changes behind automatic behavior
+
+## Stable v1.0.0 Baseline
+
+Status: Stable baseline released
+
+v1.0.0 stabilizes RoboPilot as a no-ROS-required static engineering toolchain.
+
+Stable areas include:
+
+- existing core CLI command names
+- no-ROS-required default behavior
+- ProjectSpec-based generation
+- read-only detect / inspect / deps / report workflows
+- dry-run-first apply and rollback workflows
+- project-local history journal
+- static ROS project detection
+- ROS1 static inspection
+- static dependency analysis
+- ROS1-to-ROS2 migration planning workflow
+
+Experimental or advisory areas include:
+
+- LLM planner / refiner
+- ROS1-to-ROS2 migration planning
+- migration preview
+- migration plan diff
+- JSON schemas where explicitly marked experimental
+
+Internal areas include:
+
+- internal module layout
+- template rendering internals
+- heuristic scoring details
+
+## Completed: v0.1.0 Basic Offline MVP
+
+Status: Completed
 
 Goal:
 
-Maintain the first stable no-ROS-required static engineering release for ROS-style projects.
+Build the first runnable offline MVP.
 
-Scope:
+Completed features:
 
-- Testing documentation.
-- Release process documentation.
-- Compatibility documentation.
-- Known limitations documentation.
-- Stability policy documentation.
-- v1.0.0 stable scope documentation.
-- README, changelog, and roadmap link updates.
-- Version metadata set to `1.0.0`.
-- Manual CLI help verification.
-- Full test suite verification.
+- Offline ROS-style package generator
+- Robotics error log debugger
+- Pipeline-to-Mermaid workflow graph generator
+- English README
+- Chinese README
+- Demo script
+- Static generated example project
+- Pytest tests
+- GitHub Actions CI
+- GitHub Release
 
-Non-goals for this milestone:
+Core commands:
 
-- Migration file generation.
-- Migration apply.
-- ROS or ROS2 runtime execution.
-- `catkin_make` or `colcon` execution.
-- New LLM behavior.
-- Streamlit, Gradio, RAG, VSCode extension, or robot integration.
+```bash
+robopilot generate --name demo_detector --task "Create an object detection node subscribing to camera images and publishing bounding boxes."
+```
 
-## Next Direction: Post-v1.0 Maintenance
+```bash
+robopilot debug --log examples/error_logs/cv_bridge_missing.txt
+```
 
-The next direction is maintenance and carefully scoped post-v1.0 work that preserves the stable command surface and safety model.
+```bash
+robopilot graph --pipeline "camera -> detector -> tracker -> planner -> controller"
+```
 
-Proposed v1.0.0 scope:
+## Completed: v0.2.0 Prompt-driven Template Selection
 
-- Stable ProjectSpec workflow.
-- Stable safe apply / rollback / history loop.
-- Static project inspection and reporting.
-- Static ROS project detection.
-- ROS1 static inspection.
-- Dependency analyzer.
-- ROS1-to-ROS2 migration plan / validate / diff / preview.
-- Optional LLM planner and refiner constrained to ProjectSpec data.
-- Clear documentation and CI coverage.
-- No ROS runtime requirement.
+Status: Completed
 
-See [docs/v1_scope.md](docs/v1_scope.md) for the detailed proposed scope.
+Goal:
 
-## Next: Post-v1.0 Maintenance
+Upgrade the generator from a fixed template generator to a prompt-driven template selection system.
+
+Completed features:
+
+- Rule-based task classifier
+- Multiple ROS-style generation templates
+- Template registry
+- `ProjectSpec` intermediate structure
+- Generated `robopilot.yaml` metadata
+- Refreshed static generated demo project
+- Expanded tests
+- Updated documentation
+
+Supported template types:
+
+- `camera_subscriber`
+- `object_detection`
+- `velocity_controller`
+- `perception_pipeline`
+- `generic_node`
+
+## Completed: v0.3.0 Spec-first Generation
+
+Status: Completed
+
+Goal:
+
+Upgrade RoboPilot from prompt-driven direct generation into a spec-first generation workflow.
+
+Completed features:
+
+- `robopilot plan`
+- `robopilot validate`
+- `robopilot generate --spec`
+- Spec serialization and loading
+- Spec validation before generation
+- Generation from `robopilot.yaml`
+- Backward compatibility with `generate --name --task`
+- Expanded tests
+- Updated documentation
+
+Core workflow:
+
+```bash
+robopilot plan --name demo_detector --task "Create an object detection pipeline" --output robopilot.yaml
+```
+
+```bash
+robopilot validate --spec robopilot.yaml
+```
+
+```bash
+robopilot generate --spec robopilot.yaml
+```
+
+## Completed: v0.4.0 Project Inspector
+
+Status: Completed
+
+Goal:
+
+Add a lightweight offline project inspector that analyzes existing RoboPilot-generated or ROS-style project directories.
+
+Completed features:
+
+- `robopilot inspect`
+- Static project directory inspection
+- Optional JSON output
+- Detection of missing project files
+- Detection of missing or invalid `robopilot.yaml`
+- Reuse of existing spec loader and validator
+- Expanded tests
+- Updated documentation
+
+Core commands:
+
+```bash
+robopilot inspect examples/generated_projects/demo_detector
+```
+
+```bash
+robopilot inspect examples/generated_projects/demo_detector --json
+```
+
+## Completed: v0.5.0 Project Repair Suggestions
+
+Status: Completed
+
+Goal:
+
+Use project inspection results to generate read-only repair suggestions.
+
+Completed features:
+
+- `robopilot repair-suggest`
+- Optional JSON output
+- Read-only repair suggestion layer
+- Deterministic mapping from inspection issues to repair suggestions
+- Suggested follow-up commands
+- Expanded tests
+- Updated documentation
+
+## Completed: v0.6.0 Project Report Export
+
+Status: Completed
+
+Goal:
+
+Combine project inspection and repair suggestions into a Markdown report.
+
+Completed features:
+
+- `robopilot report`
+- Terminal Markdown report output
+- Markdown report file export
+- Reuse of inspector and repair suggester
+- Deterministic report sections
+- Expanded tests
+- Updated documentation
+
+Core commands:
+
+```bash
+robopilot report examples/generated_projects/demo_detector
+```
+
+```bash
+robopilot report examples/generated_projects/demo_detector --output report.md
+```
+
+## Completed: v0.7.0 Planner Interface and Optional LLM Planner
+
+Status: Completed
+
+Goal:
+
+Add a planner abstraction and prepare RoboPilot for optional LLM-assisted planning.
+
+Completed features:
+
+- `Planner` interface
+- `RuleBasedPlanner`
+- `LLMPlanner` with injectable client support
+- Planner selection for `robopilot plan`
+- Offline rule-based planner as default
+- LLM planner path constrained to `ProjectSpec`
+- Expanded tests
+- Updated documentation
+
+## Completed: v0.8.0 Real LLM Provider Integration
+
+Status: Completed
+
+Goal:
+
+Make the optional LLM planner usable with a real provider while preserving the spec-first architecture.
+
+Completed features:
+
+- Optional OpenAI-compatible planner client
+- Environment-based provider configuration
+- `OPENAI_API_KEY`
+- `ROBOPILOT_LLM_MODEL`
+- Optional `llm` dependency extra
+- Model selection for LLM planning
+- Structured ProjectSpec-compatible LLM output
+- Spec validation before returning LLM-generated specs
+- Expanded tests
+- Updated documentation
+
+## Completed: v0.9.0 Spec Refinement
+
+Status: Completed
+
+Goal:
+
+Allow users to refine existing `robopilot.yaml` / `ProjectSpec` files with deterministic rule-based instructions.
+
+Completed features:
+
+- `robopilot refine`
+- Rule-based spec refinement
+- Add tracker node
+- Add camera node
+- Add controller node
+- Add explicit topics
+- Avoid duplicate nodes and topics
+- Preserve original spec by writing to a new output file
+- Validate refined specs before saving
+- Expanded tests
+- Updated documentation
+
+## Completed: v0.10.0 Spec Diff
+
+Status: Completed
+
+Goal:
+
+Compare two ProjectSpec files and report deterministic differences.
+
+Completed features:
+
+- `robopilot diff`
+- Optional JSON output
+- Comparison of scalar fields
+- Comparison of nodes
+- Comparison of topics
+- Comparison of config files
+- Comparison of launch files
+- Comparison of notes
+- Validation of both specs before diffing
+- Expanded tests
+- Updated documentation
+
+## Completed: v0.11.0 LLM-assisted Spec Refinement
+
+Status: Completed
+
+Goal:
+
+Enable the existing refine workflow to use the optional LLM provider path safely.
+
+Completed features:
+
+- `LLMRefiner`
+- `robopilot refine --planner llm`
+- Model selection for LLM-assisted refinement
+- Reuse of existing provider config and OpenAI client
+- Reuse of ProjectSpec parsing and validation
+- Guardrails against unrequested package name and task changes
+- Original spec remains unchanged
+- Expanded tests
+- Updated documentation
+
+## Completed: v0.12.0 Apply Preview
+
+Status: Completed
+
+Goal:
+
+Add a safe, read-only preview workflow that compares a validated spec against an existing project directory.
+
+Completed features:
+
+- `robopilot apply-preview`
+- Optional JSON output
+- In-memory expected project rendering
+- Classification of files to create, update, keep, or flag
+- Refactored generator rendering into reusable deterministic rendering
+- Multi-node expected Python file rendering
+- Expanded tests
+- Updated documentation
+
+## Completed: v0.13.0 Apply Plan Export
+
+Status: Completed
+
+Goal:
+
+Export apply-preview results into a reviewable and validatable apply plan file.
+
+Completed features:
+
+- `robopilot apply-plan`
+- `robopilot apply-plan-validate`
+- YAML-like apply plan export
+- JSON apply plan export
+- Stable apply plan fields
+- Apply plan validation
+- Reuse of apply-preview logic
+- Expanded tests
+- Updated documentation
+
+## Completed: v0.14.0 Apply from Plan
+
+Status: Completed
+
+Goal:
+
+Add the first safe file-writing workflow based on a validated apply plan.
+
+Completed features:
+
+- `robopilot apply`
+- Dry-run apply by default
+- Confirmed apply with `--confirm`
+- JSON summary output
+- Apply plan validation before applying
+- Re-run apply-preview before applying
+- Stale plan rejection
+- Conflict rejection
+- Restricted writes based on plan contents
+- Backup creation before updates
+- Unsafe relative path rejection
+- Expanded tests
+- Updated documentation
+
+## Completed: v0.15.0 Apply Rollback
+
+Status: Completed
+
+Goal:
+
+Add a safe rollback workflow for files backed up during `robopilot apply --confirm`.
+
+Completed features:
+
+- `robopilot rollback`
+- Dry-run rollback by default
+- Confirmed rollback with `--confirm`
+- JSON summary output
+- Restore files from RoboPilot backup directories
+- Project path validation
+- Backup path validation
+- Path traversal protection
+- Symlink protection
+- No deletion of newly created files in this version
+- Expanded tests
+- Updated documentation
+
+## Completed: v0.16.0 Apply History / Workspace Journal
+
+Status: Completed
+
+Goal:
+
+Add a project-local history system that records confirmed apply and rollback operations.
+
+Completed features:
+
+- `robopilot history`
+- Optional JSON output
+- Project-local journal entries under `.robopilot_history/`
+- Confirmed apply history entries
+- Confirmed rollback history entries
+- No successful modification history for dry-runs
+- Apply-preview ignores RoboPilot metadata directories
+- Expanded tests
+- Updated documentation
+
+## Completed: v0.17.0 ROS Project Detector
+
+Status: Completed
+
+Goal:
+
+Introduce static project type detection for existing ROS-style projects.
+
+Completed features:
+
+- `robopilot detect`
+- Optional JSON output
+- Static signal collection
+- Conservative project classification
+- RoboPilot project detection
+- ROS1 catkin package detection
+- ROS2 ament Python package detection
+- ROS2 ament C++ package detection
+- Mixed ROS-style project detection
+- Non-ROS / unknown project detection
+- Expanded tests
+- Updated documentation
+
+Supported categories:
+
+- `robopilot_project`
+- `ros1_catkin_package`
+- `ros2_ament_python_package`
+- `ros2_ament_cmake_package`
+- `mixed_ros_project`
+- `non_ros_project`
+- `unknown`
+
+## Completed: v0.18.0 ROS1 Static Inspector
+
+Status: Completed
+
+Goal:
+
+Extend RoboPilot's inspection capability to ROS1 catkin packages.
+
+Completed features:
+
+- `robopilot inspect-ros1`
+- Optional JSON output
+- Static parsing of `package.xml`
+- Conservative parsing of `CMakeLists.txt`
+- Catkin dependency and component detection
+- Launch/msg/srv/action file discovery
+- Python and C++ ROS1 node candidate detection
+- ROS1 structure issue reporting
+- Expanded tests
+- Updated documentation
+
+## Completed: v0.19.0 Dependency Analyzer
+
+Status: Completed
+
+Goal:
+
+Analyze declared and detected dependencies in ROS-style projects.
+
+Completed features:
+
+- `robopilot deps`
+- Optional JSON output
+- `package.xml` dependency extraction
+- CMake `find_package(...)` and catkin component extraction
+- Python import detection without executing code
+- C++ include detection
+- Launch file package reference detection
+- Conservative missing / unused dependency hints
+- Expanded tests
+- Updated documentation
+
+## Completed: v0.20.0 ROS1 to ROS2 Migration Plan
+
+Status: Completed
+
+Goal:
+
+Generate a static ROS1-to-ROS2 migration plan for ROS1 catkin packages.
+
+Completed features:
+
+- `robopilot migrate-plan`
+- YAML-like output
+- JSON output
+- Reuse of detection, ROS1 inspection, and dependency analysis
+- Package metadata migration guidance
+- Catkin-to-ament build system guidance
+- `rospy` to `rclpy` migration notes
+- `roscpp` to `rclcpp` migration notes
+- Launch migration guidance
+- msg/srv/action migration notes
+- Dependency migration hints
+- Manual review items and risks
+- Expanded tests
+- Updated documentation
+
+## Completed: v0.21.0 Migration Apply Preview
+
+Status: Completed
+
+Goal:
+
+Transform a migration plan into a read-only file-level migration preview.
+
+Completed features:
+
+- `robopilot migrate-preview`
+- Optional JSON output
+- Migration plan loading and validation
+- File-level migration preview
+- Files to create / update / keep
+- Files requiring manual migration
+- Interface files to review
+- Dependency items to review
+- Conflicts, risks, and suggested next steps
+- Expanded tests
+- Updated documentation
+
+## Completed: v0.22.0 Migration Plan Validate / Diff
+
+Status: Completed
+
+Goal:
+
+Make migration plans easier to validate and compare before future migration generation or apply workflows.
+
+Completed features:
+
+- `robopilot migrate-plan-validate`
+- `robopilot migrate-plan-diff`
+- JSON output for both commands
+- Required-field validation
+- Unsupported target validation
+- Scalar field diff
+- List-like section diff
+- Nested dependency migration diff
+- UTF-8 BOM migration plan loading support
+- Expanded tests
+- Updated documentation
+
+## Completed: v0.23.0 Stability / CLI Polish
+
+Status: Completed
+
+Goal:
+
+Improve CLI clarity, documentation structure, and v1.0 readiness without adding new product capabilities.
+
+Completed work:
+
+- CLI help text polish
+- Simplified README files
+- Command reference documentation
+- Workflow documentation
+- Architecture documentation
+- v1 scope documentation
+- Updated `.gitignore`
+- Updated roadmap and agent guidance
+- Expanded documentation entry points
+- No product command changes
+
+## Completed: v0.24.0 v1.0 Release Candidate Preparation
+
+Status: Completed
+
+Goal:
+
+Prepare RoboPilot for a future v1.0.0 release candidate.
+
+Completed work:
+
+- Testing documentation
+- Release process documentation
+- Compatibility documentation
+- Known limitations documentation
+- Stability policy documentation
+- v1.0 scope updates
+- RC versioning policy
+- Documentation audit
+- No new product capabilities
+
+## Completed: v1.0.0-rc.1 Release Candidate
+
+Status: Completed
+
+Goal:
+
+Perform a release candidate checklist pass for RoboPilot 1.0.
+
+Completed work:
+
+- Version update to `1.0.0rc1`
+- GitHub tag form documented as `v1.0.0-rc.1`
+- CLI help audit
+- Documentation link audit
+- Stability scope audit
+- Known limitations audit
+- Release process audit
+- Testing documentation audit
+- Manual help command verification
+- Full test pass
+
+## Completed: v1.0.0 First Stable Release
+
+Status: Completed
+
+Goal:
+
+Release RoboPilot's first stable version as a no-ROS-required static engineering toolchain for ROS-style projects.
+
+Stable release scope:
+
+- ProjectSpec workflow
+- safe apply / rollback / history loop
+- static project detection
+- ROS1 static inspection
+- dependency analyzer
+- ROS1-to-ROS2 migration plan / validate / diff / preview
+- optional LLM planner / refiner boundaries
+- no ROS runtime requirement
+- stable CLI baseline
+- release and stability documentation
+
+## Current: v1.1.0 Packaging & Public Developer Experience
+
+Status: Current work
+
+Goal:
+
+Prepare RoboPilot for PyPI distribution and broader open-source use.
+
+This milestone should not add robotics product features. It should make RoboPilot easier to install, publish, verify, and contribute to.
+
+Expected work:
+
+- audit `pyproject.toml` metadata
+- confirm package name and console script
+- add local build verification docs
+- add package build checks
+- add TestPyPI / PyPI publishing workflow
+- prefer PyPI Trusted Publishing over long-lived API tokens
+- document PyPI publishing process
+- add `CONTRIBUTING.md`
+- add `SECURITY.md`
+- add issue templates
+- add pull request template
+- add developer setup docs
+- update README installation instructions
+- keep optional LLM dependencies optional
+
+Possible new files:
+
+```txt
+CONTRIBUTING.md
+SECURITY.md
+docs/pypi_publish.md
+docs/developer_setup.md
+.github/ISSUE_TEMPLATE/bug_report.yml
+.github/ISSUE_TEMPLATE/feature_request.yml
+.github/pull_request_template.md
+.github/workflows/publish.yml
+.github/workflows/test-publish.yml
+```
+
+Recommended checks:
+
+```bash
+python -m pip install -U build twine
+python -m build
+python -m twine check dist/*
+python -m pytest --basetemp=".pytest_tmp" -p no:cacheprovider
+```
+
+Manual PyPI setup should use:
+
+```txt
+Project name: robopilot
+Owner: J1angJJ
+Repository: RoboPilot
+Workflow: publish.yml
+Environment: pypi
+```
+
+The exact PyPI availability of the `robopilot` package name is determined by PyPI at publish time.
+
+## Future: v1.2.0 API Layer Refactor
 
 Status: Planned
 
 Goal:
 
-Review user feedback, fix bugs, and plan future work without changing v1.0.0 behavior unexpectedly.
+Introduce a stable Python API layer so CLI, future VSCode extension, scripts, and possible UI tools can reuse the same core logic.
 
-## Later Ideas
+The API layer should not replace the CLI. It should make the CLI cleaner and make future integration easier.
 
-- Optional LLM report explanation.
-- Migration apply-plan design.
-- Migrated file generation preview.
-- Lightweight VSCode wrapper around the CLI.
-- Richer ROS2 static inspection.
+Proposed structure:
 
-These should stay behind the safety model: static first, preview before write, validated plans before apply, and no runtime ROS execution by default.
+```txt
+src/robopilot/api/
+├─ __init__.py
+├─ project.py
+├─ static_analysis.py
+├─ migration.py
+├─ apply.py
+└─ models.py
+```
 
-## Non-Goals for Early Versions
+Expected principles:
 
-- Real robot deployment.
-- Heavy model training.
-- Full ROS runtime execution.
-- Automatic `catkin_make`.
-- Automatic `colcon build`.
-- SLAM implementation.
-- Reinforcement learning training.
-- RAG before the core static workflow is stable.
-- Replacing general-purpose coding agents.
+- no Rich rendering
+- no direct stdout printing
+- no `sys.exit`
+- stable result objects or dictionaries
+- explicit file-writing behavior
+- reuse existing core modules
+- clear exceptions or result types
+- CLI remains a presentation layer
 
-## Development Priorities
+Possible API groups:
 
-1. Keep the CLI runnable.
+```txt
+project.py
+- plan_project
+- refine_spec
+- diff_specs
+- validate_spec
+- generate_project
+
+static_analysis.py
+- detect_project
+- inspect_project
+- inspect_ros1_project
+- analyze_dependencies
+- generate_report
+
+migration.py
+- create_migration_plan
+- validate_migration_plan
+- diff_migration_plans
+- preview_migration
+
+apply.py
+- preview_apply
+- export_apply_plan
+- validate_apply_plan
+- apply_plan
+- rollback
+- read_history
+```
+
+## Future: v1.3.0 Stable JSON Contracts / Schema Docs
+
+Status: Planned
+
+Goal:
+
+Document and stabilize JSON outputs for CLI and future VSCode integration.
+
+Expected work:
+
+- document JSON output for major commands
+- define which JSON fields are stable
+- define experimental JSON fields
+- add schema-like docs for key outputs
+- align CLI `--json` outputs for VSCode consumption
+- add compatibility notes for JSON consumers
+
+Important commands for JSON contract docs:
+
+- detect
+- inspect
+- inspect-ros1
+- deps
+- migrate-plan
+- migrate-plan-validate
+- migrate-plan-diff
+- migrate-preview
+- apply-preview
+- apply-plan
+- apply
+- rollback
+- history
+- report
+
+## Future: v1.4.0 VSCode Extension MVP
+
+Status: Planned
+
+Goal:
+
+Create a beginner-friendly VSCode extension that wraps RoboPilot CLI/API functionality.
+
+The extension should be thin. It should not duplicate RoboPilot's core logic.
+
+Preferred initial approach:
+
+```txt
+VSCode extension
+    ↓
+spawn robopilot CLI with --json
+    ↓
+parse JSON
+    ↓
+display TreeView / Webview / OutputChannel
+```
+
+Possible MVP commands:
+
+- RoboPilot: Detect Workspace
+- RoboPilot: Inspect ROS1 Package
+- RoboPilot: Analyze Dependencies
+- RoboPilot: Generate Migration Plan
+- RoboPilot: Preview Migration
+- RoboPilot: Validate ProjectSpec
+- RoboPilot: Open Report
+
+Future plugin direction:
+
+- show project type summary
+- show dependency warnings
+- open generated reports
+- display migration plan tree
+- display migration preview tree
+- validate `robopilot.yaml`
+- run commands from command palette
+
+The VSCode extension should remain optional and should not be required for CLI usage.
+
+## Future: v1.5.0 ROS2 Static Inspector
+
+Status: Planned
+
+Goal:
+
+Add a no-ROS-required static inspector for ROS2 ament packages.
+
+Possible command:
+
+```bash
+robopilot inspect-ros2 path/to/ros2_package
+```
+
+Expected support:
+
+- ROS2 ament Python package inspection
+- ROS2 ament C++ package inspection
+- `package.xml`
+- `setup.py`
+- `setup.cfg`
+- `CMakeLists.txt`
+- `resource/`
+- `launch/`
+- `config/`
+- `msg/`
+- `srv/`
+- `action/`
+- `rclpy` node candidates
+- `rclcpp` node candidates
+- `ament_package()`
+- `ament_python` build type
+- dependency hints
+- potential structure issues
+
+This feature should remain static and should not require ROS2 or colcon.
+
+## Future: v1.6.0 Dependency Analyzer Enhancement
+
+Status: Planned
+
+Goal:
+
+Improve dependency analysis with richer ROS1 / ROS2 dependency hints and migration-oriented mappings.
+
+Possible improvements:
+
+- ROS1 dependency to ROS2 dependency hints
+- `rosdep` package hints
+- Python import to `package.xml` dependency hints
+- C++ include to `package.xml` dependency hints
+- clearer missing / unused dependency explanations
+- richer migration dependency warnings
+
+Possible mappings:
+
+```txt
+rospy      → rclpy
+roscpp     → rclcpp
+catkin     → ament_cmake / ament_python
+tf         → tf2_ros
+dynamic_reconfigure → ROS2 parameters / lifecycle review
+```
+
+## Future: v1.7.0 Migration Scaffold Preview
+
+Status: Planned
+
+Goal:
+
+Preview a ROS2 package scaffold derived from a ROS1-to-ROS2 migration plan.
+
+Possible command:
+
+```bash
+robopilot migrate-scaffold-preview --plan migration_plan.yaml
+```
+
+Expected preview:
+
+- ROS2-style `package.xml`
+- ROS2-style `CMakeLists.txt` or `setup.py`
+- ROS2 launch file placeholders
+- config file placeholders
+- node migration TODO placeholders
+- files requiring manual migration
+- risks and review notes
+
+This should remain read-only.
+
+## Future: v1.8.0 Migration Scaffold Generate
+
+Status: Planned
+
+Goal:
+
+Generate a conservative ROS2 scaffold from a migration plan.
+
+Possible command:
+
+```bash
+robopilot migrate-scaffold --plan migration_plan.yaml --output ros2_package/
+```
+
+Expected behavior:
+
+- generate scaffold files only
+- include TODO comments for manual migration
+- avoid pretending to fully migrate business logic
+- remain explicit about limitations
+- support dry-run / preview where practical
+- avoid executing ROS2 or colcon
+
+## Future: v1.9.0 Optional LLM Report Explanation
+
+Status: Planned
+
+Goal:
+
+Add optional LLM explanation for static analysis and migration reports.
+
+Possible command:
+
+```bash
+robopilot explain --report report.md --planner llm
+```
+
+LLM rules:
+
+- explain existing reports
+- clarify warnings
+- summarize risks
+- suggest manual next steps
+- do not modify files
+- do not generate project files directly
+- do not execute commands
+
+This feature should remain optional and should require explicit LLM configuration.
+
+## Long-term: VSCode Extension Expansion
+
+Status: Long-term idea
+
+After the VSCode MVP, possible future features include:
+
+- persistent sidebar view
+- command palette integration
+- migration plan tree view
+- dependency warning panel
+- report preview
+- ProjectSpec validation view
+- guided beginner workflow
+- one-click CLI command execution
+- clear safety prompts for file-writing workflows
+
+The extension should remain a UI wrapper over stable RoboPilot CLI/API functionality.
+
+## Non-goals
+
+RoboPilot will not focus on the following unless the project direction explicitly changes:
+
+- real robot deployment
+- heavy model training
+- full ROS runtime execution
+- automatic `catkin_make`
+- automatic `colcon build`
+- SLAM implementation
+- reinforcement learning training
+- large-scale VLA model inference
+- embedded low-level driver development
+- complex multi-agent orchestration
+- replacing general-purpose coding agents
+- automatic full project migration without manual review
+
+## Development Priorities After v1.0.0
+
+Priority order:
+
+1. Keep the CLI runnable and stable.
 2. Keep no-ROS-required usage as a core principle.
-3. Keep the spec-first workflow stable.
-4. Keep behavior deterministic and testable.
-5. Avoid unnecessary dependencies.
-6. Reuse existing validation, rendering, preview, and apply logic.
-7. Make generated, inspected, and migrated outputs easy to understand.
-8. Keep file-writing workflows dry-run-first and recoverable.
-9. Keep documentation concise and current.
-10. Add optional AI features only when they preserve deterministic safety boundaries.
+3. Improve installation and public distribution.
+4. Prepare a clean API layer.
+5. Make JSON outputs usable by VSCode and external tools.
+6. Build a beginner-friendly VSCode extension as a thin wrapper.
+7. Improve ROS/ROS2 static analysis.
+8. Improve migration planning and scaffold workflows.
+9. Preserve dry-run-first safety for file-writing operations.
+10. Keep documentation concise and current.
+
+## Recommended Path
+
+```txt
+v1.1.0 Packaging & Public Developer Experience
+        ↓
+v1.2.0 API Layer Refactor
+        ↓
+v1.3.0 Stable JSON Contracts / Schema Docs
+        ↓
+v1.4.0 VSCode Extension MVP
+        ↓
+v1.5.0 ROS2 Static Inspector
+        ↓
+v1.6.0 Dependency Analyzer Enhancement
+        ↓
+v1.7.0 Migration Scaffold Preview
+        ↓
+v1.8.0 Migration Scaffold Generate
+```
+
+RoboPilot should grow as a practical no-ROS-required ROS engineering toolchain, with CLI as the stable core and beginner-friendly interfaces layered on top.
