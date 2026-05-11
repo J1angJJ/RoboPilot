@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- v1.1.0 packaging and public developer experience polish.
+- PyPI and TestPyPI publishing documentation, including Trusted Publishing guidance.
+- Developer setup documentation for virtualenv, conda, editable installs, tests, CLI help, optional LLM extras, and packaging checks.
+- Contributor and security policy documentation.
+- GitHub issue templates for bugs, feature requests, and documentation updates.
+- Pull request template with safety and testing checklist.
+- GitHub Actions workflows for PyPI and TestPyPI Trusted Publishing.
+
+### Changed
+
+- Updated package and generated demo metadata to `1.1.0`.
+- Audited `pyproject.toml` package metadata, optional dependencies, project URLs, license metadata, build backend requirements, and console script configuration.
+- Tightened Python package support metadata to `>=3.10,<3.12` to match the tested 3.10/3.11 support matrix; Python 3.12 is not claimed until tested, and Python 3.13 remains unsupported due to known Typer / CLI compatibility issues.
+- Added README installation wording for source installs now and PyPI installs after release.
+- Expanded release and testing docs with local build and `twine check` commands.
+
 ## [1.0.0] - 2026-05-11
 
 ### Changed

@@ -1,0 +1,38 @@
+name: Feature request
+description: Suggest an improvement for RoboPilot.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What robotics workflow would this help?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the behavior you want.
+    validations:
+      required: true
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: RoboPilot constraints
+      options:
+        - label: This should not require ROS or ROS2 to be installed.
+        - label: This should not execute launch files or generated nodes.
+        - label: This should keep file-writing behavior explicit and safe.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I did not include API keys, tokens, private paths, or secrets.
+          required: true

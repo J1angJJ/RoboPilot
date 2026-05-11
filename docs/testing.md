@@ -2,6 +2,18 @@
 
 RoboPilot's default test suite is designed to run without ROS, ROS2, catkin, colcon, simulator runtimes, robot hardware, network access, or API keys.
 
+## Supported Python Versions
+
+Run the supported release test suite on Python 3.10 and 3.11.
+
+Package metadata declares:
+
+```txt
+>=3.10,<3.12
+```
+
+Python 3.12 is not part of the supported matrix until the full suite is run there. Python 3.13 is not part of the supported matrix until the Typer / CLI compatibility issues are resolved and the full suite passes there.
+
 ## Install Dev Dependencies
 
 From the repository root:
@@ -72,6 +84,18 @@ Static ROS-style checks:
 robopilot detect examples/generated_projects/demo_detector
 robopilot deps examples/generated_projects/demo_detector
 ```
+
+## Packaging Checks
+
+For packaging or release-readiness changes, run:
+
+```bash
+python -m pip install -U build twine
+python -m build
+python -m twine check dist/*
+```
+
+These checks do not publish anything. They only verify that the local source distribution and wheel can be built and rendered cleanly.
 
 ## Expected Test Behavior
 

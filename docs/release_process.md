@@ -66,6 +66,28 @@ robopilot apply --help
 robopilot history --help
 ```
 
+## Build Checklist
+
+Install local packaging tools:
+
+```bash
+python -m pip install -U build twine
+```
+
+Build the source distribution and wheel:
+
+```bash
+python -m build
+```
+
+Check the built distributions before publishing:
+
+```bash
+python -m twine check dist/*
+```
+
+Do not commit `dist/`, `build/`, or `*.egg-info` artifacts.
+
 ## Commit Convention
 
 Use concise conventional commits. Example:
@@ -121,6 +143,15 @@ The GitHub Release description should include:
 - test result summary
 - upgrade notes, if any
 - link to `CHANGELOG.md`
+
+Publishing should use PyPI Trusted Publishing through the `pypi` GitHub environment when possible. Do not commit PyPI or TestPyPI tokens.
+
+Optional TestPyPI validation can use the dedicated TestPyPI workflow before the production release. After publishing, verify installation in a fresh environment:
+
+```bash
+python -m pip install -U robopilot
+robopilot --help
+```
 
 ## Rollback Plan
 

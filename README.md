@@ -26,11 +26,22 @@ RoboPilot does not run ROS, ROS2, launch files, generated code, `catkin_make`, o
 
 ## Quick Start
 
+Supported Python versions for this release line are Python 3.10 and 3.11. Package metadata declares `>=3.10,<3.12`; Python 3.12 and 3.13 are not claimed until the test suite passes there.
+
+Install from source for now:
+
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
 python -m pip install -U pip
 pip install -e ".[dev]"
+robopilot --help
+```
+
+After PyPI release:
+
+```bash
+pip install robopilot
 robopilot --help
 ```
 
@@ -96,8 +107,10 @@ robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_pack
 - [Command Reference](docs/command_reference.md)
 - [Workflows](docs/workflows.md)
 - [Architecture](docs/architecture.md)
+- [Developer Setup](docs/developer_setup.md)
 - [Testing](docs/testing.md)
 - [Release Process](docs/release_process.md)
+- [PyPI Publishing](docs/pypi_publish.md)
 - [Compatibility](docs/compatibility.md)
 - [Known Limitations](docs/known_limitations.md)
 - [Stability Policy](docs/stability_policy.md)
@@ -130,9 +143,9 @@ Transient generated projects should go under `outputs/`, which is intentionally 
 
 ## Project Status
 
-Current stable release: `v1.0.0`.
+Current release line: `v1.1.0`.
 
-RoboPilot's no-ROS-required static engineering workflow is stable for v1.0.0:
+RoboPilot's no-ROS-required static engineering workflow remains the stable v1 baseline:
 
 ```txt
 plan -> refine -> diff -> validate -> generate

@@ -9,7 +9,13 @@ Supported and tested in CI:
 - Python 3.10
 - Python 3.11
 
-RoboPilot may work on newer Python versions, but support should be confirmed with the test suite before release claims are updated.
+Package metadata declares:
+
+```txt
+>=3.10,<3.12
+```
+
+RoboPilot does not currently claim Python 3.12 or 3.13 support. Python 3.12 was not available during this release validation pass. Manual checks found Typer / CLI compatibility issues with Python 3.13, so the supported range should remain conservative until the full test suite passes on newer versions.
 
 ## Operating Systems
 

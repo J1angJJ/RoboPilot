@@ -1,29 +1,34 @@
 [project]
 name = "robopilot"
-version = "1.0.0"
+version = "1.1.0"
 description = "No-ROS-required static engineering toolchain for ROS-style projects."
 readme = "README.md"
-requires-python = ">=3.10"
-license = { text = "MIT" }
+requires-python = ">=3.10,<3.12"
+license = "MIT"
 authors = [
     { name = "J1angJJ" }
 ]
 keywords = [
     "robotics",
     "ros",
+    "ros1",
     "ros2",
-    "ai-agent",
     "developer-tools",
-    "code-generation"
+    "code-generation",
+    "static-analysis",
+    "migration"
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Education",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Topic :: Software Development :: Code Generators",
+    "Topic :: Software Development :: Quality Assurance",
     "Topic :: Scientific/Engineering"
 ]
 
@@ -43,8 +48,14 @@ llm = [
 [project.scripts]
 robopilot = "robopilot.main:app"
 
+[project.urls]
+Homepage = "https://github.com/J1angJJ/RoboPilot"
+Repository = "https://github.com/J1angJJ/RoboPilot"
+Issues = "https://github.com/J1angJJ/RoboPilot/issues"
+Changelog = "https://github.com/J1angJJ/RoboPilot/blob/main/CHANGELOG.md"
+
 [build-system]
-requires = ["setuptools>=68.0.0", "wheel"]
+requires = ["setuptools>=77.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
