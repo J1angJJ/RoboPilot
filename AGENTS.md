@@ -116,34 +116,43 @@ RoboPilot currently supports:
 The current priority is:
 
 ```txt
-v0.21.0 Migration Apply Preview
+v0.22.0 Migration Plan Validate / Diff
 ```
 
-The goal is to add a no-ROS-required static migration preview command that turns a ROS1-to-ROS2 migration plan into a file-level preview.
+The goal is to add no-ROS-required static validation and diff commands for ROS1-to-ROS2 migration plans.
 
 Expected commands:
 
 ```bash
-robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_package
+robopilot migrate-plan-validate --plan migration_plan.yaml
+```
+
+```bash
+robopilot migrate-plan-diff --old migration_plan_v1.yaml --new migration_plan_v2.yaml
 ```
 
 JSON output:
 
 ```bash
-robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_package --json
+robopilot migrate-plan-validate --plan migration_plan.yaml --json
+```
+
+```bash
+robopilot migrate-plan-diff --old migration_plan_v1.yaml --new migration_plan_v2.yaml --json
 ```
 
 Expected behavior:
 
-- Load and validate a generated migration plan.
-- Reuse `detect_project`, `inspect_ros1_project`, and dependency analysis.
-- Classify planned ROS2 files to create, files to keep, files requiring manual migration, interface files to review, dependency items to review, conflicts, risks, and next steps.
+- Reuse the existing migration plan loader.
+- Validate required migration plan fields.
+- Reject unsupported migration targets.
+- Compare scalar fields, list-like sections, dependency migration items, added items, removed items, and unchanged fields.
 - Support deterministic JSON output.
 - Do not require ROS or ROS2.
 - Do not run `catkin_make` or colcon.
 - Do not execute launch files or generated code.
 - Do not import user project modules.
-- Do not modify the source project or generate migrated files.
+- Do not modify migration plan files, source projects, or generated files.
 
 ## Important Constraints
 
@@ -425,6 +434,14 @@ robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_pack
 ```
 
 ```bash
+robopilot migrate-plan-validate --plan migration_plan.yaml
+```
+
+```bash
+robopilot migrate-plan-diff --old migration_plan_v1.yaml --new migration_plan_v2.yaml
+```
+
+```bash
 robopilot inspect outputs/demo_detector
 ```
 
@@ -549,6 +566,18 @@ robopilot migrate-plan --from .pytest_tmp/ros1_migration_demo --to ros2 --output
 ```
 
 ```bash
+robopilot migrate-plan-validate --plan .pytest_tmp/migration_plan.yaml
+```
+
+```bash
+robopilot migrate-plan-validate --plan .pytest_tmp/migration_plan.yaml --json
+```
+
+```bash
+robopilot migrate-plan-diff --old .pytest_tmp/migration_plan.yaml --new .pytest_tmp/migration_plan.yaml
+```
+
+```bash
 robopilot migrate-preview --plan .pytest_tmp/migration_plan.yaml --project .pytest_tmp/ros1_migration_demo
 ```
 
@@ -574,19 +603,27 @@ robopilot migrate-preview --plan .pytest_tmp/migration_plan.yaml --project .pyte
 Implement:
 
 ```txt
-v0.21.0 Migration Apply Preview
+v0.22.0 Migration Plan Validate / Diff
 ```
 
-The migration preview should support:
+The migration plan review commands should support:
 
 ```bash
-robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_package
+robopilot migrate-plan-validate --plan migration_plan.yaml
+```
+
+```bash
+robopilot migrate-plan-diff --old migration_plan_v1.yaml --new migration_plan_v2.yaml
 ```
 
 JSON output:
 
 ```bash
-robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_package --json
+robopilot migrate-plan-validate --plan migration_plan.yaml --json
+```
+
+```bash
+robopilot migrate-plan-diff --old migration_plan_v1.yaml --new migration_plan_v2.yaml --json
 ```
 
 Suggested implementation files:
@@ -600,9 +637,10 @@ src/robopilot/migration/
 Suggested tests:
 
 ```txt
-tests/test_migration_preview.py
+tests/test_migration_plan_validate.py
+tests/test_migration_plan_diff.py
 ```
 
-The migration preview should be static, deterministic, conservative, and testable. It must load and validate a migration plan, inspect the source project statically, classify file-level preview actions, and must not require ROS, ROS2, catkin, colcon, launch execution, generated code execution, source project modification, migrated file generation, or user module imports.
+The migration plan validation and diff commands should be static, deterministic, conservative, and testable. They must load migration plans with the existing loader, validate required fields, compare plan revisions, and must not require ROS, ROS2, catkin, colcon, launch execution, generated code execution, source project modification, migrated file generation, migration plan modification, or user module imports.
 
-Do not start migration apply-plan, migration apply, VSCode integration, RAG, Streamlit UI, or broad multi-agent orchestration until migration preview is stable.
+Do not start migrated file generation, migration apply-plan, migration apply, VSCode integration, RAG, Streamlit UI, or broad multi-agent orchestration until migration plan validation and diff are stable.

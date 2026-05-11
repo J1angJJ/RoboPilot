@@ -29,6 +29,8 @@ Current core commands:
 - `robopilot inspect-ros1`
 - `robopilot deps`
 - `robopilot migrate-plan`
+- `robopilot migrate-plan-validate`
+- `robopilot migrate-plan-diff`
 - `robopilot migrate-preview`
 - `robopilot generate`
 - `robopilot inspect`
@@ -46,7 +48,7 @@ robopilot --help
 
 Expected result:
 
-The CLI lists the available commands, including `plan`, `refine`, `diff`, `validate`, `apply-preview`, `apply-plan`, `apply-plan-validate`, `apply`, `rollback`, `history`, `detect`, `inspect-ros1`, `deps`, `migrate-plan`, `migrate-preview`, `generate`, `inspect`, `repair-suggest`, `report`, `debug`, and `graph`.
+The CLI lists the available commands, including `plan`, `refine`, `diff`, `validate`, `apply-preview`, `apply-plan`, `apply-plan-validate`, `apply`, `rollback`, `history`, `detect`, `inspect-ros1`, `deps`, `migrate-plan`, `migrate-plan-validate`, `migrate-plan-diff`, `migrate-preview`, `generate`, `inspect`, `repair-suggest`, `report`, `debug`, and `graph`.
 
 ## 3. Demo: Plan a ProjectSpec
 
@@ -143,6 +145,9 @@ Create a ROS1-to-ROS2 migration plan:
 ```bash
 robopilot migrate-plan --from .pytest_tmp/ros1_migration_demo --to ros2 --output .pytest_tmp/migration_plan.yaml
 robopilot migrate-plan --from .pytest_tmp/ros1_migration_demo --to ros2 --output .pytest_tmp/migration_plan.json --format json
+robopilot migrate-plan-validate --plan .pytest_tmp/migration_plan.yaml
+robopilot migrate-plan-validate --plan .pytest_tmp/migration_plan.yaml --json
+robopilot migrate-plan-diff --old .pytest_tmp/migration_plan.yaml --new .pytest_tmp/migration_plan.yaml
 robopilot migrate-preview --plan .pytest_tmp/migration_plan.yaml --project .pytest_tmp/ros1_migration_demo
 robopilot migrate-preview --plan .pytest_tmp/migration_plan.yaml --project .pytest_tmp/ros1_migration_demo --json
 ```
@@ -172,6 +177,8 @@ Point out:
 - Migration planning is read-only: it does not modify source files, generate migrated files, run ROS, run `catkin_make`, or run colcon.
 - v0.21.0 migrate-preview turns a migration plan into a file-level preview of planned ROS2 files, manual migration files, interface review files, dependency review items, conflicts, and risks.
 - Migration preview is read-only: it does not modify source files or generate migrated files.
+- v0.22.0 migrate-plan-validate and migrate-plan-diff make migration plans reviewable before preview or any future migration apply workflow.
+- Migration plan validation and diff are static and read-only: they do not modify plans, source projects, or generated files.
 - Real LLM refinement requires `OPENAI_API_KEY`.
 - Run `robopilot diff` before generating from an LLM-refined spec.
 
@@ -358,7 +365,25 @@ Point out:
 - It only writes the migration plan output file.
 - It does not modify the source project, generate migrated files, run ROS, run `catkin_make`, run colcon, execute launch files, or execute user code.
 
-## 18. Demo: Preview ROS1 to ROS2 Migration
+## 18. Demo: Validate and Diff Migration Plans
+
+Run:
+
+```bash
+robopilot migrate-plan-validate --plan .pytest_tmp/migration_plan.yaml
+robopilot migrate-plan-validate --plan .pytest_tmp/migration_plan.yaml --json
+robopilot migrate-plan-diff --old .pytest_tmp/migration_plan.yaml --new .pytest_tmp/migration_plan.yaml
+robopilot migrate-plan-diff --old .pytest_tmp/migration_plan.yaml --new .pytest_tmp/migration_plan.yaml --json
+```
+
+Point out:
+
+- Validation checks required migration plan fields and unsupported targets.
+- Diff compares scalar fields, list-like migration sections, dependency migration items, added items, removed items, and unchanged fields.
+- Both commands are static and read-only.
+- They do not modify migration plan files, source projects, or generated files.
+
+## 19. Demo: Preview ROS1 to ROS2 Migration
 
 Run:
 
@@ -471,8 +496,9 @@ Current implemented MVPs:
 - v0.19.0: Dependency Analyzer
 - v0.20.0: ROS1 to ROS2 Migration Plan
 - v0.21.0: Migration Apply Preview
+- v0.22.0: Migration Plan Validate / Diff
 
 Next planned work:
 
 - Optional LLM Report Explanation
-- Migration apply-plan / apply safety design
+- Migrated file generation or migration apply-plan safety design

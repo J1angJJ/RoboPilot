@@ -22,6 +22,8 @@ RoboPilot helps robotics learners and developers scaffold ROS-style Python packa
 - `inspect-ros1`: statically inspect ROS1 catkin package metadata, dependencies, files, and node candidates.
 - `deps`: conservatively analyze declared and detected dependencies in ROS-style projects.
 - `migrate-plan`: create a static ROS1-to-ROS2 migration plan without modifying files.
+- `migrate-plan-validate`: validate a saved migration plan without modifying files.
+- `migrate-plan-diff`: compare two migration plans without modifying files.
 - `migrate-preview`: preview file-level ROS1-to-ROS2 migration actions without modifying files.
 - `plan --planner llm`: optional ProjectSpec-only OpenAI planner for configured environments.
 - `validate`: check a saved ProjectSpec before generation.
@@ -99,6 +101,8 @@ robopilot detect outputs/demo_detector
 robopilot inspect-ros1 path/to/ros1_package
 robopilot deps path/to/project
 robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.yaml
+robopilot migrate-plan-validate --plan migration_plan.yaml
+robopilot migrate-plan-diff --old migration_plan_v1.yaml --new migration_plan_v2.yaml
 robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_package
 robopilot generate --spec refined.yaml
 ```
@@ -241,6 +245,20 @@ dependencies, file changes, manual review items, and risks. It does not modify
 the source project, generate migrated files, execute launch files, run
 `catkin_make`, run colcon, or validate runtime behavior.
 
+Validate and compare migration plans:
+
+```bash
+robopilot migrate-plan-validate --plan migration_plan.yaml
+robopilot migrate-plan-validate --plan migration_plan.yaml --json
+robopilot migrate-plan-diff --old migration_plan_v1.yaml --new migration_plan_v2.yaml
+robopilot migrate-plan-diff --old migration_plan_v1.yaml --new migration_plan_v2.yaml --json
+```
+
+`migrate-plan-validate` and `migrate-plan-diff` are static and read-only. They
+reuse RoboPilot's migration plan loader, report missing or invalid fields,
+compare scalar fields and list-like sections, and never modify migration plan
+files, source projects, or generated files.
+
 Preview a ROS1-to-ROS2 migration plan:
 
 ```bash
@@ -366,7 +384,7 @@ graph LR
 
 ## Project Status
 
-RoboPilot is an early v0.21.0 MVP focused on lightweight robotics developer workflows with offline defaults. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
+RoboPilot is an early v0.22.0 MVP focused on lightweight robotics developer workflows with offline defaults. See [`CHANGELOG.md`](CHANGELOG.md) for release notes.
 
 Implemented:
 
@@ -393,6 +411,7 @@ Implemented:
 - v0.19.0: Dependency Analyzer
 - v0.20.0: ROS1 to ROS2 Migration Plan
 - v0.21.0: Migration Apply Preview
+- v0.22.0: Migration Plan Validate / Diff
 
 Not included yet:
 
@@ -410,7 +429,7 @@ Not included yet:
 Near-term roadmap:
 
 1. Optional LLM Report Explanation
-2. Migration apply-plan / apply safety design
+2. Migrated file generation or migration apply-plan safety design
 3. First stable static workflow hardening
 
 Longer-term direction:

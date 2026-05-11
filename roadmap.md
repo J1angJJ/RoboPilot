@@ -781,9 +781,9 @@ Important:
 
 This version should only generate a migration plan. It should not automatically rewrite the project, generate migrated files, run ROS, run catkin, or run colcon.
 
-## Current: v0.21.0 Migration Apply Preview
+## Completed: v0.21.0 Migration Apply Preview
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -813,7 +813,44 @@ Expected behavior:
 
 This should reuse migration planning, static project detection, ROS1 inspection, and dependency analysis. It must not modify source files, generate migrated files, run ROS, run `catkin_make`, or run colcon.
 
-## Future: v0.22.0 LLM-assisted Report Explanation
+## Current: v0.22.0 Migration Plan Validate / Diff
+
+Status: Current work
+
+Goal:
+
+Validate and compare ROS1-to-ROS2 migration plans before previewing or using any future migration apply workflow.
+
+Core commands:
+
+```bash
+robopilot migrate-plan-validate --plan migration_plan.yaml
+```
+
+```bash
+robopilot migrate-plan-validate --plan migration_plan.yaml --json
+```
+
+```bash
+robopilot migrate-plan-diff --old migration_plan_v1.yaml --new migration_plan_v2.yaml
+```
+
+```bash
+robopilot migrate-plan-diff --old migration_plan_v1.yaml --new migration_plan_v2.yaml --json
+```
+
+Expected behavior:
+
+- load migration plans with the existing JSON / RoboPilot YAML-like loader
+- validate stable required fields
+- reject unsupported migration targets
+- report missing fields, invalid fields, warnings, and next steps
+- diff scalar fields, list-like sections, and dependency migration items
+- remain fully read-only
+
+This feature must not modify migration plan files, source projects, or generated files. It must not require ROS, run `catkin_make`, run colcon, execute launch files, or import user project modules.
+
+## Future: v0.23.0 LLM-assisted Report Explanation
 
 Status: Planned
 
@@ -938,7 +975,9 @@ v0.20.0 ROS1 to ROS2 Migration Plan
         ↓
 v0.21.0 Migration Apply Preview
         ↓
-v0.22.0 Optional LLM Report Explanation
+v0.22.0 Migration Plan Validate / Diff
+        ↓
+v0.23.0 Optional LLM Report Explanation
         ↓
 v1.0.0 First Stable Release
 ```

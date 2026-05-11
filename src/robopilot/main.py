@@ -27,6 +27,11 @@ from robopilot.migration.ros1_to_ros2 import (
     ROS1ToROS2MigrationPlan,
     write_migration_plan,
 )
+from robopilot.migration.plan_diff import MigrationPlanDiffResult, diff_migration_plans
+from robopilot.migration.plan_validator import (
+    MigrationPlanValidationReport,
+    validate_migration_plan_file,
+)
 from robopilot.migration.preview import MigrationPreviewResult, preview_migration
 from robopilot.planner import (
     LLMProviderConfig,
@@ -861,6 +866,124 @@ def _print_migration_plan(plan: ROS1ToROS2MigrationPlan) -> None:
 
     console.print(Panel.fit("Safety Note", style="bold cyan"))
     console.print(plan.safety_note)
+
+
+@app.command("migrate-plan-validate")
+def migrate_plan_validate(
+    plan: Annotated[
+        Path,
+        typer.Option("--plan", "-p", help="Path to a ROS1-to-ROS2 migration plan."),
+    ],
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Validate a ROS1-to-ROS2 migration plan without modifying files."""
+    report = validate_migration_plan_file(plan)
+    if json_output:
+        print(json.dumps(report.to_dict(), indent=2))
+        if not report.valid:
+            raise typer.Exit(code=1)
+        return
+
+    _print_migration_plan_validation(report)
+    if not report.valid:
+        raise typer.Exit(code=1)
+
+
+def _print_migration_plan_validation(report: MigrationPlanValidationReport) -> None:
+    console.print(Panel.fit("Migration Plan Validation Summary", style="bold cyan"))
+    console.print(f"[bold]Plan path:[/bold] {report.plan_path}")
+    console.print(f"[bold]Valid:[/bold] {report.valid}")
+
+    console.print(Panel.fit("Missing Fields", style="bold cyan"))
+    _print_scalar_values(report.missing_fields)
+
+    console.print(Panel.fit("Invalid Fields", style="bold cyan"))
+    _print_scalar_values(report.invalid_fields)
+
+    console.print(Panel.fit("Warnings", style="bold cyan"))
+    _print_scalar_values(report.warnings)
+
+    console.print(Panel.fit("Suggested Next Steps", style="bold cyan"))
+    _print_scalar_values(report.suggested_next_steps)
+
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    console.print(report.safety_note)
+
+
+@app.command("migrate-plan-diff")
+def migrate_plan_diff(
+    old: Annotated[
+        Path,
+        typer.Option("--old", help="Path to the baseline migration plan."),
+    ],
+    new: Annotated[
+        Path,
+        typer.Option("--new", help="Path to the updated migration plan."),
+    ],
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Diff two ROS1-to-ROS2 migration plans without modifying files."""
+    try:
+        result = diff_migration_plans(old, new)
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    if json_output:
+        print(json.dumps(result.to_dict(), indent=2))
+        return
+
+    _print_migration_plan_diff(result)
+
+
+def _print_migration_plan_diff(result: MigrationPlanDiffResult) -> None:
+    console.print(Panel.fit("Migration Plan Diff Summary", style="bold cyan"))
+    console.print(f"[bold]Old plan:[/bold] {result.old_plan}")
+    console.print(f"[bold]New plan:[/bold] {result.new_plan}")
+    console.print(f"[bold]Valid:[/bold] {result.valid}")
+    console.print(f"[bold]Has changes:[/bold] {result.has_changes}")
+
+    console.print(Panel.fit("Changed Fields", style="bold cyan"))
+    if result.changed_fields:
+        table = Table()
+        table.add_column("Field")
+        table.add_column("Old")
+        table.add_column("New")
+        for field, values in result.changed_fields.items():
+            table.add_row(field, values["old"], values["new"])
+        console.print(table)
+    else:
+        console.print("[green]No scalar field changes.[/green]")
+
+    console.print(Panel.fit("Added Items", style="bold cyan"))
+    _print_mapping_values(result.added_items)
+
+    console.print(Panel.fit("Removed Items", style="bold cyan"))
+    _print_mapping_values(result.removed_items)
+
+    console.print(Panel.fit("Unchanged Summary", style="bold cyan"))
+    _print_scalar_values(result.unchanged_fields)
+
+    console.print(Panel.fit("Warnings", style="bold cyan"))
+    _print_scalar_values(result.warnings)
+
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    console.print(result.safety_note)
+
+
+def _print_mapping_values(values: dict[str, list[str]]) -> None:
+    if not values:
+        console.print("- none")
+        return
+    for key, items in values.items():
+        console.print(f"[bold]{key}:[/bold]")
+        _print_scalar_values(tuple(items))
 
 
 @app.command("migrate-preview")

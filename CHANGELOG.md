@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.22.0 static migration plan validation and diff review.
+- `robopilot migrate-plan-validate --plan ...` command.
+- `robopilot migrate-plan-validate --json` deterministic JSON output.
+- `robopilot migrate-plan-diff --old ... --new ...` command.
+- `robopilot migrate-plan-diff --json` deterministic JSON output.
+- Validation reports for missing fields, invalid fields, unsupported migration targets, warnings, suggested next steps, and safety notes.
+- Migration plan diffs for scalar fields, list-like sections, dependency migration items, added items, removed items, unchanged fields, warnings, and safety notes.
+- Reuse of the existing migration plan JSON and RoboPilot YAML-like loader for validation, diff, and preview workflows.
 - v0.21.0 no-ROS-required static migration apply preview.
 - `robopilot migrate-preview --plan ... --project ...` command.
 - `robopilot migrate-preview --json` deterministic JSON output.

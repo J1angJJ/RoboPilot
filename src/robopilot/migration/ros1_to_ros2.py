@@ -167,7 +167,7 @@ def write_migration_plan(
 
 def load_migration_plan(plan_path: Path) -> dict[str, object]:
     """Load a JSON or RoboPilot YAML-like migration plan."""
-    content = plan_path.read_text(encoding="utf-8")
+    content = plan_path.read_text(encoding="utf-8-sig")
     if plan_path.suffix.lower() == ".json" or content.lstrip().startswith("{"):
         data = json.loads(content)
         if not isinstance(data, dict):
