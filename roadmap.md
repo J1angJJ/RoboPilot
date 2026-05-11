@@ -973,9 +973,9 @@ tf         → tf2_ros
 dynamic_reconfigure → ROS2 parameters / lifecycle review
 ```
 
-## Current: v1.7.0 Migration Scaffold Preview
+## Completed: v1.7.0 Migration Scaffold Preview
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -999,9 +999,9 @@ Expected preview:
 
 This should remain read-only.
 
-## Future: v1.8.0 Migration Scaffold Generate
+## Current: v1.8.0 Migration Scaffold Generate
 
-Status: Planned
+Status: Current work
 
 Goal:
 

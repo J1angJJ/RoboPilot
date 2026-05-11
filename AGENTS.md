@@ -65,29 +65,31 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v1.7.0 Migration Scaffold Preview
+v1.8.0 Migration Scaffold Generate
 ```
 
-The goal is to preview the future ROS2 target package scaffold implied by an existing ROS1-to-ROS2 migration plan.
+The goal is to generate a conservative ROS2 scaffold from an existing ROS1-to-ROS2 migration plan.
 
 This milestone should focus on:
 
-- `robopilot migrate-scaffold-preview --plan migration_plan.yaml`
+- `robopilot migrate-scaffold --plan migration_plan.yaml --output path/to/ros2_scaffold`
 - deterministic `--json` output
-- target-style inference for `ament_python`, `ament_cmake`, and mixed-review cases
-- planned scaffold file lists and placeholder file lists
-- manual migration, interface, dependency, risk, conflict, and next-step reporting
-- no scaffold generation, source project modification, plan modification, ROS, ROS2, catkin, colcon, launch execution, generated code execution, or user module imports
+- reuse of `migrate-scaffold-preview`
+- conservative placeholder files and `MIGRATION_NOTES.md`
+- no overwrite by default
+- output path safety checks before writing
+- source project and migration plan remaining unchanged
+- no ROS, ROS2, catkin, colcon, launch execution, generated code execution, or user module imports
 
-This milestone should remain read-only.
+This milestone may write scaffold files only under the explicit output directory.
 
 ## Near-term Direction
 
-After v1.7.0, the recommended direction is:
+After v1.8.0, the recommended direction is:
 
 ```txt
-v1.7.0 Migration Scaffold Preview
 v1.8.0 Migration Scaffold Generate
+v1.9.0 Optional LLM Report Explanation or scaffold validation/apply safety planning
 ```
 
 The VSCode extension should be a thin beginner-friendly interface over the CLI / API layer. It should not duplicate RoboPilot core logic.
@@ -435,6 +437,10 @@ robopilot migrate-scaffold-preview --plan migration_plan.yaml
 ```
 
 ```bash
+robopilot migrate-scaffold --plan migration_plan.yaml --output path/to/ros2_scaffold
+```
+
+```bash
 robopilot inspect outputs/demo_detector
 ```
 
@@ -567,17 +573,17 @@ robopilot deps --help
 Implement:
 
 ```txt
-v1.7.0 Migration Scaffold Preview
+v1.8.0 Migration Scaffold Generate
 ```
 
-This milestone should add `robopilot migrate-scaffold-preview --plan migration_plan.yaml` as a read-only preview of future ROS2 scaffold generation.
+This milestone should add `robopilot migrate-scaffold --plan migration_plan.yaml --output path/to/ros2_scaffold` as a conservative scaffold generation workflow.
 
 Suggested implementation items:
 
 ```txt
-src/robopilot/migration/scaffold_preview.py
-tests/test_migration_scaffold_preview.py
+src/robopilot/migration/scaffold_generator.py
+tests/test_migration_scaffold_generator.py
 docs/json_contracts.md
 ```
 
-Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration scaffold generation, migration apply, VSCode Marketplace publishing, or new LLM behavior during this milestone unless explicitly requested.
+Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, VSCode Marketplace publishing, or new LLM behavior during this milestone unless explicitly requested.

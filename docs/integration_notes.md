@@ -21,6 +21,7 @@ robopilot inspect-ros2 path/to/project --json
 robopilot deps path/to/project --json
 robopilot migrate-preview --plan migration_plan.yaml --project path/to/project --json
 robopilot migrate-scaffold-preview --plan migration_plan.yaml --json
+robopilot migrate-scaffold --plan migration_plan.yaml --output path/to/ros2_scaffold --json
 ```
 
 The documented top-level keys in [JSON Contracts](json_contracts.md) are intended for integration use. Treat undocumented keys, deeply nested heuristic details, and dependency hint wording as unstable unless a future schema document marks them stable.
@@ -51,6 +52,7 @@ External tools must keep RoboPilot's safety model visible:
 
 - Invoke file-writing commands only after explicit user intent.
 - Use dry-run commands before confirmed writes.
+- For `migrate-scaffold`, show the output directory and conflict list before treating generation as successful.
 - Do not call `apply --confirm` or `rollback --confirm` without an explicit user confirmation step.
 - Surface conflicts, skipped files, backup paths, and safety notes to users.
 - Do not bypass ProjectSpec validation, apply-preview, apply-plan, or rollback safety checks.

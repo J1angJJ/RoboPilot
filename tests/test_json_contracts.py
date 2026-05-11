@@ -254,6 +254,35 @@ def test_migrate_scaffold_preview_json_has_expected_top_level_keys(tmp_path: Pat
     ]
 
 
+def test_migrate_scaffold_json_has_expected_top_level_keys(tmp_path: Path) -> None:
+    project = tmp_path / "ros1_demo"
+    _write_ros1_package(project)
+    plan = _write_migration_plan(tmp_path, project=project)
+    output = tmp_path / "ros2_scaffold"
+
+    data = _invoke_json(["migrate-scaffold", "--plan", str(plan), "--output", str(output), "--json"])
+
+    assert list(data.keys()) == [
+        "plan_path",
+        "output_path",
+        "source_path",
+        "target",
+        "package_name",
+        "target_style",
+        "dry_run",
+        "files_to_create",
+        "files_created",
+        "conflicts",
+        "skipped_files",
+        "manual_migration_required",
+        "interface_files_to_review",
+        "dependency_items_to_review",
+        "risks",
+        "suggested_next_steps",
+        "safety_note",
+    ]
+
+
 def test_apply_preview_json_has_expected_top_level_keys(tmp_path: Path) -> None:
     spec_path = _write_demo_spec(tmp_path)
 

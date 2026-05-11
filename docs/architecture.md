@@ -104,8 +104,9 @@ ROS1-to-ROS2 migration support is currently planning and preview only:
 - `migrate-plan-diff` compares two migration plan revisions.
 - `migrate-preview` turns a plan into conservative file-level preview categories.
 - `migrate-scaffold-preview` turns a plan into a read-only ROS2 target scaffold preview for future generation.
+- `migrate-scaffold` writes conservative ROS2 scaffold placeholders to an explicit output directory.
 
-Migration modules do not generate migrated files, modify the source project, or run ROS tooling.
+Migration modules do not modify the source project, modify migration plans, run ROS tooling, or claim full automatic migration. Scaffold generation is conservative, refuses to overwrite existing files by default, and writes only placeholder files under the requested output directory.
 
 ## Optional LLM Boundaries
 

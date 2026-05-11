@@ -15,6 +15,7 @@ from robopilot.api.apply import (
 )
 from robopilot.api.migration import (
     create_ros1_to_ros2_migration_plan as api_create_ros1_to_ros2_migration_plan,
+    generate_migration_scaffold as api_generate_migration_scaffold,
     preview_migration_plan as api_preview_migration_plan,
     preview_migration_scaffold as api_preview_migration_scaffold,
     validate_migration_plan_file as api_validate_migration_plan_file,
@@ -47,6 +48,7 @@ from robopilot.migration.plan_validator import (
     MigrationPlanValidationReport,
 )
 from robopilot.migration.preview import MigrationPreviewResult
+from robopilot.migration.scaffold_generator import MigrationScaffoldGenerationResult
 from robopilot.migration.scaffold_preview import MigrationScaffoldPreviewResult, ScaffoldFile
 from robopilot.planner import (
     LLMProviderConfig,
@@ -1218,6 +1220,81 @@ def _print_scaffold_items(items: tuple[ScaffoldFile, ...]) -> None:
         console.print(f"- {item.path} ({item.status})")
         console.print(f"  purpose: {item.purpose}")
         console.print(f"  source_basis: {item.source_basis}")
+
+
+@app.command("migrate-scaffold")
+def migrate_scaffold(
+    plan: Annotated[
+        Path,
+        typer.Option("--plan", "-p", help="Path to a ROS1-to-ROS2 migration plan."),
+    ],
+    output: Annotated[
+        Path,
+        typer.Option("--output", "-o", help="Directory where the ROS2 scaffold should be generated."),
+    ],
+    overwrite: Annotated[
+        bool,
+        typer.Option("--overwrite", help="Overwrite only intended scaffold files if they already exist."),
+    ] = False,
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Generate a conservative ROS2 scaffold from a migration plan."""
+    try:
+        result = api_generate_migration_scaffold(plan, output, overwrite=overwrite, as_dict=False)
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    if json_output:
+        print(json.dumps(result.to_dict(), indent=2))
+    else:
+        _print_migration_scaffold_generation(result)
+
+    if result.conflicts:
+        raise typer.Exit(code=1)
+
+
+def _print_migration_scaffold_generation(result: MigrationScaffoldGenerationResult) -> None:
+    console.print(Panel.fit("Migration Scaffold Generation Summary", style="bold cyan"))
+    console.print(f"[bold]Plan path:[/bold] {result.plan_path}")
+    console.print(f"[bold]Output path:[/bold] {result.output_path}")
+    console.print(f"[bold]Source Project:[/bold] {result.source_path or 'unknown'}")
+    console.print(f"[bold]Target:[/bold] {result.target}")
+    console.print(f"[bold]Package:[/bold] {result.package_name or 'unknown'}")
+    console.print(f"[bold]Target Style:[/bold] {result.target_style}")
+
+    console.print(Panel.fit("Files to Create", style="bold cyan"))
+    _print_scalar_values(result.files_to_create)
+
+    console.print(Panel.fit("Files Created", style="bold cyan"))
+    _print_scalar_values(result.files_created)
+
+    console.print(Panel.fit("Conflicts", style="bold cyan"))
+    _print_scalar_values(result.conflicts)
+
+    console.print(Panel.fit("Skipped Files", style="bold cyan"))
+    _print_scalar_values(result.skipped_files)
+
+    console.print(Panel.fit("Manual Migration Required", style="bold cyan"))
+    _print_scalar_values(result.manual_migration_required)
+
+    console.print(Panel.fit("Interface Files to Review", style="bold cyan"))
+    _print_scalar_values(result.interface_files_to_review)
+
+    console.print(Panel.fit("Dependency Items to Review", style="bold cyan"))
+    _print_scalar_values(result.dependency_items_to_review)
+
+    console.print(Panel.fit("Risks", style="bold cyan"))
+    _print_scalar_values(result.risks)
+
+    console.print(Panel.fit("Suggested Next Steps", style="bold cyan"))
+    _print_scalar_values(result.suggested_next_steps)
+
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    console.print(result.safety_note)
 
 
 @app.command()

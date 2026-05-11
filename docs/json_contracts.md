@@ -602,6 +602,64 @@ Minimal output:
 }
 ```
 
+## `migrate-scaffold --json`
+
+Purpose: generate a conservative ROS2 scaffold from a migration plan and return the generation summary.
+
+Example:
+
+```bash
+robopilot migrate-scaffold --plan migration_plan.yaml --output path/to/ros2_scaffold --json
+```
+
+Top-level stable keys:
+
+- `plan_path`
+- `output_path`
+- `source_path`
+- `target`
+- `package_name`
+- `target_style`
+- `dry_run`
+- `files_to_create`
+- `files_created`
+- `conflicts`
+- `skipped_files`
+- `manual_migration_required`
+- `interface_files_to_review`
+- `dependency_items_to_review`
+- `risks`
+- `suggested_next_steps`
+- `safety_note`
+
+Experimental fields: target-style inference, placeholder file naming, risk wording, and manual migration guidance.
+
+Safety notes: writes only to the explicit output directory, refuses to overwrite existing files by default, does not modify the original ROS1 source project or migration plan, and generates placeholders rather than a full automatic migration.
+
+Minimal output:
+
+```json
+{
+  "plan_path": "migration_plan.yaml",
+  "output_path": "path/to/ros2_scaffold",
+  "source_path": "path/to/ros1_package",
+  "target": "ros2",
+  "package_name": "demo_pkg",
+  "target_style": "ament_python",
+  "dry_run": false,
+  "files_to_create": ["package.xml", "setup.py", "MIGRATION_NOTES.md"],
+  "files_created": ["package.xml", "setup.py", "MIGRATION_NOTES.md"],
+  "conflicts": [],
+  "skipped_files": [],
+  "manual_migration_required": ["scripts/talker.py"],
+  "interface_files_to_review": ["msg/Demo.msg"],
+  "dependency_items_to_review": [],
+  "risks": [],
+  "suggested_next_steps": [],
+  "safety_note": "Scaffold generation only."
+}
+```
+
 ## `apply-preview --json`
 
 Purpose: compare a ProjectSpec with a project directory before apply.
