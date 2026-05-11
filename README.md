@@ -16,7 +16,7 @@ It helps robotics learners and developers plan, refine, validate, generate, insp
 - Previews, exports, applies, backs up, rolls back, and journals safe project updates.
 - Inspects projects and exports read-only reports.
 - Detects RoboPilot, ROS1, ROS2, mixed, non-ROS, and unknown project types.
-- Statically inspects ROS1 catkin packages.
+- Statically inspects ROS1 catkin and ROS2 ament packages.
 - Analyzes declared and detected dependencies.
 - Builds static ROS1-to-ROS2 migration plans, validates/diffs them, and previews file-level migration work.
 - Provides small offline utilities for robotics error logs and Mermaid workflow graphs.
@@ -94,6 +94,7 @@ ROS-style static analysis:
 ```bash
 robopilot detect path/to/project
 robopilot inspect-ros1 path/to/ros1_package
+robopilot inspect-ros2 path/to/ros2_package
 robopilot deps path/to/project
 ```
 
@@ -150,7 +151,7 @@ Transient generated projects should go under `outputs/`, which is intentionally 
 
 ## Project Status
 
-Current release line: `v1.4.0`.
+Current release line: `v1.5.0`.
 
 RoboPilot's no-ROS-required static engineering workflow remains the stable v1 baseline:
 
@@ -158,11 +159,11 @@ RoboPilot's no-ROS-required static engineering workflow remains the stable v1 ba
 plan -> refine -> diff -> validate -> generate
       -> apply-preview -> apply-plan -> apply -> rollback -> history
       -> inspect -> repair-suggest -> report
-      -> detect -> inspect-ros1 -> deps
+      -> detect -> inspect-ros1 -> inspect-ros2 -> deps
       -> migrate-plan -> migrate-plan-validate -> migrate-plan-diff -> migrate-preview
 ```
 
-The Python API layer, documented CLI JSON contracts, and VSCode extension MVP source are available for integration work while the CLI remains the primary user interface.
+The Python API layer, documented CLI JSON contracts, ROS2 static inspector, and VSCode extension MVP source are available for integration work while the CLI remains the primary user interface.
 
 The VSCode extension lives under `vscode-extension/`, requires the RoboPilot CLI to be installed, and is documented in [docs/vscode_extension.md](docs/vscode_extension.md).
 

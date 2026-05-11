@@ -48,6 +48,8 @@ Static detection supports these categories:
 - ROS1 catkin package
 - ROS2 ament Python package detection
 - ROS2 ament C++ package detection
+- ROS2 ament Python package static inspection
+- ROS2 ament C++ package static inspection
 - mixed ROS-style project
 - non-ROS project
 - unknown project

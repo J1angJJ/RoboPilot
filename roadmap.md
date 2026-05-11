@@ -853,9 +853,9 @@ Important commands for JSON contract docs:
 - history
 - report
 
-## Current: v1.4.0 VSCode Extension MVP
+## Completed: v1.4.0 VSCode Extension MVP
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -897,9 +897,9 @@ Future plugin direction:
 
 The VSCode extension should remain optional and should not be required for CLI usage.
 
-## Future: v1.5.0 ROS2 Static Inspector
+## Current: v1.5.0 ROS2 Static Inspector
 
-Status: Planned
+Status: Current work
 
 Goal:
 
@@ -933,6 +933,18 @@ Expected support:
 - potential structure issues
 
 This feature should remain static and should not require ROS2 or colcon.
+
+Expected command:
+
+```bash
+robopilot inspect-ros2 path/to/ros2_package
+```
+
+JSON output:
+
+```bash
+robopilot inspect-ros2 path/to/ros2_package --json
+```
 
 ## Future: v1.6.0 Dependency Analyzer Enhancement
 

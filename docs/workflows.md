@@ -91,6 +91,17 @@ robopilot inspect-ros1 path/to/ros1_package --json
 
 The inspector reads `package.xml`, `CMakeLists.txt`, launch files, interfaces, Python files, and C++ files statically.
 
+## ROS2 Static Inspection
+
+Inspect ROS2 ament package metadata and file structure without ROS2.
+
+```bash
+robopilot inspect-ros2 path/to/ros2_package
+robopilot inspect-ros2 path/to/ros2_package --json
+```
+
+The inspector reads `package.xml`, `CMakeLists.txt`, `setup.py`, `setup.cfg`, `resource/`, launch files, config files, interfaces, Python files, and C++ files statically.
+
 ## Dependency Analysis
 
 Analyze declared dependencies and detected usage.

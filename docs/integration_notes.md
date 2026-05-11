@@ -17,6 +17,7 @@ For external tools such as a VSCode extension, prefer commands like:
 
 ```bash
 robopilot detect path/to/project --json
+robopilot inspect-ros2 path/to/project --json
 robopilot deps path/to/project --json
 robopilot migrate-preview --plan migration_plan.yaml --project path/to/project --json
 ```

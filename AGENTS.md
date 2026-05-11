@@ -51,6 +51,7 @@ The stable baseline includes:
 - project-local history journal
 - ROS project detection
 - ROS1 static inspection
+- ROS2 static inspection
 - static dependency analysis
 - ROS1-to-ROS2 migration planning
 - migration plan validation and diff
@@ -64,29 +65,29 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v1.4.0 VSCode Extension MVP
+v1.5.0 ROS2 Static Inspector
 ```
 
-The goal is to add a lightweight VSCode extension MVP that wraps existing RoboPilot CLI JSON outputs.
+The goal is to add no-ROS-required static inspection for ROS2 ament Python and ament CMake packages.
 
 This milestone should focus on:
 
-- a thin VSCode UI layer over the RoboPilot CLI
-- CLI `--json` consumption
-- OutputChannel summaries
-- simple project TreeView state if low risk
-- no TypeScript reimplementation of RoboPilot core logic
-- no Python CLI behavior changes
+- `robopilot inspect-ros2`
+- deterministic `--json` output
+- package.xml, CMakeLists.txt, setup.py, setup.cfg, resource, launch, config, msg, srv, action, Python, and C++ static analysis
+- rclpy and rclcpp node candidate detection
+- reuse of project detection and API wrappers
+- no ROS2, colcon, launch execution, generated code execution, or user module imports
 
 This milestone should not add new robotics product features.
 
 ## Near-term Direction
 
-After v1.4.0, the recommended direction is:
+After v1.5.0, the recommended direction is:
 
 ```txt
-v1.4.0 VSCode Extension MVP
 v1.5.0 ROS2 Static Inspector
+v1.6.0 Dependency Analyzer Enhancement
 ```
 
 The VSCode extension should be a thin beginner-friendly interface over the CLI / API layer. It should not duplicate RoboPilot core logic.
@@ -562,21 +563,17 @@ robopilot deps --help
 Implement:
 
 ```txt
-v1.4.0 VSCode Extension MVP
+v1.5.0 ROS2 Static Inspector
 ```
 
-This milestone should add a thin VSCode extension MVP over the existing CLI JSON outputs.
+This milestone should add `robopilot inspect-ros2` for ROS2 ament Python and ament CMake packages.
 
 Suggested implementation items:
 
 ```txt
-vscode-extension/package.json
-vscode-extension/src/extension.ts
-vscode-extension/src/robopilotCli.ts
-vscode-extension/src/output.ts
-vscode-extension/src/projectTree.ts
-vscode-extension/test/robopilotCli.test.ts
-docs/vscode_extension.md
+src/robopilot/ros2/__init__.py
+src/robopilot/ros2/inspector.py
+tests/test_ros2_inspector.py
 ```
 
-Do not add new Python product commands, ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, or new LLM behavior during this milestone unless explicitly requested.
+Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, VSCode Marketplace publishing, or new LLM behavior during this milestone unless explicitly requested.

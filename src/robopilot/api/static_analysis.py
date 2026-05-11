@@ -8,6 +8,7 @@ from robopilot.detector.project_detector import ProjectDetection, detect_project
 from robopilot.inspector.project_inspector import ProjectInspection, inspect_project
 from robopilot.report.project_report import generate_project_report, write_project_report
 from robopilot.ros1.inspector import ROS1Inspection, inspect_ros1_project
+from robopilot.ros2.inspector import ROS2Inspection, inspect_ros2_project
 
 
 def detect_project_type(
@@ -37,6 +38,16 @@ def inspect_ros1_project_static(
 ) -> StructuredResult | ROS1Inspection:
     """Inspect a ROS1 catkin package statically without requiring ROS."""
     result = inspect_ros1_project(normalize_path(project_path))
+    return to_structured_result(result) if as_dict else result
+
+
+def inspect_ros2_project_static(
+    project_path: PathLike,
+    *,
+    as_dict: bool = True,
+) -> StructuredResult | ROS2Inspection:
+    """Inspect a ROS2 ament package statically without requiring ROS2."""
+    result = inspect_ros2_project(normalize_path(project_path))
     return to_structured_result(result) if as_dict else result
 
 

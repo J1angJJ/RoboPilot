@@ -11,7 +11,7 @@ Stable areas are expected to remain backward-compatible unless a major release n
 - No-ROS-required default behavior.
 - Rule-based `ProjectSpec` planning and generation.
 - `robopilot.yaml` as the generated ProjectSpec metadata file.
-- Read-only behavior for `inspect`, `report`, `repair-suggest`, `detect`, `inspect-ros1`, `deps`, migration validation, migration diff, and migration preview.
+- Read-only behavior for `inspect`, `report`, `repair-suggest`, `detect`, `inspect-ros1`, `inspect-ros2`, `deps`, migration validation, migration diff, and migration preview.
 - Dry-run-first behavior for `apply` and `rollback`.
 - Confirmed apply writing only through validated apply plans.
 - Rollback restoring only from RoboPilot backup directories.

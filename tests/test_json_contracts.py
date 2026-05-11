@@ -70,6 +70,30 @@ def test_inspect_ros1_json_has_expected_top_level_keys(tmp_path: Path) -> None:
     ]
 
 
+def test_inspect_ros2_json_has_expected_top_level_keys(tmp_path: Path) -> None:
+    project = tmp_path / "ros2_py_demo"
+    _write_ros2_python_package(project)
+
+    data = _invoke_json(["inspect-ros2", str(project), "--json"])
+
+    assert list(data.keys()) == [
+        "project_path",
+        "exists",
+        "package_name",
+        "package_format",
+        "detected_project_type",
+        "dependencies",
+        "build_system",
+        "files",
+        "nodes",
+        "rclpy_usage",
+        "rclcpp_usage",
+        "issues",
+        "suggested_next_steps",
+        "safety_note",
+    ]
+
+
 def test_deps_json_has_expected_top_level_keys(tmp_path: Path) -> None:
     project = tmp_path / "ros1_demo"
     _write_ros1_package(project)
@@ -338,6 +362,31 @@ catkin_package()
     _write(project / "msg" / "Demo.msg", "string data\n")
     _write(project / "srv" / "Demo.srv", "string in\n---\nstring out\n")
     _write(project / "action" / "Demo.action", "string goal\n---\nstring result\n---\nstring feedback\n")
+
+
+def _write_ros2_python_package(project: Path) -> None:
+    _write(
+        project / "package.xml",
+        """<?xml version="1.0"?>
+<package format="3">
+  <name>ros2_py_demo</name>
+  <version>0.0.1</version>
+  <description>ROS2 demo</description>
+  <maintainer email="demo@example.com">Demo</maintainer>
+  <license>MIT</license>
+  <exec_depend>rclpy</exec_depend>
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
+""",
+    )
+    _write(project / "setup.py", "from setuptools import setup\nsetup(name='ros2_py_demo')\n")
+    _write(project / "setup.cfg", "[develop]\nscript_dir=$base/lib/ros2_py_demo\n")
+    _write(project / "resource" / "ros2_py_demo", "")
+    _write(project / "ros2_py_demo" / "node.py", "import rclpy\n")
+    _write(project / "launch" / "demo.launch.py", "from launch import LaunchDescription\n")
+    _write(project / "config" / "params.yaml", "ros__parameters: {}\n")
 
 
 def _write_demo_spec(tmp_path: Path) -> Path:

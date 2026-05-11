@@ -13,6 +13,7 @@ from robopilot.api.static_analysis import (
     analyze_project_dependencies,
     detect_project_type,
     inspect_ros1_project_static,
+    inspect_ros2_project_static,
 )
 
 
@@ -34,6 +35,16 @@ def test_inspect_ros1_project_static_returns_structured_data(tmp_path: Path) -> 
     assert result["package_name"] == "demo_ros1"
     assert result["detected_project_type"] == "ros1_catkin_package"
     assert "dependencies" in result
+
+
+def test_inspect_ros2_project_static_returns_structured_data(tmp_path: Path) -> None:
+    project = _create_ros2_python_package(tmp_path)
+
+    result = inspect_ros2_project_static(project)
+
+    assert result["package_name"] == "demo_ros2_py"
+    assert result["detected_project_type"] == "ros2_ament_python_package"
+    assert "build_system" in result
 
 
 def test_analyze_project_dependencies_returns_structured_data(tmp_path: Path) -> None:
@@ -99,6 +110,7 @@ def test_api_functions_do_not_print_stdout(tmp_path: Path, capsys) -> None:
 
     detect_project_type(project)
     inspect_ros1_project_static(project)
+    inspect_ros2_project_static(_create_ros2_python_package(tmp_path))
     analyze_project_dependencies(project)
     read_project_history(project)
 
@@ -151,4 +163,35 @@ catkin_package()
     (project / "msg" / "Demo.msg").write_text("string data\n", encoding="utf-8")
     (project / "srv" / "Demo.srv").write_text("string input\n---\nstring output\n", encoding="utf-8")
     (project / "action" / "Demo.action").write_text("string goal\n---\nstring result\n---\nstring feedback\n", encoding="utf-8")
+    return project
+
+
+def _create_ros2_python_package(tmp_path: Path) -> Path:
+    project = tmp_path / "demo_ros2_py"
+    (project / "resource").mkdir(parents=True)
+    (project / "demo_ros2_py").mkdir()
+    (project / "launch").mkdir()
+    (project / "config").mkdir()
+    (project / "package.xml").write_text(
+        """<?xml version="1.0"?>
+<package format="3">
+  <name>demo_ros2_py</name>
+  <version>0.0.1</version>
+  <description>Demo ROS2 package</description>
+  <maintainer email="demo@example.com">Demo</maintainer>
+  <license>MIT</license>
+  <exec_depend>rclpy</exec_depend>
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
+""",
+        encoding="utf-8",
+    )
+    (project / "setup.py").write_text("from setuptools import setup\nsetup(name='demo_ros2_py')\n", encoding="utf-8")
+    (project / "setup.cfg").write_text("[develop]\nscript_dir=$base/lib/demo_ros2_py\n", encoding="utf-8")
+    (project / "resource" / "demo_ros2_py").write_text("", encoding="utf-8")
+    (project / "demo_ros2_py" / "node.py").write_text("import rclpy\n", encoding="utf-8")
+    (project / "launch" / "demo.launch.py").write_text("from launch import LaunchDescription\n", encoding="utf-8")
+    (project / "config" / "params.yaml").write_text("ros__parameters: {}\n", encoding="utf-8")
     return project

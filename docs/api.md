@@ -25,6 +25,15 @@ result = detect_project_type("examples/generated_projects/demo_detector")
 print(result["project_type"])
 ```
 
+ROS-specific static inspection is also available:
+
+```python
+from robopilot.api.static_analysis import inspect_ros2_project_static
+
+result = inspect_ros2_project_static("path/to/ros2_package")
+print(result["package_name"])
+```
+
 ## ProjectSpec Example
 
 ```python
@@ -74,7 +83,7 @@ history = read_project_history("outputs/demo_detector")
 ## API Groups
 
 - `robopilot.api.project`: ProjectSpec planning, refinement, validation, diff, and generation wrappers.
-- `robopilot.api.static_analysis`: project detection, inspection, ROS1 inspection, dependency analysis, and report export wrappers.
+- `robopilot.api.static_analysis`: project detection, inspection, ROS1 inspection, ROS2 inspection, dependency analysis, and report export wrappers.
 - `robopilot.api.migration`: ROS1-to-ROS2 migration plan, validation, diff, and preview wrappers.
 - `robopilot.api.apply`: apply-preview, apply-plan export/validation, apply, rollback, and history wrappers.
 - `robopilot.api.models`: small helper aliases for path-like inputs and structured results.

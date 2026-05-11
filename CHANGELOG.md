@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v1.5.0 no-ROS-required ROS2 static inspector for ament Python and ament CMake packages.
+- `robopilot inspect-ros2 path/to/ros2_package` command with readable terminal output.
+- `robopilot inspect-ros2 --json` deterministic JSON output for integrations.
+- Static ROS2 package metadata, dependency, build-system, launch/config/interface, and node-candidate detection.
+- `robopilot.api.static_analysis.inspect_ros2_project_static` API wrapper.
+- JSON contract documentation and tests for `inspect-ros2 --json`.
 - v1.4.0 VSCode Extension MVP source under `vscode-extension/`.
 - VSCode commands for workspace detection, ROS1 inspection, dependency analysis, migration plan generation, migration preview, ProjectSpec validation, and output display.
 - Thin TypeScript CLI runner that calls RoboPilot with argument arrays, parses JSON outputs, and reports missing CLI installation clearly.
@@ -35,6 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated package and generated demo metadata to `1.5.0`.
+- Updated README, command reference, workflow, architecture, API, JSON contract, roadmap, and agent guidance with ROS2 static inspection.
 - Updated package and generated demo metadata to `1.4.0`.
 - Updated integration and developer documentation with VSCode extension MVP guidance.
 - Updated package and generated demo metadata to `1.3.0`.

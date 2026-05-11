@@ -187,6 +187,88 @@ Minimal output:
 }
 ```
 
+## `inspect-ros2 --json`
+
+Purpose: statically inspect a ROS2 ament Python or ament CMake package.
+
+Example:
+
+```bash
+robopilot inspect-ros2 path/to/ros2_package --json
+```
+
+Top-level stable keys:
+
+- `project_path`
+- `exists`
+- `package_name`
+- `package_format`
+- `detected_project_type`
+- `dependencies`
+- `build_system`
+- `files`
+- `nodes`
+- `rclpy_usage`
+- `rclcpp_usage`
+- `issues`
+- `suggested_next_steps`
+- `safety_note`
+
+Essential nested keys:
+
+- `dependencies`: `buildtool`, `build`, `exec`, `test`
+- `build_system`: `ament_cmake`, `ament_python`, `ament_package`, `setup_py`, `setup_cfg`, `resource_marker`
+- `files`: `launch_files`, `config_files`, `msg_files`, `srv_files`, `action_files`, `python_files`, `cpp_files`
+- `nodes`: `python_node_candidates`, `cpp_node_candidates`
+
+Experimental fields: node candidate heuristics, issue wording, and partial ROS2 structure warnings.
+
+Safety notes: read-only; does not require ROS2 or run `colcon`.
+
+Minimal output:
+
+```json
+{
+  "project_path": "path/to/ros2_package",
+  "exists": true,
+  "package_name": "demo_pkg",
+  "package_format": "3",
+  "detected_project_type": "ros2_ament_python_package",
+  "dependencies": {
+    "buildtool": [],
+    "build": [],
+    "exec": ["rclpy"],
+    "test": []
+  },
+  "build_system": {
+    "ament_cmake": false,
+    "ament_python": true,
+    "ament_package": false,
+    "setup_py": true,
+    "setup_cfg": true,
+    "resource_marker": true
+  },
+  "files": {
+    "launch_files": [],
+    "config_files": [],
+    "msg_files": [],
+    "srv_files": [],
+    "action_files": [],
+    "python_files": ["demo_pkg/node.py"],
+    "cpp_files": []
+  },
+  "nodes": {
+    "python_node_candidates": ["demo_pkg/node.py"],
+    "cpp_node_candidates": []
+  },
+  "rclpy_usage": true,
+  "rclcpp_usage": false,
+  "issues": [],
+  "suggested_next_steps": [],
+  "safety_note": "Static inspection only."
+}
+```
+
 ## `deps --json`
 
 Purpose: analyze declared dependencies and detected dependency usage.

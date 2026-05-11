@@ -1,34 +1,35 @@
 # RoboPilot
 
-[English](README.md) | [简体中文](README.zh-CN.md)
+[English](README.md) | [中文](README.zh-CN.md)
 
 [![Tests](https://github.com/J1angJJ/RoboPilot/actions/workflows/tests.yml/badge.svg)](https://github.com/J1angJJ/RoboPilot/actions/workflows/tests.yml)
 
-RoboPilot 是一个不需要安装 ROS 的 ROS 风格项目静态工程工具链。
+RoboPilot 是一个不依赖 ROS 环境的 ROS 风格项目静态工程工具链。
 
-它帮助机器人学习者和开发者规划、细化、验证、生成、检查、更新、回滚、记录和审查 ROS/ROS2 风格项目结构，而不需要本地安装 ROS、ROS2、catkin、colcon、仿真器运行时或机器人硬件。
+它帮助机器人学习者和开发者在不安装 ROS、ROS2、catkin、colcon、仿真器或机器人硬件的情况下，规划、校验、生成、检查、更新、回滚、分析和迁移 ROS/ROS2 风格项目结构。
 
 ## RoboPilot 能做什么
 
-- 从机器人任务创建并验证 `ProjectSpec`。
-- 生成确定性的 ROS 风格 Python 包骨架。
-- 在生成前细化、比较和验证规格文件。
-- 预览、导出、应用、备份、回滚并记录安全的项目更新。
-- 静态检查项目并导出只读报告。
-- 检测 RoboPilot、ROS1、ROS2、混合 ROS 风格、非 ROS 和未知项目类型。
-- 静态检查 ROS1 catkin 包。
-- 分析声明依赖和代码中检测到的依赖。
-- 构建、验证、比较并预览 ROS1 到 ROS2 的静态迁移计划。
-- 提供离线规则化的机器人错误日志分析和 Mermaid 工作流图生成。
-- 可选使用 LLM，但只用于生成或细化经过验证的 `ProjectSpec` 数据。
+- 从任务描述创建并校验 `ProjectSpec`。
+- 生成确定性的 ROS 风格 Python package 骨架。
+- 在生成前 refine 和 diff spec。
+- 通过 apply-preview、apply-plan、apply、rollback、history 形成安全更新闭环。
+- 静态 inspect 项目并导出报告。
+- 检测 RoboPilot、ROS1、ROS2、mixed、non-ROS 和 unknown 项目类型。
+- 静态检查 ROS1 catkin 和 ROS2 ament package。
+- 静态分析声明依赖和检测到的依赖使用。
+- 生成、校验、diff 和 preview ROS1 到 ROS2 的迁移计划。
+- 提供离线错误日志分析和 Mermaid workflow graph 工具。
+- 可选使用 LLM，但只用于生成或 refine 已校验的 `ProjectSpec` 数据。
+- 提供轻量 Python API 和 VSCode extension MVP 源码。
 
-RoboPilot 不会运行 ROS、ROS2、launch 文件、生成的代码、`catkin_make` 或 `colcon`。
+RoboPilot 不会运行 ROS、ROS2、launch 文件、生成节点、`catkin_make` 或 `colcon`。
 
-## 快速开始
+## Quick Start
 
-当前版本线支持 Python 3.10 和 3.11。包元数据声明为 `>=3.10,<3.12`；在测试套件通过之前，暂不声明支持 Python 3.12 和 3.13。
+当前支持 Python 3.10 和 3.11。包元数据声明 `>=3.10,<3.12`；Python 3.12 和 3.13 暂不声明支持。
 
-当前可从源码安装：
+从源码安装：
 
 ```bash
 python -m venv .venv
@@ -38,14 +39,14 @@ pip install -e ".[dev]"
 robopilot --help
 ```
 
-PyPI 发布后可使用：
+PyPI 发布后：
 
 ```bash
 pip install robopilot
 robopilot --help
 ```
 
-Windows 上如果 pytest 临时目录权限有问题，可以使用：
+Windows 下如果 pytest 临时目录有权限问题：
 
 ```bash
 python -m pytest --basetemp=".pytest_tmp" -p no:cacheprovider
@@ -53,7 +54,7 @@ python -m pytest --basetemp=".pytest_tmp" -p no:cacheprovider
 
 ## 核心工作流
 
-Spec-first 项目生成：
+Spec-first 生成：
 
 ```bash
 robopilot plan --name demo_detector --task "Create an object detection pipeline" --output robopilot.yaml
@@ -61,14 +62,7 @@ robopilot validate --spec robopilot.yaml
 robopilot generate --spec robopilot.yaml
 ```
 
-迭代式规格审查：
-
-```bash
-robopilot refine --spec robopilot.yaml --instruction "Add a tracker node after the detector" --output refined.yaml
-robopilot diff --old robopilot.yaml --new refined.yaml
-```
-
-安全项目更新：
+安全更新闭环：
 
 ```bash
 robopilot apply-preview --spec refined.yaml --project outputs/demo_detector
@@ -78,7 +72,7 @@ robopilot apply --plan apply_plan.yaml --confirm
 robopilot history --project outputs/demo_detector
 ```
 
-静态项目审查：
+静态项目检查：
 
 ```bash
 robopilot inspect examples/generated_projects/demo_detector
@@ -91,6 +85,7 @@ ROS 风格静态分析：
 ```bash
 robopilot detect path/to/project
 robopilot inspect-ros1 path/to/ros1_package
+robopilot inspect-ros2 path/to/ros2_package
 robopilot deps path/to/project
 ```
 
@@ -104,40 +99,38 @@ robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_pack
 
 ## 文档
 
-- [命令参考](docs/command_reference.md)
-- [工作流](docs/workflows.md)
-- [架构](docs/architecture.md)
+- [Command Reference](docs/command_reference.md)
+- [Workflows](docs/workflows.md)
+- [Architecture](docs/architecture.md)
 - [Python API](docs/api.md)
 - [JSON Contracts](docs/json_contracts.md)
 - [Integration Notes](docs/integration_notes.md)
 - [VSCode Extension MVP](docs/vscode_extension.md)
-- [开发者设置](docs/developer_setup.md)
-- [测试](docs/testing.md)
-- [发布流程](docs/release_process.md)
-- [PyPI 发布](docs/pypi_publish.md)
-- [兼容性](docs/compatibility.md)
-- [已知限制](docs/known_limitations.md)
-- [稳定性策略](docs/stability_policy.md)
-- [演示脚本](docs/demo_script.md)
-- [v1.0.0 范围](docs/v1_scope.md)
-- [更新日志](CHANGELOG.md)
-- [路线图](roadmap.md)
+- [Developer Setup](docs/developer_setup.md)
+- [Testing](docs/testing.md)
+- [Release Process](docs/release_process.md)
+- [PyPI Publishing](docs/pypi_publish.md)
+- [Compatibility](docs/compatibility.md)
+- [Known Limitations](docs/known_limitations.md)
+- [Stability Policy](docs/stability_policy.md)
+- [Demo Script](docs/demo_script.md)
+- [v1.0.0 Scope](docs/v1_scope.md)
+- [Changelog](CHANGELOG.md)
+- [Roadmap](roadmap.md)
 
 ## 安全模型
 
-RoboPilot 围绕静态分析和显式审查设计：
-
-- 默认的规划、验证、比较、检查、报告、检测、依赖分析和迁移命令都是只读的。
-- `apply` 默认是 dry-run，只有加上 `--confirm` 才会写文件。
-- 确认后的更新只会写入经过验证的 apply plan 中列出的文件。
-- 更新已有文件前会先备份。
-- `rollback` 默认是 dry-run，并且只从 RoboPilot 备份目录恢复文件。
-- 迁移规划、验证、比较和预览不会修改源项目。
-- 可选 LLM 路径只限于 `ProjectSpec` 规划/细化，并且必须通过验证后才能进入生成或 apply 工作流。
+- 默认的 plan、validate、diff、inspect、report、detect、deps 和 migration 命令都是静态或只读的。
+- `apply` 默认 dry-run，只有显式传入 `--confirm` 才会写文件。
+- confirmed apply 只写入 validated apply plan 中列出的文件。
+- 更新已有文件前会创建备份。
+- `rollback` 默认 dry-run，只从 RoboPilot backup 目录恢复文件。
+- migration plan / validate / diff / preview 不会修改源项目。
+- 可选 LLM 路径只能输出 `ProjectSpec`，并且必须通过校验。
 
 ## 示例输出
 
-仓库中包含一个静态生成示例项目：
+静态生成示例项目位于：
 
 ```txt
 examples/generated_projects/demo_detector/
@@ -147,21 +140,19 @@ examples/generated_projects/demo_detector/
 
 ## 项目状态
 
-当前稳定版本：`v1.4.0`。
+当前版本线：`v1.5.0`。
 
-RoboPilot 的 v1 基线是一个不需要 ROS 的静态工程工作流：
+RoboPilot 的 v1 基线仍然是不依赖 ROS 的静态工程工作流：
 
 ```txt
 plan -> refine -> diff -> validate -> generate
       -> apply-preview -> apply-plan -> apply -> rollback -> history
       -> inspect -> repair-suggest -> report
-      -> detect -> inspect-ros1 -> deps
+      -> detect -> inspect-ros1 -> inspect-ros2 -> deps
       -> migrate-plan -> migrate-plan-validate -> migrate-plan-diff -> migrate-preview
 ```
 
-Python API 层、已记录的 CLI JSON 合约和 VSCode 扩展 MVP 源码可用于脚本和后续集成；CLI 仍然是主要用户界面。
-
-VSCode 扩展位于 `vscode-extension/`，需要先安装 RoboPilot CLI；说明见 [docs/vscode_extension.md](docs/vscode_extension.md)。
+CLI 仍是主要用户界面；Python API、JSON contracts 和 VSCode extension MVP 用于后续集成。
 
 ## 开发
 
@@ -177,7 +168,7 @@ Windows fallback：
 python -m pytest --basetemp=".pytest_tmp" -p no:cacheprovider
 ```
 
-本地打包检查：
+打包检查：
 
 ```bash
 python -m pip install -U build twine
