@@ -110,6 +110,8 @@ def test_deps_json_has_expected_top_level_keys(tmp_path: Path) -> None:
         "possibly_missing",
         "possibly_unused",
         "hints",
+        "migration_hints",
+        "rosdep_hints",
         "warnings",
         "suggested_next_steps",
         "safety_note",

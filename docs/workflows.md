@@ -111,7 +111,7 @@ robopilot deps path/to/project
 robopilot deps path/to/project --json
 ```
 
-Dependency analysis reports conservative hints such as `possibly_missing` and `possibly_unused`.
+Dependency analysis reports conservative hints such as `possibly_missing`, `possibly_unused`, ROS/package-manager style hints, and ROS1-to-ROS2 migration-oriented dependency review notes.
 
 ## ROS1 to ROS2 Migration Planning
 

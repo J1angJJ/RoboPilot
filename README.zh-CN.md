@@ -140,7 +140,7 @@ examples/generated_projects/demo_detector/
 
 ## 项目状态
 
-当前版本线：`v1.5.0`。
+当前版本线：`v1.6.0`。
 
 RoboPilot 的 v1 基线仍然是不依赖 ROS 的静态工程工作流：
 
@@ -152,7 +152,7 @@ plan -> refine -> diff -> validate -> generate
       -> migrate-plan -> migrate-plan-validate -> migrate-plan-diff -> migrate-preview
 ```
 
-CLI 仍是主要用户界面；Python API、JSON contracts 和 VSCode extension MVP 用于后续集成。
+CLI 仍是主要用户界面；Python API、JSON contracts、增强的依赖分析器和 VSCode extension MVP 用于后续集成。
 
 ## 开发
 

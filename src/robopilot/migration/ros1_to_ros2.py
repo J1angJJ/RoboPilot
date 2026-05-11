@@ -419,6 +419,8 @@ def _dependency_migration(dependencies: DependencyAnalysis) -> dict[str, object]
         "possibly_missing": list(dependencies.possibly_missing),
         "possibly_unused": list(dependencies.possibly_unused),
         "ros2_equivalent_hints": [_ros2_dependency_hint(dep) for dep in all_deps],
+        "dependency_analyzer_migration_hints": list(dependencies.migration_hints),
+        "dependency_analyzer_rosdep_hints": list(dependencies.rosdep_hints),
         "manual_review_dependencies": _manual_review_dependencies(all_deps),
     }
 

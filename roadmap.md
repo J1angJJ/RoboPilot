@@ -897,9 +897,9 @@ Future plugin direction:
 
 The VSCode extension should remain optional and should not be required for CLI usage.
 
-## Current: v1.5.0 ROS2 Static Inspector
+## Completed: v1.5.0 ROS2 Static Inspector
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -946,9 +946,9 @@ JSON output:
 robopilot inspect-ros2 path/to/ros2_package --json
 ```
 
-## Future: v1.6.0 Dependency Analyzer Enhancement
+## Current: v1.6.0 Dependency Analyzer Enhancement
 
-Status: Planned
+Status: Current work
 
 Goal:
 

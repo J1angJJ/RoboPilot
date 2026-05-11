@@ -55,6 +55,7 @@ Run one test:
 
 ```bash
 python -m pytest tests/test_dependency_analyzer.py::test_detects_python_imports
+python -m pytest tests/test_dependency_analyzer.py::test_ros1_rospy_usage_produces_migration_hint_toward_rclpy
 ```
 
 ## Manual Verification

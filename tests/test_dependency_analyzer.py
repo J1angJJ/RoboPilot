@@ -13,7 +13,7 @@ def _write(path: Path, text: str) -> None:
 
 
 def _ros1_package(path: Path, *, declare_rospy: bool = True, declare_roscpp: bool = True) -> None:
-    build_deps = ["std_msgs", "unused_dep"]
+    build_deps = ["std_msgs", "unused_dep", "message_generation"]
     exec_deps = ["sensor_msgs"]
     if declare_rospy:
         build_deps.append("rospy")
@@ -30,6 +30,7 @@ def _ros1_package(path: Path, *, declare_rospy: bool = True, declare_roscpp: boo
                 *(f"  <build_depend>{dep}</build_depend>" for dep in build_deps),
                 *(f"  <exec_depend>{dep}</exec_depend>" for dep in exec_deps),
                 "  <run_depend>geometry_msgs</run_depend>",
+                "  <run_depend>message_runtime</run_depend>",
                 "  <test_depend>rostest</test_depend>",
                 "</package>",
             ]
@@ -48,8 +49,10 @@ catkin_package()
         path / "scripts" / "talker.py",
         """
 from pathlib import Path
+import cv2
 import rospy
 import numpy as np
+import serial
 from sensor_msgs.msg import Image
 """,
     )
@@ -62,6 +65,9 @@ int main(int argc, char **argv) { ros::init(argc, argv, "listener"); }
 """,
     )
     _write(path / "launch" / "demo.launch", '<launch><node pkg="ros1_dep_demo" type="talker.py" /></launch>')
+    _write(path / "msg" / "Demo.msg", "string data\n")
+    _write(path / "srv" / "Demo.srv", "string request\n---\nstring response\n")
+    _write(path / "action" / "Demo.action", "string goal\n---\nstring result\n---\nstring feedback\n")
 
 
 def _ros2_py_package(path: Path) -> None:
@@ -82,6 +88,7 @@ def _ros2_py_package(path: Path) -> None:
     _write(path / "setup.cfg", "[develop]\nscript_dir=$base/lib/ros2_py_dep_demo\n")
     _write(path / "resource" / "ros2_py_dep_demo", "")
     _write(path / "ros2_py_dep_demo" / "node.py", "import rclpy\nfrom std_msgs.msg import String\n")
+    _write(path / "msg" / "Demo.msg", "string data\n")
 
 
 def _ros2_cpp_package(path: Path) -> None:
@@ -107,7 +114,10 @@ find_package(rclcpp REQUIRED)
 ament_package()
 """,
     )
-    _write(path / "src" / "node.cpp", "#include <rclcpp/rclcpp.hpp>\n#include <geometry_msgs/msg/twist.hpp>\n")
+    _write(
+        path / "src" / "node.cpp",
+        "#include <rclcpp/rclcpp.hpp>\n#include <rclcpp_action/rclcpp_action.hpp>\n#include <geometry_msgs/msg/twist.hpp>\n",
+    )
 
 
 def test_extracts_package_xml_dependencies_from_ros1_package(tmp_path: Path) -> None:
@@ -117,9 +127,9 @@ def test_extracts_package_xml_dependencies_from_ros1_package(tmp_path: Path) -> 
     deps = analyze_dependencies(project).declared_dependencies
 
     assert deps.buildtool == ("catkin",)
-    assert deps.build == ("roscpp", "rospy", "std_msgs", "unused_dep")
+    assert deps.build == ("message_generation", "roscpp", "rospy", "std_msgs", "unused_dep")
     assert deps.exec == ("sensor_msgs",)
-    assert deps.run == ("geometry_msgs",)
+    assert deps.run == ("geometry_msgs", "message_runtime")
     assert deps.test == ("rostest",)
 
 
@@ -140,6 +150,8 @@ def test_detects_python_imports(tmp_path: Path) -> None:
 
     assert "rospy" in imports
     assert "numpy" in imports
+    assert "cv2" in imports
+    assert "serial" in imports
     assert "sensor_msgs" in imports
 
 
@@ -178,6 +190,119 @@ def test_detects_possibly_unused_declared_dependency(tmp_path: Path) -> None:
     result = analyze_dependencies(project)
 
     assert "unused_dep" in result.possibly_unused
+
+
+def test_ros1_rospy_usage_produces_migration_hint_toward_rclpy(tmp_path: Path) -> None:
+    project = tmp_path / "ros1_dep_demo"
+    _ros1_package(project)
+
+    result = analyze_dependencies(project)
+
+    assert any("rospy" in hint and "rclpy" in hint for hint in result.migration_hints)
+
+
+def test_ros1_roscpp_usage_produces_migration_hint_toward_rclcpp(tmp_path: Path) -> None:
+    project = tmp_path / "ros1_dep_demo"
+    _ros1_package(project)
+
+    result = analyze_dependencies(project)
+
+    assert any("roscpp" in hint and "rclcpp" in hint for hint in result.migration_hints)
+
+
+def test_catkin_dependency_produces_ament_migration_hint(tmp_path: Path) -> None:
+    project = tmp_path / "ros1_dep_demo"
+    _ros1_package(project)
+
+    result = analyze_dependencies(project)
+
+    assert any("catkin" in hint and "ament_cmake" in hint for hint in result.migration_hints)
+
+
+def test_interface_dependencies_produce_rosidl_migration_hint(tmp_path: Path) -> None:
+    project = tmp_path / "ros1_dep_demo"
+    _ros1_package(project)
+
+    result = analyze_dependencies(project)
+
+    assert any("message_generation" in hint and "rosidl_default_generators" in hint for hint in result.migration_hints)
+    assert any("message_runtime" in hint and "rosidl_default_runtime" in hint for hint in result.migration_hints)
+
+
+def test_dynamic_reconfigure_produces_manual_review_hint(tmp_path: Path) -> None:
+    project = tmp_path / "ros1_dep_demo"
+    _ros1_package(project)
+    _write(
+        project / "package.xml",
+        (project / "package.xml").read_text(encoding="utf-8").replace(
+            "  <test_depend>rostest</test_depend>",
+            "  <build_depend>dynamic_reconfigure</build_depend>\n  <test_depend>rostest</test_depend>",
+        ),
+    )
+
+    result = analyze_dependencies(project)
+
+    assert any("dynamic_reconfigure" in hint and "parameters" in hint for hint in result.migration_hints)
+
+
+def test_actionlib_produces_ros2_action_review_hint(tmp_path: Path) -> None:
+    project = tmp_path / "ros1_dep_demo"
+    _ros1_package(project)
+    _write(project / "scripts" / "action_client.py", "import actionlib\n")
+
+    result = analyze_dependencies(project)
+
+    assert "actionlib" in result.inferred_dependencies
+    assert any("actionlib" in hint and "ROS2 actions" in hint for hint in result.migration_hints)
+
+
+def test_python_cv2_import_produces_conservative_opencv_hint(tmp_path: Path) -> None:
+    project = tmp_path / "ros1_dep_demo"
+    _ros1_package(project)
+
+    result = analyze_dependencies(project)
+
+    assert any("cv2" in hint and "vision_opencv" in hint for hint in result.rosdep_hints)
+
+
+def test_python_serial_import_produces_pyserial_hint(tmp_path: Path) -> None:
+    project = tmp_path / "ros1_dep_demo"
+    _ros1_package(project)
+
+    result = analyze_dependencies(project)
+
+    assert any("serial" in hint and "pyserial" in hint for hint in result.rosdep_hints)
+
+
+def test_cpp_rclcpp_include_produces_rclcpp_hint(tmp_path: Path) -> None:
+    project = tmp_path / "ros2_cpp_dep_demo"
+    _ros2_cpp_package(project)
+
+    result = analyze_dependencies(project)
+
+    assert "rclcpp" in result.inferred_dependencies
+    assert any("rclcpp/rclcpp.hpp" in hint and "rclcpp" in hint for hint in result.rosdep_hints)
+
+
+def test_msg_srv_action_files_produce_interface_dependency_hints(tmp_path: Path) -> None:
+    project = tmp_path / "ros1_dep_demo"
+    _ros1_package(project)
+
+    result = analyze_dependencies(project)
+
+    assert any("message_generation" in hint for hint in result.hints)
+    assert any("message_runtime" in hint for hint in result.hints)
+
+
+def test_possibly_unused_does_not_overclaim_common_buildtool_or_interface_deps(tmp_path: Path) -> None:
+    project = tmp_path / "ros1_dep_demo"
+    _ros1_package(project)
+
+    result = analyze_dependencies(project)
+
+    assert "catkin" not in result.possibly_unused
+    assert "message_generation" not in result.possibly_unused
+    assert "message_runtime" not in result.possibly_unused
 
 
 def test_handles_ros2_ament_python_style_package(tmp_path: Path) -> None:
@@ -238,6 +363,8 @@ def test_json_output_has_stable_keys(tmp_path: Path) -> None:
         "possibly_missing",
         "possibly_unused",
         "hints",
+        "migration_hints",
+        "rosdep_hints",
         "warnings",
         "suggested_next_steps",
         "safety_note",

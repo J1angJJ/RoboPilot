@@ -90,7 +90,7 @@ RoboPilot includes no-ROS-required static modules for existing projects:
 - `detector`: classifies project type from file and content signals.
 - `ros1`: inspects ROS1 catkin package metadata and node candidates.
 - `ros2`: inspects ROS2 ament Python and ament CMake package metadata and node candidates.
-- `deps`: extracts declared dependencies, imports, includes, CMake packages, launch references, and conservative hints.
+- `deps`: extracts declared dependencies, imports, includes, CMake packages, launch references, conservative missing/unused hints, rosdep-style hints, and ROS1-to-ROS2 dependency migration review notes.
 - `inspector`, `repair`, and `report`: inspect RoboPilot-generated or ROS-style projects and produce reviewable output.
 
 These modules must not execute launch files, import user code, or run build tools.

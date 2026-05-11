@@ -59,7 +59,7 @@ Static detection supports these categories:
 The following areas are heuristic and conservative:
 
 - project type detection
-- dependency inference
+- dependency inference, including missing/unused dependency review notes, rosdep-style hints, and ROS1-to-ROS2 dependency mapping hints
 - CMake parsing
 - launch file package reference detection
 - ROS1-to-ROS2 migration planning

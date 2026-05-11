@@ -65,29 +65,29 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v1.5.0 ROS2 Static Inspector
+v1.6.0 Dependency Analyzer Enhancement
 ```
 
-The goal is to add no-ROS-required static inspection for ROS2 ament Python and ament CMake packages.
+The goal is to improve the existing no-ROS-required dependency analyzer with richer ROS1 / ROS2 dependency hints, migration-oriented mappings, and clearer missing/unused explanations.
 
 This milestone should focus on:
 
-- `robopilot inspect-ros2`
-- deterministic `--json` output
-- package.xml, CMakeLists.txt, setup.py, setup.cfg, resource, launch, config, msg, srv, action, Python, and C++ static analysis
-- rclpy and rclcpp node candidate detection
-- reuse of project detection and API wrappers
-- no ROS2, colcon, launch execution, generated code execution, or user module imports
+- enhancing `robopilot deps`
+- preserving existing JSON top-level keys while documenting any additions
+- conservative ROS1-to-ROS2 dependency mapping hints
+- rosdep-style hints for Python imports, C++ includes, and interface files
+- clearer `possibly_missing` and `possibly_unused` review guidance
+- no ROS, ROS2, catkin, colcon, launch execution, generated code execution, or user module imports
 
-This milestone should not add new robotics product features.
+This milestone should not add new product commands.
 
 ## Near-term Direction
 
-After v1.5.0, the recommended direction is:
+After v1.6.0, the recommended direction is:
 
 ```txt
-v1.5.0 ROS2 Static Inspector
 v1.6.0 Dependency Analyzer Enhancement
+v1.7.0 Migration Scaffold Preview
 ```
 
 The VSCode extension should be a thin beginner-friendly interface over the CLI / API layer. It should not duplicate RoboPilot core logic.
@@ -563,17 +563,17 @@ robopilot deps --help
 Implement:
 
 ```txt
-v1.5.0 ROS2 Static Inspector
+v1.6.0 Dependency Analyzer Enhancement
 ```
 
-This milestone should add `robopilot inspect-ros2` for ROS2 ament Python and ament CMake packages.
+This milestone should enhance `robopilot deps` with richer static dependency hints while preserving the existing command.
 
 Suggested implementation items:
 
 ```txt
-src/robopilot/ros2/__init__.py
-src/robopilot/ros2/inspector.py
-tests/test_ros2_inspector.py
+src/robopilot/deps/analyzer.py
+tests/test_dependency_analyzer.py
+docs/json_contracts.md
 ```
 
-Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, VSCode Marketplace publishing, or new LLM behavior during this milestone unless explicitly requested.
+Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, new product commands, migration apply, VSCode Marketplace publishing, or new LLM behavior during this milestone unless explicitly requested.

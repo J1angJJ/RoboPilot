@@ -71,6 +71,8 @@ class DependencyAnalysis:
     possibly_missing: tuple[str, ...]
     possibly_unused: tuple[str, ...]
     hints: tuple[str, ...]
+    migration_hints: tuple[str, ...]
+    rosdep_hints: tuple[str, ...]
     warnings: tuple[str, ...]
     suggested_next_steps: tuple[str, ...]
     safety_note: str
@@ -87,6 +89,8 @@ class DependencyAnalysis:
             "possibly_missing": list(self.possibly_missing),
             "possibly_unused": list(self.possibly_unused),
             "hints": list(self.hints),
+            "migration_hints": list(self.migration_hints),
+            "rosdep_hints": list(self.rosdep_hints),
             "warnings": list(self.warnings),
             "suggested_next_steps": list(self.suggested_next_steps),
             "safety_note": self.safety_note,
@@ -109,6 +113,8 @@ def analyze_dependencies(project_path: Path) -> DependencyAnalysis:
             possibly_missing=(),
             possibly_unused=(),
             hints=(),
+            migration_hints=(),
+            rosdep_hints=(),
             warnings=(warning,),
             suggested_next_steps=("Check the project path and run robopilot deps again.",),
             safety_note=SAFETY_NOTE,
@@ -124,12 +130,28 @@ def analyze_dependencies(project_path: Path) -> DependencyAnalysis:
         catkin_components=_detect_catkin_components(path / "CMakeLists.txt"),
         launch_references=_detect_launch_references(path / "launch"),
     )
+    interface_files = _detect_interface_files(path)
     inferred = _infer_dependencies(usage, package_name=package_name)
     declared_all = _declared_dependency_set(declared)
     possibly_missing = tuple(dep for dep in inferred if dep not in declared_all)
-    possibly_unused = _detect_possibly_unused(declared, inferred, usage)
+    possibly_unused = _detect_possibly_unused(declared, inferred, usage, interface_files)
     warnings = _warnings_for_project(detection.project_type, path)
-    hints = _build_hints(usage, inferred, possibly_missing, possibly_unused, detection.project_type)
+    migration_hints = _build_migration_hints(
+        declared,
+        usage,
+        inferred,
+        interface_files,
+        detection.project_type,
+    )
+    rosdep_hints = _build_rosdep_hints(usage, inferred, possibly_missing, interface_files, detection.project_type)
+    hints = _build_hints(
+        usage,
+        inferred,
+        possibly_missing,
+        possibly_unused,
+        detection.project_type,
+        interface_files,
+    )
     return DependencyAnalysis(
         project_path=str(project_path),
         exists=True,
@@ -140,6 +162,8 @@ def analyze_dependencies(project_path: Path) -> DependencyAnalysis:
         possibly_missing=possibly_missing,
         possibly_unused=possibly_unused,
         hints=hints,
+        migration_hints=migration_hints,
+        rosdep_hints=rosdep_hints,
         warnings=warnings,
         suggested_next_steps=_suggest_next_steps(possibly_missing, possibly_unused, warnings),
         safety_note=SAFETY_NOTE,
@@ -251,6 +275,13 @@ def _detect_launch_references(directory: Path) -> tuple[str, ...]:
     return tuple(sorted(refs))
 
 
+def _detect_interface_files(path: Path) -> tuple[str, ...]:
+    files: list[str] = []
+    for directory, pattern in (("msg", "*.msg"), ("srv", "*.srv"), ("action", "*.action")):
+        files.extend(_relative_files(path / directory, (pattern,)))
+    return tuple(sorted(dict.fromkeys(files)))
+
+
 def _parse_package_name(path: Path) -> str:
     if not path.is_file():
         return ""
@@ -279,6 +310,7 @@ def _detect_possibly_unused(
     declared: DeclaredDependencies,
     inferred: tuple[str, ...],
     usage: DetectedUsage,
+    interface_files: tuple[str, ...],
 ) -> tuple[str, ...]:
     inferred_set = set(inferred)
     declared_runtime = set(declared.build) | set(declared.exec) | set(declared.run)
@@ -291,6 +323,9 @@ def _detect_possibly_unused(
         "rosidl_default_generators",
         "rosidl_default_runtime",
     }
+    if interface_files:
+        ignored.update(_INTERFACE_RUNTIME_DEPENDENCIES)
+    ignored.update(_COMMON_RUNTIME_DEPENDENCIES)
     possibly_unused = [
         dep
         for dep in declared_runtime
@@ -321,6 +356,7 @@ def _build_hints(
     possibly_missing: tuple[str, ...],
     possibly_unused: tuple[str, ...],
     project_type: str,
+    interface_files: tuple[str, ...],
 ) -> tuple[str, ...]:
     hints: list[str] = []
     for import_name in usage.python_imports:
@@ -334,16 +370,87 @@ def _build_hints(
                 break
     if "cv2" in usage.python_imports:
         hints.append("hint: cv2 may map to opencv-python for pure Python or vision_opencv in ROS contexts")
+    if "serial" in usage.python_imports:
+        hints.append("hint: serial may map to python3-serial or pyserial depending on packaging context")
+    if "yaml" in usage.python_imports:
+        hints.append("hint: yaml may map to python3-yaml or PyYAML depending on packaging context")
     if project_type.startswith("ros1") and ("rospy" in inferred or "roscpp" in inferred):
         hints.append("hint: ROS1 usage detected from rospy or roscpp signals")
     if project_type.startswith("ros2") and ("rclpy" in inferred or "rclcpp" in inferred):
         hints.append("hint: ROS2 usage detected from rclpy or rclcpp signals")
+    if interface_files and project_type.startswith("ros1"):
+        hints.append("hint: interface files detected; review message_generation and message_runtime in catkin metadata")
+    if interface_files and project_type.startswith("ros2"):
+        hints.append(
+            "hint: interface files detected; review rosidl_default_generators and rosidl_default_runtime in ROS2 metadata"
+        )
     for dep in possibly_missing:
         hints.append(f"possibly_missing: detected usage suggests declaring '{dep}'")
     for dep in possibly_unused:
         hints.append(f"possibly_unused: declared dependency '{dep}' was not matched to simple static usage")
     if not hints:
         hints.append("hint: no obvious dependency mismatch detected by conservative static rules")
+    return tuple(dict.fromkeys(hints))
+
+
+def _build_migration_hints(
+    declared: DeclaredDependencies,
+    usage: DetectedUsage,
+    inferred: tuple[str, ...],
+    interface_files: tuple[str, ...],
+    project_type: str,
+) -> tuple[str, ...]:
+    deps = set(_declared_dependency_set(declared)) | set(inferred)
+    hints: list[str] = []
+    dependency_label = "ROS1 dependency" if project_type.startswith("ros1") else "dependency"
+    for dep in sorted(deps):
+        target = _ROS1_TO_ROS2_DEPENDENCY_HINTS.get(dep)
+        if target:
+            hints.append(f"migration_hint: {dependency_label} '{dep}' should be reviewed for ROS2 direction: {target}")
+    if "dynamic_reconfigure" in deps:
+        hints.append("migration_hint: dynamic_reconfigure usually needs manual review toward ROS2 parameters or lifecycle nodes")
+    if "actionlib" in deps or "actionlib" in usage.python_imports:
+        hints.append("migration_hint: actionlib usage should be reviewed for ROS2 actions, rclcpp_action, or rclpy.action")
+    if "nodelet" in deps:
+        hints.append("migration_hint: nodelet usage should be reviewed for ROS2 components or composable nodes")
+    if usage.launch_references and project_type.startswith("ros1"):
+        hints.append("migration_hint: ROS1 launch references should be reviewed for the ROS2 Python launch system")
+    if interface_files and project_type.startswith("ros1"):
+        hints.append(
+            "migration_hint: ROS1 interface dependencies message_generation/message_runtime usually migrate toward rosidl_default_generators/rosidl_default_runtime"
+        )
+    elif interface_files and project_type.startswith("ros2"):
+        hints.append(
+            "migration_hint: ROS2 interface files should be reviewed for rosidl_default_generators/rosidl_default_runtime metadata"
+        )
+    if not hints and project_type.startswith("ros2"):
+        hints.append("migration_hint: project already looks ROS2-like; review dependencies for package-style consistency")
+    return tuple(dict.fromkeys(hints))
+
+
+def _build_rosdep_hints(
+    usage: DetectedUsage,
+    inferred: tuple[str, ...],
+    possibly_missing: tuple[str, ...],
+    interface_files: tuple[str, ...],
+    project_type: str,
+) -> tuple[str, ...]:
+    hints: list[str] = []
+    for import_name in usage.python_imports:
+        hint = _PYTHON_ROSDEP_HINTS.get(import_name)
+        if hint:
+            hints.append(f"rosdep_hint: Python import '{import_name}' may require {hint}")
+    for include in usage.cpp_includes:
+        for prefix, hint in _CPP_ROSDEP_HINTS.items():
+            if include == prefix or include.startswith(f"{prefix}/"):
+                hints.append(f"rosdep_hint: C++ include '{include}' may require {hint}")
+                break
+    for dep in possibly_missing:
+        hints.append(f"rosdep_hint: possibly_missing dependency '{dep}' should be checked against rosdep or package metadata")
+    if interface_files and project_type.startswith("ros1"):
+        hints.append("rosdep_hint: ROS1 interface files usually need message_generation and message_runtime review")
+    if interface_files and project_type.startswith("ros2"):
+        hints.append("rosdep_hint: ROS2 interface files usually need rosidl_default_generators and rosidl_default_runtime review")
     return tuple(dict.fromkeys(hints))
 
 
@@ -423,8 +530,15 @@ _PYTHON_IMPORT_MAP = {
     "numpy": ("python3-numpy",),
     "rclpy": ("rclpy",),
     "rospy": ("rospy",),
+    "yaml": ("python3-yaml",),
+    "serial": ("python3-serial",),
+    "tf": ("tf",),
+    "tf2_ros": ("tf2_ros",),
+    "actionlib": ("actionlib",),
     "sensor_msgs": ("sensor_msgs",),
     "geometry_msgs": ("geometry_msgs",),
+    "nav_msgs": ("nav_msgs",),
+    "visualization_msgs": ("visualization_msgs",),
     "std_msgs": ("std_msgs",),
     "cv_bridge": ("cv_bridge",),
 }
@@ -432,9 +546,99 @@ _PYTHON_IMPORT_MAP = {
 _CPP_INCLUDE_MAP = {
     "ros/ros.h": ("roscpp",),
     "rclcpp": ("rclcpp",),
+    "rclcpp_action": ("rclcpp_action",),
     "sensor_msgs": ("sensor_msgs",),
     "geometry_msgs": ("geometry_msgs",),
+    "nav_msgs": ("nav_msgs",),
+    "visualization_msgs": ("visualization_msgs",),
     "std_msgs": ("std_msgs",),
     "cv_bridge": ("cv_bridge",),
     "image_transport": ("image_transport",),
+    "tf": ("tf",),
+    "tf2_ros": ("tf2_ros",),
+    "actionlib": ("actionlib",),
+}
+
+_ROS1_TO_ROS2_DEPENDENCY_HINTS = {
+    "rospy": "rclpy, with manual review of node lifecycle, parameters, logging, and spin behavior",
+    "roscpp": "rclcpp, with manual review of NodeHandle, publishers, subscribers, parameters, and executors",
+    "catkin": "ament_cmake or ament_python after choosing the target ROS2 package style",
+    "tf": "tf2_ros, with transform listener/broadcaster API review",
+    "tf2_ros": "tf2_ros, while reviewing API and QoS behavior",
+    "std_msgs": "std_msgs, usually with message import/build metadata review",
+    "sensor_msgs": "sensor_msgs, usually with message import/build metadata review",
+    "geometry_msgs": "geometry_msgs, usually with message import/build metadata review",
+    "nav_msgs": "nav_msgs, usually with message import/build metadata review",
+    "visualization_msgs": "visualization_msgs, usually with message import/build metadata review",
+    "cv_bridge": "cv_bridge, with OpenCV/image encoding behavior review",
+    "image_transport": "image_transport, with transport plugin behavior review",
+    "message_generation": "rosidl_default_generators for ROS2 interface generation",
+    "message_runtime": "rosidl_default_runtime for ROS2 interface runtime dependencies",
+    "dynamic_reconfigure": "ROS2 parameters or lifecycle-node review; no automatic one-to-one migration",
+    "actionlib": "ROS2 actions using rclcpp_action or rclpy.action, with manual API review",
+    "nodelet": "ROS2 components or composable nodes, with manual architecture review",
+    "roslaunch": "ROS2 launch system, usually Python launch files",
+}
+
+_PYTHON_ROSDEP_HINTS = {
+    "cv2": "opencv-python outside ROS or vision_opencv in ROS contexts",
+    "numpy": "python3-numpy",
+    "yaml": "python3-yaml or PyYAML depending on packaging context",
+    "serial": "python3-serial or pyserial depending on packaging context",
+    "rospy": "rospy",
+    "rclpy": "rclpy",
+    "tf": "tf",
+    "tf2_ros": "tf2_ros",
+    "actionlib": "actionlib",
+    "std_msgs": "std_msgs",
+    "sensor_msgs": "sensor_msgs",
+    "geometry_msgs": "geometry_msgs",
+    "nav_msgs": "nav_msgs",
+    "visualization_msgs": "visualization_msgs",
+    "cv_bridge": "cv_bridge",
+}
+
+_CPP_ROSDEP_HINTS = {
+    "ros/ros.h": "roscpp",
+    "rclcpp": "rclcpp",
+    "rclcpp_action": "rclcpp_action",
+    "std_msgs": "std_msgs",
+    "sensor_msgs": "sensor_msgs",
+    "geometry_msgs": "geometry_msgs",
+    "nav_msgs": "nav_msgs",
+    "visualization_msgs": "visualization_msgs",
+    "cv_bridge": "cv_bridge",
+    "image_transport": "image_transport",
+    "tf": "tf",
+    "tf2_ros": "tf2_ros",
+    "actionlib": "actionlib",
+}
+
+_INTERFACE_RUNTIME_DEPENDENCIES = {
+    "message_generation",
+    "message_runtime",
+    "rosidl_default_generators",
+    "rosidl_default_runtime",
+    "std_msgs",
+    "sensor_msgs",
+    "geometry_msgs",
+    "nav_msgs",
+    "visualization_msgs",
+}
+
+_COMMON_RUNTIME_DEPENDENCIES = {
+    "rospy",
+    "roscpp",
+    "rclpy",
+    "rclcpp",
+    "rclcpp_action",
+    "std_msgs",
+    "sensor_msgs",
+    "geometry_msgs",
+    "nav_msgs",
+    "visualization_msgs",
+    "tf",
+    "tf2_ros",
+    "cv_bridge",
+    "image_transport",
 }

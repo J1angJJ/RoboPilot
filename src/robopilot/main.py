@@ -851,6 +851,12 @@ def _print_dependency_analysis(result: DependencyAnalysis) -> None:
     console.print(Panel.fit("Dependency Hints", style="bold cyan"))
     _print_scalar_values(result.hints)
 
+    console.print(Panel.fit("Migration Hints", style="bold cyan"))
+    _print_scalar_values(result.migration_hints)
+
+    console.print(Panel.fit("Rosdep Hints", style="bold cyan"))
+    _print_scalar_values(result.rosdep_hints)
+
     console.print(Panel.fit("Warnings", style="bold cyan"))
     _print_scalar_values(result.warnings)
 

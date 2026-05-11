@@ -16,6 +16,8 @@ Use the Python API for Python scripts and in-process integrations. Use CLI `--js
 
 Do not parse Rich human-readable CLI output. See [JSON Contracts](json_contracts.md) and [Integration Notes](integration_notes.md) for integration guidance.
 
+Dependency analysis API results mirror `robopilot deps --json`, including conservative `migration_hints` and `rosdep_hints` fields. The top-level fields are documented for integrations; individual heuristic messages may evolve.
+
 ## Static Analysis Example
 
 ```python

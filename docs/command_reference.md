@@ -226,7 +226,7 @@ robopilot deps path/to/project
 
 Mode: read-only.
 
-Safety notes: dependency inference is conservative and static.
+Safety notes: dependency inference is conservative and static. `--json` includes stable top-level keys for `hints`, `migration_hints`, and `rosdep_hints`; the wording of individual heuristic messages may evolve.
 
 ## `migrate-plan`
 

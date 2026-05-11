@@ -151,7 +151,7 @@ Transient generated projects should go under `outputs/`, which is intentionally 
 
 ## Project Status
 
-Current release line: `v1.5.0`.
+Current release line: `v1.6.0`.
 
 RoboPilot's no-ROS-required static engineering workflow remains the stable v1 baseline:
 
@@ -163,7 +163,7 @@ plan -> refine -> diff -> validate -> generate
       -> migrate-plan -> migrate-plan-validate -> migrate-plan-diff -> migrate-preview
 ```
 
-The Python API layer, documented CLI JSON contracts, ROS2 static inspector, and VSCode extension MVP source are available for integration work while the CLI remains the primary user interface.
+The Python API layer, documented CLI JSON contracts, ROS2 static inspector, enhanced dependency analyzer, and VSCode extension MVP source are available for integration work while the CLI remains the primary user interface.
 
 The VSCode extension lives under `vscode-extension/`, requires the RoboPilot CLI to be installed, and is documented in [docs/vscode_extension.md](docs/vscode_extension.md).
 

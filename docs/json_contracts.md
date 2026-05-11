@@ -290,6 +290,8 @@ Top-level stable keys:
 - `possibly_missing`
 - `possibly_unused`
 - `hints`
+- `migration_hints`
+- `rosdep_hints`
 - `warnings`
 - `suggested_next_steps`
 - `safety_note`
@@ -299,7 +301,7 @@ Essential nested keys:
 - `declared_dependencies`: `buildtool`, `build`, `exec`, `run`, `test`
 - `detected_usage`: `python_imports`, `cpp_includes`, `cmake_find_package`, `catkin_components`, `launch_references`
 
-Experimental fields: inference rules, warning wording, and hint wording.
+Experimental fields: inference rules, warning wording, nested dependency details, and hint wording. The top-level keys are documented for integration use, but individual heuristic messages may evolve.
 
 Safety notes: read-only and conservative; no ROS environment is required.
 
@@ -328,6 +330,8 @@ Minimal output:
   "possibly_missing": [],
   "possibly_unused": [],
   "hints": [],
+  "migration_hints": ["migration_hint: ROS1 dependency 'rospy' should be reviewed for ROS2 direction: rclpy"],
+  "rosdep_hints": ["rosdep_hint: Python import 'rospy' may require rospy"],
   "warnings": [],
   "suggested_next_steps": [],
   "safety_note": "Static analysis only."

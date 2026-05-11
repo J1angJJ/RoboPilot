@@ -54,6 +54,8 @@ def test_analyze_project_dependencies_returns_structured_data(tmp_path: Path) ->
 
     assert result["project_type"] == "ros1_catkin_package"
     assert "declared_dependencies" in result
+    assert "migration_hints" in result
+    assert "rosdep_hints" in result
     assert "rospy" in result["detected_usage"]["python_imports"]
 
 
