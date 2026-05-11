@@ -16,6 +16,18 @@ RoboPilot v1.0.0 should be the first stable release of the no-ROS-required stati
 - CI-tested Python 3.10 and 3.11 support.
 - No ROS runtime requirement.
 
+## Experimental Features Carried Into v1.0
+
+Some features may remain experimental in v1.0 while still being useful and documented:
+
+- Optional LLM planner and refiner.
+- ROS1-to-ROS2 migration planning.
+- Migration plan diff.
+- Migration preview.
+- Conservative dependency inference heuristics.
+
+Experimental features must still preserve RoboPilot's safety boundaries: no runtime ROS execution, no direct LLM file modification, and no migration apply without a future explicit design.
+
 ## Non-Goals
 
 - Real ROS runtime execution.
@@ -31,6 +43,7 @@ RoboPilot v1.0.0 should be the first stable release of the no-ROS-required stati
 ## v1.0.0 Readiness Checklist
 
 - Core commands have stable help text.
+- Testing, release process, compatibility, known limitations, and stability policy docs are present.
 - JSON outputs used by tests and integrations have stable keys.
 - File-writing flows are dry-run-first or explicit-output-only.
 - Apply writes only through validated plans.
@@ -38,3 +51,12 @@ RoboPilot v1.0.0 should be the first stable release of the no-ROS-required stati
 - Migration workflows remain read-only until a future explicit migration apply design is reviewed.
 - README is concise and links to detailed docs.
 - Tests pass in CI and on Windows with the documented pytest temp workaround.
+
+## Before v1.0.0-rc.1
+
+- Run the full test suite locally and in GitHub Actions.
+- Manually verify core CLI help pages.
+- Review `docs/compatibility.md` and `docs/known_limitations.md`.
+- Ensure `CHANGELOG.md` has release-candidate notes.
+- Confirm no API keys, local outputs, backups, or history entries are tracked.
+- Decide whether any experimental JSON schema fields need final pre-v1 adjustments.

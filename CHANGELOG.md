@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.24.0 v1.0 release candidate preparation documentation.
+- `docs/testing.md` covering dev dependency installation, full and selected test runs, Windows pytest temp workaround, manual workflow checks, and no-ROS/no-network expectations.
+- `docs/release_process.md` covering version bumps, changelog updates, tests, manual CLI checks, commit conventions, tags, GitHub Releases, and rollback planning.
+- `docs/compatibility.md` covering supported Python versions, expected operating systems, no-ROS runtime boundaries, supported project categories, and heuristic areas.
+- `docs/known_limitations.md` covering static analysis limits, migration limits, apply/rollback constraints, LLM validation caveats, and unimplemented VSCode integration.
+- `docs/stability_policy.md` defining stable, experimental, and internal areas before v1.0 final.
 - v0.23.0 stability and CLI polish pass.
 - `docs/command_reference.md` with command purpose, examples, read-only/file-writing mode, and safety notes.
 - `docs/workflows.md` with the main spec-first, apply/rollback, inspection, static analysis, and migration workflows.
@@ -149,6 +155,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated CLI top-level help text to emphasize no-ROS-required static tooling.
 - Updated `.gitignore` coverage for RoboPilot local backup and history metadata.
 - Updated package metadata and generated demo package version to `0.23.0`.
+- Updated README documentation links and v1.0 scope notes for release-candidate readiness.
+- Updated package metadata and generated demo package version to `0.24.0`.
 
 ## [0.1.0] - 2026-05-09
 

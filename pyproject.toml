@@ -1,6 +1,6 @@
 [project]
 name = "robopilot"
-version = "0.23.0"
+version = "0.24.0"
 description = "No-ROS-required static engineering toolchain for ROS-style projects."
 readme = "README.md"
 requires-python = ">=3.10"

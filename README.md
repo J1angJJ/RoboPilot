@@ -96,6 +96,11 @@ robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_pack
 - [Command Reference](docs/command_reference.md)
 - [Workflows](docs/workflows.md)
 - [Architecture](docs/architecture.md)
+- [Testing](docs/testing.md)
+- [Release Process](docs/release_process.md)
+- [Compatibility](docs/compatibility.md)
+- [Known Limitations](docs/known_limitations.md)
+- [Stability Policy](docs/stability_policy.md)
 - [Demo Script](docs/demo_script.md)
 - [v1.0.0 Scope](docs/v1_scope.md)
 - [Changelog](CHANGELOG.md)
@@ -125,7 +130,7 @@ Transient generated projects should go under `outputs/`, which is intentionally 
 
 ## Project Status
 
-Current release polish target: `v0.23.0` Stability / CLI Polish.
+Current release polish target: `v0.24.0` v1.0 Release Candidate Preparation.
 
 RoboPilot is still pre-1.0, but the core no-ROS-required workflow is in place:
 

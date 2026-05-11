@@ -96,29 +96,29 @@ RoboPilot currently supports:
 25. ROS1-to-ROS2 static migration planning.
 26. Migration plan validation and diff.
 27. Migration apply preview.
-28. Pytest test coverage and GitHub Actions CI.
+28. Release-readiness documentation for testing, compatibility, limitations, stability policy, and release process.
+29. Pytest test coverage and GitHub Actions CI.
 
 ## Current Priority
 
 The current priority is:
 
 ```txt
-v0.23.0 Stability / CLI Polish
+v0.24.0 v1.0 Release Candidate Preparation
 ```
 
-The goal is to polish the existing CLI, documentation, project structure, and release readiness without adding major product capabilities.
+The goal is to prepare RoboPilot for a future v1.0.0 release candidate by documenting testing, release process, compatibility, limitations, and stability policy.
 
 Expected work:
 
-- keep CLI help text concise and consistent
-- maintain a concise English README and Chinese README
-- keep detailed command usage in `docs/command_reference.md`
-- document workflows in `docs/workflows.md`
-- document architecture in `docs/architecture.md`
-- document proposed v1.0.0 scope in `docs/v1_scope.md`
-- keep `.gitignore`, `CHANGELOG.md`, and `roadmap.md` current
+- maintain `docs/testing.md`
+- maintain `docs/release_process.md`
+- maintain `docs/compatibility.md`
+- maintain `docs/known_limitations.md`
+- maintain `docs/stability_policy.md`
+- keep README links, `docs/v1_scope.md`, `CHANGELOG.md`, and `roadmap.md` current
 
-Do not implement migration file generation, migration apply, ROS runtime execution, ROS2 runtime execution, catkin/colcon execution, RAG, Streamlit, Gradio, VSCode extension, robot integration, or new LLM behavior for this milestone.
+Do not implement new CLI commands, migration file generation, migration apply, ROS runtime execution, ROS2 runtime execution, catkin/colcon execution, RAG, Streamlit, Gradio, VSCode extension, robot integration, or new LLM behavior for this milestone.
 
 ## Important Constraints
 
@@ -341,7 +341,7 @@ robopilot deps --help
 Implement:
 
 ```txt
-v0.23.0 Stability / CLI Polish
+v0.24.0 v1.0 Release Candidate Preparation
 ```
 
-This milestone should improve command help consistency, documentation structure, release metadata, and project maintainability. It must not add new product capabilities or change public CLI behavior.
+This milestone should improve release readiness, stability boundaries, compatibility documentation, known limitation documentation, and maintainability. It must not add new product capabilities, new commands, or change public CLI behavior.

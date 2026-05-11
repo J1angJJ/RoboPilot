@@ -49,25 +49,25 @@ For existing ROS-style projects, RoboPilot adds static detection, inspection, de
 - v0.20.0 ROS1-to-ROS2 migration plan.
 - v0.21.0 Migration apply preview.
 - v0.22.0 Migration plan validation and diff.
+- v0.23.0 Stability / CLI polish.
 
-## Current: v0.23.0 Stability / CLI Polish
+## Current: v0.24.0 v1.0 Release Candidate Preparation
 
 Status: Current work
 
 Goal:
 
-Polish the existing CLI, documentation, and project structure before larger features.
+Prepare RoboPilot for a future v1.0.0 release candidate by documenting testing, release process, compatibility, limitations, and stability policy.
 
 Scope:
 
-- Consistent CLI help text.
-- Concise English and Chinese README pages.
-- Detailed command reference.
-- Main workflow documentation.
-- Architecture documentation.
-- Proposed v1.0.0 scope documentation.
-- `.gitignore` cleanup for local outputs, test caches, backups, history, logs, and secrets.
-- Changelog and roadmap updates.
+- Testing documentation.
+- Release process documentation.
+- Compatibility documentation.
+- Known limitations documentation.
+- Stability policy documentation.
+- v1.0.0 scope updates.
+- README, changelog, and roadmap link updates.
 
 Non-goals for this milestone:
 
@@ -78,9 +78,9 @@ Non-goals for this milestone:
 - New LLM behavior.
 - Streamlit, Gradio, RAG, VSCode extension, or robot integration.
 
-## Next Direction: v1.0.0 Preparation
+## Next Direction: v1.0.0-rc.1
 
-The next direction is preparing a first stable release around the existing static toolchain.
+The next planned milestone is `v1.0.0-rc.1`, a release candidate for the existing static toolchain.
 
 Proposed v1.0.0 scope:
 
@@ -96,6 +96,14 @@ Proposed v1.0.0 scope:
 - No ROS runtime requirement.
 
 See [docs/v1_scope.md](docs/v1_scope.md) for the detailed proposed scope.
+
+## Next: v1.0.0-rc.1
+
+Status: Planned
+
+Goal:
+
+Cut a release candidate that freezes the documented command surface, safety model, compatibility notes, known limitations, and release process for broader review.
 
 ## Later Ideas
 

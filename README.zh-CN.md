@@ -96,6 +96,11 @@ robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_pack
 - [Command Reference](docs/command_reference.md)
 - [Workflows](docs/workflows.md)
 - [Architecture](docs/architecture.md)
+- [Testing](docs/testing.md)
+- [Release Process](docs/release_process.md)
+- [Compatibility](docs/compatibility.md)
+- [Known Limitations](docs/known_limitations.md)
+- [Stability Policy](docs/stability_policy.md)
 - [Demo Script](docs/demo_script.md)
 - [v1.0.0 Scope](docs/v1_scope.md)
 - [Changelog](CHANGELOG.md)
@@ -125,7 +130,7 @@ examples/generated_projects/demo_detector/
 
 ## 项目状态
 
-当前版本打磨目标：`v0.23.0` Stability / CLI Polish。
+当前版本打磨目标：`v0.24.0` v1.0 Release Candidate Preparation。
 
 RoboPilot 仍处于 1.0 之前，但核心 no-ROS-required 工作流已经成型：
 
