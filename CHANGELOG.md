@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.23.0 stability and CLI polish pass.
+- `docs/command_reference.md` with command purpose, examples, read-only/file-writing mode, and safety notes.
+- `docs/workflows.md` with the main spec-first, apply/rollback, inspection, static analysis, and migration workflows.
+- `docs/architecture.md` with the no-ROS-required design, ProjectSpec workflow, deterministic rendering, safety chain, static analysis modules, migration modules, and LLM boundaries.
+- `docs/v1_scope.md` with proposed v1.0.0 scope and non-goals.
 - v0.22.0 static migration plan validation and diff review.
 - `robopilot migrate-plan-validate --plan ...` command.
 - `robopilot migrate-plan-validate --json` deterministic JSON output.
@@ -137,6 +142,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Generated `robopilot.yaml` metadata with package name, task, selected template,
   generator name, and notes.
 - Template registry and project specification layer for deterministic generation.
+
+### Changed
+
+- Simplified `README.md` and `README.zh-CN.md` into concise project overview pages that link to detailed docs.
+- Updated CLI top-level help text to emphasize no-ROS-required static tooling.
+- Updated `.gitignore` coverage for RoboPilot local backup and history metadata.
+- Updated package metadata and generated demo package version to `0.23.0`.
 
 ## [0.1.0] - 2026-05-09
 

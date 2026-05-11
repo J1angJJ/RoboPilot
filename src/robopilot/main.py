@@ -53,7 +53,7 @@ from robopilot.utils.file_ops import OutputPathExistsError
 
 
 app = typer.Typer(
-    help="RoboPilot: lightweight ROS-style robotics development assistant.",
+    help="RoboPilot: no-ROS-required static tooling for ROS-style projects.",
     no_args_is_help=True,
 )
 console = Console()
@@ -61,7 +61,7 @@ console = Console()
 
 @app.callback()
 def main() -> None:
-    """Run RoboPilot commands."""
+    """Run RoboPilot CLI commands."""
 
 
 @app.command()
@@ -634,7 +634,7 @@ def detect(
         typer.Option("--json", help="Print deterministic JSON output."),
     ] = False,
 ) -> None:
-    """Detect whether a directory looks like a RoboPilot, ROS1, or ROS2 project."""
+    """Detect ROS-style project type without requiring ROS."""
     result = detect_project(project_path)
     if json_output:
         print(json.dumps(result.to_dict(), indent=2))

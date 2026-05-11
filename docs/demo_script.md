@@ -4,14 +4,14 @@ This script is a short walkthrough for recording a demo video, presenting the pr
 
 ## 1. Introduce the Project
 
-RoboPilot is a lightweight offline developer tool for ROS-style robotics workflows.
+RoboPilot is a no-ROS-required static engineering toolchain for ROS-style projects.
 
 Key message:
 
-- It does not require ROS2.
+- It does not require ROS or ROS2.
 - It does not require a GPU.
-- It does not call an external LLM API.
-- It focuses on local, reproducible robotics development helpers.
+- It does not run catkin, colcon, launch files, or generated nodes.
+- It focuses on deterministic specs, static analysis, safe updates, and migration planning.
 
 Current core commands:
 
@@ -497,8 +497,10 @@ Current implemented MVPs:
 - v0.20.0: ROS1 to ROS2 Migration Plan
 - v0.21.0: Migration Apply Preview
 - v0.22.0: Migration Plan Validate / Diff
+- v0.23.0: Stability / CLI Polish
 
 Next planned work:
 
-- Optional LLM Report Explanation
-- Migrated file generation or migration apply-plan safety design
+- v1.0.0 release preparation
+- Optional LLM Report Explanation as a later, explicitly configured feature
+- Migrated file generation or migration apply-plan safety design as future work

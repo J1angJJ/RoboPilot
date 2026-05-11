@@ -26,6 +26,10 @@ dist/
 outputs/
 *.log
 
+# RoboPilot local safety metadata
+.robopilot_backups/
+.robopilot_history/
+
 # IDE and editor files
 .vscode/
 .idea/
