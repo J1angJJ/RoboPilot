@@ -746,9 +746,9 @@ Possible sources:
 
 The analyzer should be conservative and should report uncertainty clearly.
 
-## Current: v0.20.0 ROS1 to ROS2 Migration Plan
+## Completed: v0.20.0 ROS1 to ROS2 Migration Plan
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -781,30 +781,37 @@ Important:
 
 This version should only generate a migration plan. It should not automatically rewrite the project, generate migrated files, run ROS, run catkin, or run colcon.
 
-## Future: v0.21.0 Migration Apply Preview
+## Current: v0.21.0 Migration Apply Preview
 
-Status: Planned
+Status: Current work
 
 Goal:
 
 Preview what a ROS1-to-ROS2 migration plan would create or update.
 
-Possible command:
+Core commands:
 
 ```bash
 robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_package
 ```
 
+```bash
+robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_package --json
+```
+
 Expected behavior:
 
-- read migration plan
+- load and validate a generated migration plan
+- re-inspect the source project statically
 - preview files to create
 - preview files to update
 - preview files to keep
-- preview conflicts
+- preview files requiring manual migration
+- preview interface files and dependency items that need review
+- preview conflicts and risks
 - remain fully read-only
 
-This should reuse the apply-preview safety model where possible.
+This should reuse migration planning, static project detection, ROS1 inspection, and dependency analysis. It must not modify source files, generate migrated files, run ROS, run `catkin_make`, or run colcon.
 
 ## Future: v0.22.0 LLM-assisted Report Explanation
 

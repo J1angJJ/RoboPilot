@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v0.21.0 no-ROS-required static migration apply preview.
+- `robopilot migrate-preview --plan ... --project ...` command.
+- `robopilot migrate-preview --json` deterministic JSON output.
+- Migration preview loading and validation for JSON and RoboPilot YAML-like migration plans.
+- File-level migration classifications for planned ROS2 files to create, files to keep, files requiring manual migration, interface files to review, dependency items to review, conflicts, risks, and suggested next steps.
+- Conservative conflict detection for unsupported targets, missing source projects, source path mismatches, mixed ROS signals, and planned ROS2 files that already exist in the source tree.
+- Migration preview reuse of migration plans, static project detection, ROS1 inspection, and dependency analysis.
 - v0.20.0 no-ROS-required static ROS1-to-ROS2 migration planning.
 - `robopilot migrate-plan --from ... --to ros2 --output ...` command.
 - `robopilot migrate-plan --format json` deterministic JSON output.

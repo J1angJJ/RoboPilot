@@ -116,28 +116,29 @@ RoboPilot currently supports:
 The current priority is:
 
 ```txt
-v0.20.0 ROS1 to ROS2 Migration Plan
+v0.21.0 Migration Apply Preview
 ```
 
-The goal is to add a no-ROS-required static migration planning command for ROS1 catkin packages moving toward ROS2-style structure.
+The goal is to add a no-ROS-required static migration preview command that turns a ROS1-to-ROS2 migration plan into a file-level preview.
 
 Expected commands:
 
 ```bash
-robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.yaml
+robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_package
 ```
 
-Optional JSON output:
+JSON output:
 
 ```bash
-robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.json --format json
+robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_package --json
 ```
 
 Expected behavior:
 
+- Load and validate a generated migration plan.
 - Reuse `detect_project`, `inspect_ros1_project`, and dependency analysis.
-- Generate package.xml, build system, source code, launch, interface, dependency, suggested file change, manual review, risk, and next-step sections.
-- Support deterministic YAML-like and JSON output.
+- Classify planned ROS2 files to create, files to keep, files requiring manual migration, interface files to review, dependency items to review, conflicts, risks, and next steps.
+- Support deterministic JSON output.
 - Do not require ROS or ROS2.
 - Do not run `catkin_make` or colcon.
 - Do not execute launch files or generated code.
@@ -420,6 +421,10 @@ robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_
 ```
 
 ```bash
+robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_package
+```
+
+```bash
 robopilot inspect outputs/demo_detector
 ```
 
@@ -439,10 +444,10 @@ robopilot debug --log examples/error_logs/cv_bridge_missing.txt
 robopilot graph --pipeline "camera -> detector -> tracker -> planner -> controller"
 ```
 
-The next planned command is:
+The next planned migration command is:
 
 ```bash
-robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_package
+robopilot migrate-apply-plan --plan migration_plan.yaml --project path/to/ros1_package --output migration_apply_plan.yaml
 ```
 
 ## ProjectSpec Rules
@@ -525,7 +530,7 @@ python -m pytest --basetemp=".pytest_tmp" -p no:cacheprovider
 
 For CLI-related changes, also run relevant commands manually.
 
-For the current migration planning work, manually verify commands similar to:
+For the current migration preview work, manually verify commands similar to:
 
 ```bash
 robopilot detect .pytest_tmp/ros1_migration_demo
@@ -544,7 +549,11 @@ robopilot migrate-plan --from .pytest_tmp/ros1_migration_demo --to ros2 --output
 ```
 
 ```bash
-robopilot migrate-plan --from .pytest_tmp/ros1_migration_demo --to ros2 --output .pytest_tmp/migration_plan.json --format json
+robopilot migrate-preview --plan .pytest_tmp/migration_plan.yaml --project .pytest_tmp/ros1_migration_demo
+```
+
+```bash
+robopilot migrate-preview --plan .pytest_tmp/migration_plan.yaml --project .pytest_tmp/ros1_migration_demo --json
 ```
 
 ## Preferred Development Workflow
@@ -565,19 +574,19 @@ robopilot migrate-plan --from .pytest_tmp/ros1_migration_demo --to ros2 --output
 Implement:
 
 ```txt
-v0.20.0 ROS1 to ROS2 Migration Plan
+v0.21.0 Migration Apply Preview
 ```
 
-The migration planner should support:
+The migration preview should support:
 
 ```bash
-robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.yaml
+robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_package
 ```
 
-Optional JSON output:
+JSON output:
 
 ```bash
-robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.json --format json
+robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_package --json
 ```
 
 Suggested implementation files:
@@ -591,9 +600,9 @@ src/robopilot/migration/
 Suggested tests:
 
 ```txt
-tests/test_ros1_to_ros2_migration_plan.py
+tests/test_migration_preview.py
 ```
 
-The migration planner should be static, deterministic, conservative, and testable. It must not require ROS, ROS2, catkin, colcon, launch execution, generated code execution, source project modification, or user module imports.
+The migration preview should be static, deterministic, conservative, and testable. It must load and validate a migration plan, inspect the source project statically, classify file-level preview actions, and must not require ROS, ROS2, catkin, colcon, launch execution, generated code execution, source project modification, migrated file generation, or user module imports.
 
-Do not start migration apply preview, migration apply, VSCode integration, RAG, Streamlit UI, or broad multi-agent orchestration until migration planning is stable.
+Do not start migration apply-plan, migration apply, VSCode integration, RAG, Streamlit UI, or broad multi-agent orchestration until migration preview is stable.

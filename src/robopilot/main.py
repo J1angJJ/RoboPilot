@@ -27,6 +27,7 @@ from robopilot.migration.ros1_to_ros2 import (
     ROS1ToROS2MigrationPlan,
     write_migration_plan,
 )
+from robopilot.migration.preview import MigrationPreviewResult, preview_migration
 from robopilot.planner import (
     LLMProviderConfig,
     LLMPlanner,
@@ -860,6 +861,74 @@ def _print_migration_plan(plan: ROS1ToROS2MigrationPlan) -> None:
 
     console.print(Panel.fit("Safety Note", style="bold cyan"))
     console.print(plan.safety_note)
+
+
+@app.command("migrate-preview")
+def migrate_preview(
+    plan: Annotated[
+        Path,
+        typer.Option("--plan", "-p", help="Path to a ROS1-to-ROS2 migration plan."),
+    ],
+    project: Annotated[
+        Path,
+        typer.Option("--project", help="Source ROS1 package directory to preview."),
+    ],
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Preview file-level ROS1-to-ROS2 migration actions without modifying files."""
+    try:
+        result = preview_migration(plan, project)
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    if json_output:
+        print(json.dumps(result.to_dict(), indent=2))
+        return
+
+    _print_migration_preview(result)
+
+
+def _print_migration_preview(result: MigrationPreviewResult) -> None:
+    console.print(Panel.fit("Migration Preview Summary", style="bold cyan"))
+    console.print(f"[bold]Plan path:[/bold] {result.plan_path}")
+    console.print(f"[bold]Source Project:[/bold] {result.project_path}")
+    console.print(f"[bold]Target:[/bold] {result.target}")
+    console.print(f"[bold]Package:[/bold] {result.package_name or 'unknown'}")
+    console.print(f"[bold]Source project type:[/bold] {result.source_project_type}")
+
+    console.print(Panel.fit("Files to Create", style="bold cyan"))
+    _print_scalar_values(result.files_to_create)
+
+    console.print(Panel.fit("Files to Update", style="bold cyan"))
+    _print_scalar_values(result.files_to_update)
+
+    console.print(Panel.fit("Files to Keep", style="bold cyan"))
+    _print_scalar_values(result.files_to_keep)
+
+    console.print(Panel.fit("Files Requiring Manual Migration", style="bold cyan"))
+    _print_scalar_values(result.files_requiring_manual_migration)
+
+    console.print(Panel.fit("Interface Files to Review", style="bold cyan"))
+    _print_scalar_values(result.interface_files_to_review)
+
+    console.print(Panel.fit("Dependency Items to Review", style="bold cyan"))
+    _print_scalar_values(result.dependency_items_to_review)
+
+    console.print(Panel.fit("Conflicts", style="bold cyan"))
+    _print_scalar_values(result.conflicts)
+
+    console.print(Panel.fit("Risks", style="bold cyan"))
+    _print_scalar_values(result.risks)
+
+    console.print(Panel.fit("Suggested Next Steps", style="bold cyan"))
+    _print_scalar_values(result.suggested_next_steps)
+
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    console.print(result.safety_note)
 
 
 @app.command()

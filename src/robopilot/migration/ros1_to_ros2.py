@@ -15,6 +15,17 @@ from robopilot.ros1.inspector import ROS1Inspection, inspect_ros1_project
 GENERATED_BY = "RoboPilot ROS1ToROS2MigrationPlan"
 SUPPORTED_TARGETS = {"ros2"}
 SUPPORTED_FORMATS = {"yaml", "json"}
+LIST_FIELDS = {
+    "package_xml_migration",
+    "build_system_migration",
+    "source_code_migration",
+    "launch_migration",
+    "interface_migration",
+    "suggested_file_changes",
+    "manual_review_items",
+    "risks",
+    "suggested_next_steps",
+}
 SAFETY_NOTE = (
     "This migration plan is generated from static inspection only. RoboPilot "
     "did not modify source files, generate migrated files, validate runtime "
@@ -42,6 +53,14 @@ TOP_LEVEL_FIELDS = (
     "suggested_next_steps",
     "safety_note",
 )
+
+
+@dataclass(frozen=True)
+class MigrationPlanValidationResult:
+    """Validation result for a serialized migration plan."""
+
+    is_valid: bool
+    errors: tuple[str, ...]
 
 
 @dataclass(frozen=True)
@@ -146,9 +165,145 @@ def write_migration_plan(
     return plan
 
 
+def load_migration_plan(plan_path: Path) -> dict[str, object]:
+    """Load a JSON or RoboPilot YAML-like migration plan."""
+    content = plan_path.read_text(encoding="utf-8")
+    if plan_path.suffix.lower() == ".json" or content.lstrip().startswith("{"):
+        data = json.loads(content)
+        if not isinstance(data, dict):
+            raise ValueError("Migration plan JSON must be an object.")
+        return data
+    return migration_plan_from_yaml(content)
+
+
+def validate_migration_plan(plan: dict[str, object]) -> MigrationPlanValidationResult:
+    """Validate required migration plan fields and basic types."""
+    errors: list[str] = []
+    for field in TOP_LEVEL_FIELDS:
+        if field not in plan:
+            errors.append(f"{field} is required.")
+
+    for field in LIST_FIELDS:
+        if field in plan and not isinstance(plan[field], list):
+            errors.append(f"{field} must be a list.")
+
+    for field in (
+        "generated_by",
+        "source_path",
+        "target",
+        "source_project_type",
+        "package_name",
+        "confidence",
+        "summary",
+        "safety_note",
+    ):
+        if field in plan and not isinstance(plan[field], str):
+            errors.append(f"{field} must be a string.")
+
+    if "dependency_migration" in plan and not isinstance(plan["dependency_migration"], dict):
+        errors.append("dependency_migration must be a mapping.")
+
+    if str(plan.get("target", "")).strip().lower() not in SUPPORTED_TARGETS:
+        errors.append("target must be ros2.")
+
+    return MigrationPlanValidationResult(is_valid=not errors, errors=tuple(errors))
+
+
 def migration_plan_to_yaml(plan: ROS1ToROS2MigrationPlan) -> str:
     """Serialize a migration plan using RoboPilot's small YAML-like subset."""
     return _to_yaml(plan.to_dict(), TOP_LEVEL_FIELDS)
+
+
+def migration_plan_from_yaml(content: str) -> dict[str, object]:
+    """Parse RoboPilot's small migration-plan YAML-like subset."""
+    lines = [
+        (len(raw_line) - len(raw_line.lstrip(" ")), raw_line.strip())
+        for raw_line in content.splitlines()
+        if raw_line.strip() and not raw_line.lstrip().startswith("#")
+    ]
+    data: dict[str, object] = {}
+    current_top: str | None = None
+    current_second: str | None = None
+    current_third: str | None = None
+
+    for index, (indent, stripped) in enumerate(lines):
+        next_stripped = lines[index + 1][1] if index + 1 < len(lines) else ""
+
+        if indent == 0:
+            key, value = _split_key_value(stripped)
+            current_top = key
+            current_second = None
+            current_third = None
+            if value:
+                data[key] = _unquote(value)
+            elif next_stripped.startswith("- "):
+                data[key] = []
+            else:
+                data[key] = {}
+            continue
+
+        if current_top is None:
+            raise ValueError(f"Unexpected indented line outside a section: {stripped}")
+
+        if indent == 2:
+            if stripped.startswith("- "):
+                target = data.setdefault(current_top, [])
+                if not isinstance(target, list):
+                    raise ValueError(f"Expected list field: {current_top}")
+                target.append(_unquote(stripped[2:].strip()))
+                continue
+
+            key, value = _split_key_value(stripped)
+            parent = data.setdefault(current_top, {})
+            if not isinstance(parent, dict):
+                raise ValueError(f"Expected mapping field: {current_top}")
+            current_second = key
+            current_third = None
+            if value:
+                parent[key] = _unquote(value)
+            elif next_stripped.startswith("- "):
+                parent[key] = []
+            else:
+                parent[key] = {}
+            continue
+
+        if indent == 4:
+            parent = data.get(current_top)
+            if not isinstance(parent, dict) or current_second is None:
+                raise ValueError(f"Unexpected nested line: {stripped}")
+            if stripped.startswith("- "):
+                target = parent.setdefault(current_second, [])
+                if not isinstance(target, list):
+                    raise ValueError(f"Expected list field: {current_second}")
+                target.append(_unquote(stripped[2:].strip()))
+                continue
+
+            key, value = _split_key_value(stripped)
+            child = parent.setdefault(current_second, {})
+            if not isinstance(child, dict):
+                raise ValueError(f"Expected mapping field: {current_second}")
+            current_third = key
+            child[key] = _unquote(value) if value else []
+            continue
+
+        if indent == 6:
+            parent = data.get(current_top)
+            if not isinstance(parent, dict) or current_second is None or current_third is None:
+                raise ValueError(f"Unexpected deeply nested line: {stripped}")
+            child = parent.get(current_second)
+            if not isinstance(child, dict):
+                raise ValueError(f"Expected nested mapping field: {current_second}")
+            target = child.setdefault(current_third, [])
+            if not isinstance(target, list):
+                raise ValueError(f"Expected list field: {current_third}")
+            if not stripped.startswith("- "):
+                raise ValueError(f"Expected list item: {stripped}")
+            target.append(_unquote(stripped[2:].strip()))
+            continue
+
+        raise ValueError(f"Unsupported indentation in migration plan: {stripped}")
+
+    return data
 
 
 def _confidence(project_type: str, inspection: ROS1Inspection) -> str:
@@ -380,6 +535,13 @@ def _package_name_from_path(path: Path) -> str:
     return path.name if path.name else "unknown"
 
 
+def _split_key_value(line: str) -> tuple[str, str]:
+    if ":" not in line:
+        raise ValueError(f"Expected key/value line: {line}")
+    key, value = line.split(":", 1)
+    return key.strip(), value.strip()
+
+
 def _to_yaml(data: dict[str, object], field_order: tuple[str, ...]) -> str:
     lines: list[str] = []
     for field in field_order:
@@ -409,3 +571,9 @@ def _append_yaml(lines: list[str], key: str, value: object, *, indent: int) -> N
 
 def _quote(value: str) -> str:
     return value.replace("\\", "\\\\").replace('"', '\\"')
+
+
+def _unquote(value: str) -> str:
+    if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
+        value = value[1:-1]
+    return value.replace('\\"', '"').replace("\\\\", "\\")
