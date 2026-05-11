@@ -130,9 +130,9 @@ examples/generated_projects/demo_detector/
 
 ## 项目状态
 
-当前发布目标：`v1.0.0-rc.1`。
+当前稳定版本：`v1.0.0`。
 
-RoboPilot 仍处于 1.0 之前，但核心 no-ROS-required 工作流已经成型：
+RoboPilot 的 no-ROS-required 静态工程工作流已作为 v1.0.0 稳定版发布：
 
 ```txt
 plan -> refine -> diff -> validate -> generate

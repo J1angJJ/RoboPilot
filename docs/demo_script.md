@@ -500,9 +500,10 @@ Current implemented MVPs:
 - v0.23.0: Stability / CLI Polish
 - v0.24.0: v1.0 Release Candidate Preparation
 - v1.0.0-rc.1: Release Candidate Checklist
+- v1.0.0: First Stable Release
 
 Next planned work:
 
-- v1.0.0 stable release preparation
+- Post-v1.0 maintenance and carefully scoped future work
 - Optional LLM Report Explanation as a later, explicitly configured feature
 - Migrated file generation or migration apply-plan safety design as future work

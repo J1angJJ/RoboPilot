@@ -104,10 +104,10 @@ RoboPilot currently supports:
 The current priority is:
 
 ```txt
-v1.0.0-rc.1 Release Candidate Checklist
+v1.0.0 Stable Baseline
 ```
 
-The goal is to prepare RoboPilot v1.0.0-rc.1 by auditing versioning, documentation, stability boundaries, limitations, compatibility, tests, and CLI help.
+The goal is to maintain RoboPilot v1.0.0 as the stable no-ROS-required static engineering baseline and start future work only after preserving that baseline.
 
 Expected work:
 
@@ -117,7 +117,7 @@ Expected work:
 - maintain `docs/known_limitations.md`
 - maintain `docs/stability_policy.md`
 - keep README links, `docs/v1_scope.md`, `CHANGELOG.md`, and `roadmap.md` current
-- keep `pyproject.toml` on the valid Python package version `1.0.0rc1` for the RC
+- keep stable release metadata consistent with `1.0.0`
 
 Do not implement new CLI commands, migration file generation, migration apply, ROS runtime execution, ROS2 runtime execution, catkin/colcon execution, RAG, Streamlit, Gradio, VSCode extension, robot integration, or new LLM behavior for this milestone.
 
@@ -342,7 +342,7 @@ robopilot deps --help
 Implement:
 
 ```txt
-v1.0.0-rc.1 Release Candidate Checklist
+v1.0.0 Stable Baseline
 ```
 
-This milestone should finalize release-candidate readiness through documentation and version consistency checks. It must not add new product capabilities, new commands, or change public CLI behavior.
+The stable baseline is released. Future work should preserve the documented v1.0.0 command surface, no-ROS-required behavior, and safety model unless an explicitly planned compatibility change is documented.

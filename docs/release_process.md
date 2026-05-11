@@ -37,7 +37,7 @@ Update `CHANGELOG.md` under `Unreleased` before cutting a release.
 For a release tag, move relevant notes under a dated release heading when appropriate:
 
 ```md
-## [1.0.0-rc.1] - YYYY-MM-DD
+## [1.0.0] - YYYY-MM-DD
 ```
 
 Keep release notes focused on user-visible changes, documentation, safety behavior, compatibility, and known limitations.

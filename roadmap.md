@@ -51,14 +51,15 @@ For existing ROS-style projects, RoboPilot adds static detection, inspection, de
 - v0.22.0 Migration plan validation and diff.
 - v0.23.0 Stability / CLI polish.
 - v0.24.0 v1.0 release candidate preparation docs.
+- v1.0.0-rc.1 Release candidate checklist.
 
-## Current: v1.0.0-rc.1 Release Candidate Checklist
+## Current: v1.0.0 Stable Release
 
-Status: Current work
+Status: Stable baseline
 
 Goal:
 
-Perform the release candidate checklist pass for RoboPilot 1.0.
+Maintain the first stable no-ROS-required static engineering release for ROS-style projects.
 
 Scope:
 
@@ -67,9 +68,9 @@ Scope:
 - Compatibility documentation.
 - Known limitations documentation.
 - Stability policy documentation.
-- v1.0.0 scope updates.
+- v1.0.0 stable scope documentation.
 - README, changelog, and roadmap link updates.
-- Version metadata set to Python package version `1.0.0rc1`.
+- Version metadata set to `1.0.0`.
 - Manual CLI help verification.
 - Full test suite verification.
 
@@ -82,9 +83,9 @@ Non-goals for this milestone:
 - New LLM behavior.
 - Streamlit, Gradio, RAG, VSCode extension, or robot integration.
 
-## Next Direction: v1.0.0
+## Next Direction: Post-v1.0 Maintenance
 
-The next planned milestone after the release candidate is `v1.0.0`, assuming RC feedback does not require another candidate.
+The next direction is maintenance and carefully scoped post-v1.0 work that preserves the stable command surface and safety model.
 
 Proposed v1.0.0 scope:
 
@@ -101,13 +102,13 @@ Proposed v1.0.0 scope:
 
 See [docs/v1_scope.md](docs/v1_scope.md) for the detailed proposed scope.
 
-## Next: v1.0.0
+## Next: Post-v1.0 Maintenance
 
 Status: Planned
 
 Goal:
 
-Promote the release candidate to the first stable release after test, documentation, and compatibility review.
+Review user feedback, fix bugs, and plan future work without changing v1.0.0 behavior unexpectedly.
 
 ## Later Ideas
 

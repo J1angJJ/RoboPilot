@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-05-11
+
+### Changed
+
+- Promoted RoboPilot from `v1.0.0-rc.1` to the first stable `v1.0.0` release.
+- Updated package metadata and generated demo metadata from `1.0.0rc1` to `1.0.0`.
+- Confirmed `v1.0.0-rc.1` validation passed with no blocking issues.
+- Confirmed no new product capabilities were added after the release candidate.
+- Updated README, roadmap, AGENTS, and v1 scope wording from release-candidate status to stable release status.
+
+### Stable Scope
+
+- No-ROS-required static engineering workflow for ROS-style projects.
+- ProjectSpec planning, validation, generation, refinement, and diff.
+- Static detect, inspect, dependency analysis, repair suggestion, and report workflows.
+- Safe apply, rollback, and project-local history loop.
+- ROS1 static inspection without requiring ROS.
+- ROS1-to-ROS2 migration plan, validation, diff, and preview workflows.
+- Optional LLM planner/refiner boundaries constrained to validated ProjectSpec data.
+
 ## [1.0.0-rc.1] - 2026-05-11
 
 ### Changed

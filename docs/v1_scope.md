@@ -1,8 +1,8 @@
-# Proposed v1.0.0 Scope
+# v1.0.0 Scope
 
-RoboPilot v1.0.0 should be the first stable release of the no-ROS-required static engineering toolchain.
+RoboPilot v1.0.0 is the first stable release of the no-ROS-required static engineering toolchain.
 
-## Proposed Scope
+## Stable Scope
 
 - Stable `ProjectSpec` planning, validation, generation, refinement, and diff workflow.
 - Stable safe apply / rollback / history loop.
@@ -40,7 +40,7 @@ Experimental features must still preserve RoboPilot's safety boundaries: no runt
 - Direct LLM code generation or direct LLM file modification.
 - RAG, Streamlit, Gradio, or VSCode extension as part of the core v1.0.0 scope.
 
-## v1.0.0 Readiness Checklist
+## v1.0.0 Release Checklist
 
 - Core commands have stable help text.
 - Testing, release process, compatibility, known limitations, and stability policy docs are present.
@@ -52,12 +52,13 @@ Experimental features must still preserve RoboPilot's safety boundaries: no runt
 - README is concise and links to detailed docs.
 - Tests pass in CI and on Windows with the documented pytest temp workaround.
 
-## Before v1.0.0-rc.1
+## v1.0.0 Final Validation
 
-- Run the full test suite locally and in GitHub Actions.
+- The `v1.0.0-rc.1` validation pass completed with no blocking issues.
+- Run the full test suite locally and in GitHub Actions before tagging final release builds.
 - Manually verify core CLI help pages.
 - Review `docs/compatibility.md` and `docs/known_limitations.md`.
-- Ensure `CHANGELOG.md` has release-candidate notes.
-- Ensure `pyproject.toml` uses the valid Python package version `1.0.0rc1`.
+- Ensure `CHANGELOG.md` has final release notes.
+- Ensure `pyproject.toml` uses `1.0.0` for the final release.
 - Confirm no API keys, local outputs, backups, or history entries are tracked.
-- Decide whether any experimental JSON schema fields need final pre-v1 adjustments.
+- Keep experimental features clearly marked in `docs/stability_policy.md`.

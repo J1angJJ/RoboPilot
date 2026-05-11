@@ -1,6 +1,6 @@
 # Stability Policy
 
-This policy describes what should be considered stable, experimental, or internal before RoboPilot v1.0.0.
+This policy describes what is considered stable, experimental, or internal as of RoboPilot v1.0.0.
 
 ## Stable
 
@@ -42,4 +42,4 @@ Internal areas are implementation details and may change without compatibility g
 
 ## Compatibility Notes
 
-Before v1.0.0, RoboPilot may refine JSON fields or command output wording to improve clarity. Once v1.0.0 is released, documented command names, safety behavior, and stable JSON keys should change only with strong justification and changelog notes.
+After v1.0.0, documented command names, safety behavior, and stable JSON keys should change only with strong justification and changelog notes. Experimental areas may still evolve, but they must preserve RoboPilot's no-ROS-required and safety-first boundaries.
