@@ -9,30 +9,42 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
+from robopilot.api.apply import (
+    preview_apply as api_preview_apply,
+    read_project_history as api_read_project_history,
+)
+from robopilot.api.migration import (
+    create_ros1_to_ros2_migration_plan as api_create_ros1_to_ros2_migration_plan,
+    preview_migration_plan as api_preview_migration_plan,
+    validate_migration_plan_file as api_validate_migration_plan_file,
+)
+from robopilot.api.static_analysis import (
+    analyze_project_dependencies as api_analyze_project_dependencies,
+    detect_project_type as api_detect_project_type,
+    inspect_ros1_project_static as api_inspect_ros1_project_static,
+)
 from robopilot.apply.apply_plan import ApplySummary, apply_from_plan
 from robopilot.apply_plan.plan import export_apply_plan, validate_apply_plan_file
-from robopilot.apply_preview.preview import ApplyPreviewResult, preview_apply
+from robopilot.apply_preview.preview import ApplyPreviewResult
 from robopilot.debugger.log_analyzer import LogAnalysis, analyze_log
-from robopilot.deps.analyzer import DependencyAnalysis, analyze_dependencies
-from robopilot.detector.project_detector import ProjectDetection, detect_project
+from robopilot.deps.analyzer import DependencyAnalysis
+from robopilot.detector.project_detector import ProjectDetection
 from robopilot.diff.spec_diff import SpecDiffResult, diff_spec_files
 from robopilot.generator.project_generator import (
     generate_project,
     generate_project_from_spec,
 )
 from robopilot.graph.mermaid_generator import PipelineParseError, generate_mermaid
-from robopilot.history.journal import HistoryReport, list_history
+from robopilot.history.journal import HistoryReport
 from robopilot.inspector.project_inspector import ProjectInspection, inspect_project
 from robopilot.migration.ros1_to_ros2 import (
     ROS1ToROS2MigrationPlan,
-    write_migration_plan,
 )
 from robopilot.migration.plan_diff import MigrationPlanDiffResult, diff_migration_plans
 from robopilot.migration.plan_validator import (
     MigrationPlanValidationReport,
-    validate_migration_plan_file,
 )
-from robopilot.migration.preview import MigrationPreviewResult, preview_migration
+from robopilot.migration.preview import MigrationPreviewResult
 from robopilot.planner import (
     LLMProviderConfig,
     LLMPlanner,
@@ -46,7 +58,7 @@ from robopilot.refiner.llm_refiner import LLMRefiner
 from robopilot.refiner.spec_refiner import refine_spec
 from robopilot.report.project_report import generate_project_report, write_project_report
 from robopilot.rollback.rollback import RollbackSummary, rollback_project
-from robopilot.ros1.inspector import ROS1Inspection, inspect_ros1_project
+from robopilot.ros1.inspector import ROS1Inspection
 from robopilot.spec.io import load_spec, spec_to_yaml, write_spec
 from robopilot.spec.validator import validate_spec
 from robopilot.utils.file_ops import OutputPathExistsError
@@ -362,7 +374,7 @@ def apply_preview(
 ) -> None:
     """Preview applying a ProjectSpec to a project without modifying files."""
     try:
-        result = preview_apply(spec, project)
+        result = api_preview_apply(spec, project, as_dict=False)
     except (OSError, ValueError) as exc:
         console.print(f"[red]Error:[/red] {exc}")
         raise typer.Exit(code=1) from exc
@@ -583,7 +595,7 @@ def history(
 ) -> None:
     """Show project-local RoboPilot apply and rollback history."""
     try:
-        report = list_history(project)
+        report = api_read_project_history(project, as_dict=False)
     except (OSError, ValueError) as exc:
         console.print(f"[red]Error:[/red] {exc}")
         raise typer.Exit(code=1) from exc
@@ -635,7 +647,7 @@ def detect(
     ] = False,
 ) -> None:
     """Detect ROS-style project type without requiring ROS."""
-    result = detect_project(project_path)
+    result = api_detect_project_type(project_path, as_dict=False)
     if json_output:
         print(json.dumps(result.to_dict(), indent=2))
         return
@@ -672,7 +684,7 @@ def inspect_ros1(
     ] = False,
 ) -> None:
     """Statically inspect a ROS1 catkin package without requiring ROS."""
-    result = inspect_ros1_project(project_path)
+    result = api_inspect_ros1_project_static(project_path, as_dict=False)
     if json_output:
         print(json.dumps(result.to_dict(), indent=2))
         return
@@ -734,7 +746,7 @@ def deps(
     ] = False,
 ) -> None:
     """Analyze ROS-style dependencies without requiring ROS."""
-    result = analyze_dependencies(project_path)
+    result = api_analyze_project_dependencies(project_path, as_dict=False)
     if json_output:
         print(json.dumps(result.to_dict(), indent=2))
         return
@@ -802,11 +814,12 @@ def migrate_plan(
 ) -> None:
     """Create a static ROS1-to-ROS2 migration plan without modifying files."""
     try:
-        plan = write_migration_plan(
+        plan = api_create_ros1_to_ros2_migration_plan(
             source_path=source_path,
             target=target,
             output_path=output,
             output_format=output_format,
+            as_dict=False,
         )
     except (OSError, ValueError) as exc:
         console.print(f"[red]Error:[/red] {exc}")
@@ -880,7 +893,7 @@ def migrate_plan_validate(
     ] = False,
 ) -> None:
     """Validate a ROS1-to-ROS2 migration plan without modifying files."""
-    report = validate_migration_plan_file(plan)
+    report = api_validate_migration_plan_file(plan, as_dict=False)
     if json_output:
         print(json.dumps(report.to_dict(), indent=2))
         if not report.valid:
@@ -1003,7 +1016,7 @@ def migrate_preview(
 ) -> None:
     """Preview file-level ROS1-to-ROS2 migration actions without modifying files."""
     try:
-        result = preview_migration(plan, project)
+        result = api_preview_migration_plan(plan, project, as_dict=False)
     except (OSError, ValueError) as exc:
         console.print(f"[red]Error:[/red] {exc}")
         raise typer.Exit(code=1) from exc

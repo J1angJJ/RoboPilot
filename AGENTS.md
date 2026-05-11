@@ -64,32 +64,27 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v1.1.0 Packaging & Public Developer Experience
+v1.2.0 API Layer Refactor
 ```
 
-The goal is to prepare RoboPilot for public Python package distribution and open-source collaboration.
+The goal is to introduce a lightweight Python API layer so CLI commands, future VSCode extension code, scripts, and possible UI tools can reuse RoboPilot functionality without duplicating CLI logic.
 
 This milestone should focus on:
 
-- PyPI / TestPyPI packaging readiness
-- Trusted Publishing via GitHub Actions
-- package metadata audit
-- build and distribution checks
-- contributor documentation
-- security policy
-- issue templates
-- pull request template
-- public installation documentation
-- release process hardening
+- thin wrappers around existing core modules
+- no Rich rendering or stdout printing in API functions
+- explicit file-writing behavior
+- structured dictionaries or existing result objects
+- CLI output preserved as the presentation layer
+- future integration readiness
 
 This milestone should not add new robotics product features.
 
 ## Near-term Direction
 
-After v1.1.0, the recommended direction is:
+After v1.2.0, the recommended direction is:
 
 ```txt
-v1.1.0 Packaging & Public Developer Experience
 v1.2.0 API Layer Refactor
 v1.3.0 Stable JSON Contracts / Schema Docs
 v1.4.0 VSCode Extension MVP
@@ -174,7 +169,7 @@ Do not overpromise community processes that are not actually maintained yet.
 
 ## API Layer Direction
 
-A future API layer should make RoboPilot easier to integrate with VSCode, scripts, and future UI tools.
+The API layer should make RoboPilot easier to integrate with VSCode, scripts, and future UI tools.
 
 Preferred direction:
 
@@ -569,25 +564,22 @@ robopilot deps --help
 Implement:
 
 ```txt
-v1.1.0 Packaging & Public Developer Experience
+v1.2.0 API Layer Refactor
 ```
 
-This milestone should prepare RoboPilot for PyPI publication and broader open-source use.
+This milestone should introduce a thin Python API layer over existing RoboPilot modules.
 
 Suggested implementation items:
 
 ```txt
-CONTRIBUTING.md
-SECURITY.md
-.github/ISSUE_TEMPLATE/
-.github/pull_request_template.md
-.github/workflows/publish.yml
-.github/workflows/test-publish.yml
-docs/pypi_publish.md
-docs/developer_setup.md
-package metadata audit
-build / twine check
-README install instructions
+src/robopilot/api/__init__.py
+src/robopilot/api/project.py
+src/robopilot/api/static_analysis.py
+src/robopilot/api/migration.py
+src/robopilot/api/apply.py
+src/robopilot/api/models.py
+tests/test_api_layer.py
+docs/api.md
 ```
 
-Do not start API layer refactor, VSCode extension work, ROS2 static inspector, migration scaffold generation, or new runtime behavior during this milestone unless explicitly requested.
+Do not add new product commands, VSCode extension code, ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, or new LLM behavior during this milestone unless explicitly requested.

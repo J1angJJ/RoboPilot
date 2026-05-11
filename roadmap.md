@@ -692,9 +692,9 @@ Stable release scope:
 - stable CLI baseline
 - release and stability documentation
 
-## Current: v1.1.0 Packaging & Public Developer Experience
+## Completed: v1.1.0 Packaging & Public Developer Experience
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -754,9 +754,9 @@ Environment: pypi
 
 The exact PyPI availability of the `robopilot` package name is determined by PyPI at publish time.
 
-## Future: v1.2.0 API Layer Refactor
+## Current: v1.2.0 API Layer Refactor
 
-Status: Planned
+Status: Current work
 
 Goal:
 
@@ -792,31 +792,31 @@ Possible API groups:
 ```txt
 project.py
 - plan_project
-- refine_spec
-- diff_specs
-- validate_spec
+- refine_project_spec
+- diff_project_specs
+- validate_project_spec
 - generate_project
 
 static_analysis.py
-- detect_project
-- inspect_project
-- inspect_ros1_project
-- analyze_dependencies
-- generate_report
+- detect_project_type
+- inspect_project_static
+- inspect_ros1_project_static
+- analyze_project_dependencies
+- export_project_report
 
 migration.py
-- create_migration_plan
-- validate_migration_plan
-- diff_migration_plans
-- preview_migration
+- create_ros1_to_ros2_migration_plan
+- validate_migration_plan_file
+- diff_migration_plan_files
+- preview_migration_plan
 
 apply.py
 - preview_apply
 - export_apply_plan
-- validate_apply_plan
-- apply_plan
-- rollback
-- read_history
+- validate_apply_plan_file
+- apply_exported_plan
+- rollback_project_backup
+- read_project_history
 ```
 
 ## Future: v1.3.0 Stable JSON Contracts / Schema Docs

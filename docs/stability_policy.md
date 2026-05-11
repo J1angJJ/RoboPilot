@@ -25,6 +25,7 @@ Experimental areas may change before v1.0 final as safety and usability improve.
 - ROS1-to-ROS2 migration planning.
 - Migration preview.
 - Migration plan diff.
+- Python API layer before a documented stable API contract.
 - JSON schemas before v1.0 final, if a documented compatibility fix is needed.
 - Heuristic dependency inference wording.
 

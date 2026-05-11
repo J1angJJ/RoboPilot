@@ -21,6 +21,7 @@ It helps robotics learners and developers plan, refine, validate, generate, insp
 - Builds static ROS1-to-ROS2 migration plans, validates/diffs them, and previews file-level migration work.
 - Provides small offline utilities for robotics error logs and Mermaid workflow graphs.
 - Optionally uses an LLM only to produce or refine validated `ProjectSpec` data.
+- Provides a lightweight Python API layer for scripts and future integrations.
 
 RoboPilot does not run ROS, ROS2, launch files, generated code, `catkin_make`, or `colcon`.
 
@@ -107,6 +108,7 @@ robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_pack
 - [Command Reference](docs/command_reference.md)
 - [Workflows](docs/workflows.md)
 - [Architecture](docs/architecture.md)
+- [Python API](docs/api.md)
 - [Developer Setup](docs/developer_setup.md)
 - [Testing](docs/testing.md)
 - [Release Process](docs/release_process.md)
@@ -143,7 +145,7 @@ Transient generated projects should go under `outputs/`, which is intentionally 
 
 ## Project Status
 
-Current release line: `v1.1.0`.
+Current release line: `v1.2.0`.
 
 RoboPilot's no-ROS-required static engineering workflow remains the stable v1 baseline:
 
@@ -154,6 +156,8 @@ plan -> refine -> diff -> validate -> generate
       -> detect -> inspect-ros1 -> deps
       -> migrate-plan -> migrate-plan-validate -> migrate-plan-diff -> migrate-preview
 ```
+
+The Python API layer is available for integration work while the CLI remains the primary user interface.
 
 ## Development
 

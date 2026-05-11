@@ -30,6 +30,19 @@ task text
 
 Generation and update workflows should not bypass validation. `robopilot.yaml` is both a generated metadata file and an input format for later generation.
 
+## API Layer
+
+RoboPilot exposes a lightweight Python API layer for scripts, future VSCode integration, and possible UI wrappers:
+
+```txt
+CLI
+  -> API layer
+  -> core modules
+  -> structured results
+```
+
+The API layer lives under `robopilot.api`. It avoids Rich rendering, direct stdout printing, and Typer exits. CLI commands remain responsible for terminal presentation and process exit behavior. API functions are intentionally thin wrappers over the existing core modules so future integrations can reuse RoboPilot logic without duplicating CLI code.
+
 ## Planner and Refiner Architecture
 
 The default planner and refiner are rule-based, offline, deterministic, and testable.

@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v1.2.0 lightweight Python API layer for scripts, future VSCode integration, and possible UI wrappers.
+- `robopilot.api.project` wrappers for ProjectSpec planning, refinement, diff, validation, and generation.
+- `robopilot.api.static_analysis` wrappers for project detection, static inspection, ROS1 inspection, dependency analysis, and report export.
+- `robopilot.api.migration` wrappers for ROS1-to-ROS2 migration plan creation, validation, diff, and preview.
+- `robopilot.api.apply` wrappers for apply-preview, apply-plan export/validation, apply, rollback, and history.
+- `docs/api.md` with API purpose, stability notes, and usage examples.
 - v1.1.0 packaging and public developer experience polish.
 - PyPI and TestPyPI publishing documentation, including Trusted Publishing guidance.
 - Developer setup documentation for virtualenv, conda, editable installs, tests, CLI help, optional LLM extras, and packaging checks.
@@ -19,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated package and generated demo metadata to `1.2.0`.
+- Routed selected CLI commands through the new thin API wrappers while preserving CLI output behavior.
 - Updated package and generated demo metadata to `1.1.0`.
 - Audited `pyproject.toml` package metadata, optional dependencies, project URLs, license metadata, build backend requirements, and console script configuration.
 - Tightened Python package support metadata to `>=3.10,<3.12` to match the tested 3.10/3.11 support matrix; Python 3.12 is not claimed until tested, and Python 3.13 remains unsupported due to known Typer / CLI compatibility issues.

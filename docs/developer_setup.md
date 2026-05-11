@@ -72,6 +72,19 @@ robopilot detect --help
 robopilot migrate-plan --help
 ```
 
+## Try the Python API
+
+The CLI remains the main user interface, but integration code can call the lightweight API layer directly:
+
+```python
+from robopilot.api.static_analysis import detect_project_type
+
+result = detect_project_type("examples/generated_projects/demo_detector")
+print(result["project_type"])
+```
+
+API functions are designed to avoid Rich rendering and direct stdout printing.
+
 ## Packaging Checks
 
 For local package verification:
