@@ -118,6 +118,8 @@ npm run package
 
 The package command creates a local `.vsix` for installation testing. It does not publish to the VSCode Marketplace.
 
+Marketplace publishing preparation is documented in `docs/vscode_marketplace.md`. Publishing requires a confirmed Marketplace publisher id and a `VSCE_PAT` secret; do not run publishing workflows during normal development.
+
 ## Packaging Checks
 
 For local package verification:

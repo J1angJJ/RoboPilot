@@ -1,0 +1,40 @@
+name: VSCode Marketplace Publish
+
+# Manual only. This workflow is preparation for future publishing and must not
+# be wired to push or pull_request events.
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        working-directory: vscode-extension
+        run: npm ci
+      - name: Compile extension
+        working-directory: vscode-extension
+        run: npm run compile
+      - name: Run extension tests
+        working-directory: vscode-extension
+        run: npm test
+      - name: Package extension VSIX
+        working-directory: vscode-extension
+        run: npm run package
+      - name: Check publish token
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          if [ -z "$VSCE_PAT" ]; then
+            echo "VSCE_PAT secret is required for Marketplace publishing."
+            exit 1
+          fi
+      - name: Publish extension
+        working-directory: vscode-extension
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: npx vsce publish --pat "$VSCE_PAT"

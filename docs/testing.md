@@ -119,6 +119,8 @@ npm run package
 
 The VSIX package command is a local packaging check only. It must not publish to the VSCode Marketplace.
 
+Marketplace preparation checks should stop at compile, tests, and local package generation unless a release task explicitly requests publishing. Do not run `vsce publish` during normal test passes.
+
 ## Expected Test Behavior
 
 - Tests should create temporary files only under pytest-managed temp directories or `.pytest_tmp`.

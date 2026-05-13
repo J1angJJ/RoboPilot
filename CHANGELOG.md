@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v1.13.0 VSCode Marketplace publish preparation.
+- `vscode-extension/CHANGELOG.md` with extension release notes from `0.1.0` through `0.4.0`.
+- `docs/vscode_marketplace.md` with publisher-id, PAT, `VSCE_PAT`, manual publishing, GitHub Actions, listing verification, and rollback guidance.
+- Manually triggered `.github/workflows/vscode-publish.yml` preparation workflow for future Marketplace publishing.
 - v1.12.0 VSCode extension local VSIX packaging readiness.
 - Project-local `@vscode/vsce` packaging script for generating a local `.vsix` without Marketplace publishing.
 - `docs/vscode_packaging.md` with Node 20, build, package, local install, uninstall, configuration, and troubleshooting guidance.
@@ -72,6 +76,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated VSCode extension package metadata to `0.4.0` with homepage, bugs URL, and Marketplace-ready publisher documentation.
+- Updated package and generated demo metadata to `1.13.0`.
+- Updated README, VSCode docs, developer setup, testing docs, roadmap, and agent guidance with Marketplace preparation notes.
 - Updated VSCode extension package metadata to `0.3.0` with repository, license, keywords, and local packaging publisher metadata.
 - Updated package and generated demo metadata to `1.12.0`.
 - Updated VSCode extension CI to run local VSIX packaging checks without publishing.

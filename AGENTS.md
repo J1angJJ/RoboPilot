@@ -39,7 +39,7 @@ RoboPilot should avoid competing directly with general-purpose coding agents. It
 The current stable baseline is:
 
 ```txt
-v1.11.0
+v1.12.0
 ```
 
 The stable baseline includes:
@@ -65,22 +65,22 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v1.12.0 VSCode Extension VSIX Packaging
+v1.13.0 VSCode Marketplace Publish Preparation
 ```
 
-The goal is to make the existing VSCode extension packageable as a local VSIX for installation testing.
+The goal is to prepare the existing VSCode extension for future Visual Studio Marketplace publishing without publishing it.
 
 This milestone should focus on:
 
-- package metadata needed for local VSIX generation
-- project-local `@vscode/vsce` dependency and `npm run package`
-- `.vscodeignore` coverage for source, tests, local temp files, and generated artifacts
-- documentation for local VSIX packaging, install, uninstall, and troubleshooting
-- CI checks that compile, test, and package the extension without publishing
+- Marketplace-ready extension metadata
+- `vscode-extension/CHANGELOG.md`
+- documentation for publisher id confirmation, PAT handling, `VSCE_PAT`, manual publishing, and listing verification
+- a safety-first, manually triggered GitHub Actions publishing workflow if included
+- preserving local VSIX packaging as the required pre-publish check
 - preserving no-ROS-required static behavior
 - no ROS, ROS2, catkin, colcon, launch execution, generated code execution, or generated module imports
 
-This milestone should not publish to the VSCode Marketplace. It should not add new product commands, migration apply, automatic source conversion, automatic colcon execution, ROS runtime execution, or launch execution.
+This milestone must not publish to the VSCode Marketplace, add real tokens, commit secrets, add new product commands, migration apply, automatic source conversion, automatic colcon execution, ROS runtime execution, or launch execution.
 
 ## Near-term Direction
 
@@ -596,10 +596,10 @@ robopilot deps --help
 Implement:
 
 ```txt
-v1.12.0 VSCode Extension VSIX Packaging
+v1.13.0 VSCode Marketplace Publish Preparation
 ```
 
-This milestone should prepare the existing VSCode extension for local VSIX packaging and local installation testing.
+This milestone should prepare the existing VSCode extension for future Visual Studio Marketplace publishing while keeping actual publishing as a separate explicit release action.
 
 Suggested implementation items:
 
@@ -607,7 +607,8 @@ Suggested implementation items:
 vscode-extension/
 docs/vscode_extension.md
 docs/vscode_packaging.md
-.github/workflows/vscode-extension.yml
+docs/vscode_marketplace.md
+.github/workflows/vscode-publish.yml
 ```
 
-Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, automatic source conversion, VSCode Marketplace publishing, or new LLM behavior during this milestone unless explicitly requested.
+Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, automatic source conversion, actual VSCode Marketplace publishing, real tokens, or new LLM behavior during this milestone unless explicitly requested.

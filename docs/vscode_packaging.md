@@ -47,7 +47,7 @@ vscode-extension/robopilot-vscode-<version>.vsix
 Install the local VSIX:
 
 ```bash
-code --install-extension robopilot-vscode-0.3.0.vsix
+code --install-extension robopilot-vscode-0.4.0.vsix
 ```
 
 Uninstall if needed:
@@ -86,4 +86,6 @@ Delete that directory manually if stale migration plans, scaffold directories, o
 
 ## Marketplace Boundary
 
-The extension package metadata includes a `publisher` value for local VSIX packaging. Marketplace publishing may require confirming or changing that publisher id. Do not publish to the Marketplace until the v1.13.0 preparation work is complete.
+The extension package metadata includes a `publisher` value for local VSIX packaging. Marketplace publishing requires confirming that this value matches the Visual Studio Marketplace publisher id.
+
+See [VSCode Marketplace Publishing](vscode_marketplace.md) for the future publishing checklist. Do not publish to the Marketplace unless a release task explicitly asks for it.

@@ -116,9 +116,13 @@ npm run package
 Install the generated VSIX locally with:
 
 ```bash
-code --install-extension robopilot-vscode-0.3.0.vsix
+code --install-extension robopilot-vscode-0.4.0.vsix
 ```
 
 See [VSCode Extension Packaging](vscode_packaging.md) for troubleshooting and uninstall steps.
 
-This milestone does not publish the extension to the VSCode Marketplace. Marketplace publishing may require confirming the publisher id and reviewing metadata in a later milestone.
+## Marketplace Status
+
+Local VSIX packaging is available for installation testing. Marketplace publishing preparation is documented in [VSCode Marketplace Publishing](vscode_marketplace.md).
+
+The extension is not guaranteed to be listed on the Visual Studio Marketplace until it is explicitly published. The current `publisher` value is `j1angjj`; confirm that it matches the Marketplace publisher id before publishing.

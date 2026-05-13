@@ -120,6 +120,7 @@ robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/
 - [Integration Notes](docs/integration_notes.md)
 - [VSCode Extension](docs/vscode_extension.md)
 - [VSCode Packaging](docs/vscode_packaging.md)
+- [VSCode Marketplace Publishing](docs/vscode_marketplace.md)
 - [Developer Setup](docs/developer_setup.md)
 - [Testing](docs/testing.md)
 - [Release Process](docs/release_process.md)
@@ -159,7 +160,7 @@ Transient generated projects should go under `outputs/`, which is intentionally 
 
 ## Project Status
 
-Current release line: `v1.12.0`.
+Current release line: `v1.13.0`.
 
 RoboPilot's no-ROS-required static engineering workflow remains the stable v1 baseline:
 
@@ -175,7 +176,7 @@ plan -> refine -> diff -> validate -> generate
 
 The Python API layer, documented CLI JSON contracts, ROS2 static inspector, enhanced dependency analyzer, and VSCode extension source are available for integration work while the CLI remains the primary user interface.
 
-The VSCode extension lives under `vscode-extension/`, requires the RoboPilot CLI to be installed, supports the migration scaffold workflow, and can be packaged locally as a VSIX. See [docs/vscode_extension.md](docs/vscode_extension.md) and [docs/vscode_packaging.md](docs/vscode_packaging.md).
+The VSCode extension lives under `vscode-extension/`, requires the RoboPilot CLI to be installed, supports the migration scaffold workflow, and can be packaged locally as a VSIX. Marketplace publishing preparation is documented, but no Marketplace release is claimed yet. See [docs/vscode_extension.md](docs/vscode_extension.md), [docs/vscode_packaging.md](docs/vscode_packaging.md), and [docs/vscode_marketplace.md](docs/vscode_marketplace.md).
 
 Post-v1.10 roadmap work is aimed at v2.0 as a stage-completion release: polish the VSCode migration workflow, package the extension, improve examples and tutorials, and stabilize compatibility. v2.0 is not intended to imply a breaking rewrite unless a future release plan says so.
 

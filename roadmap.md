@@ -1099,9 +1099,9 @@ Expected behavior:
 - do not duplicate RoboPilot migration logic in TypeScript
 - do not add migration apply, automatic source conversion, ROS execution, ROS2 execution, colcon execution, or launch execution
 
-## Current: v1.12.0 VSCode Extension VSIX Packaging
+## Completed: v1.12.0 VSCode Extension VSIX Packaging
 
-Status: Current priority
+Status: Completed
 
 Goal:
 
@@ -1115,9 +1115,9 @@ Expected behavior:
 - run extension compile/test checks when extension files change
 - do not publish to the VSCode Marketplace
 
-## Future: v1.13.0 VSCode Marketplace Publish Preparation
+## Current: v1.13.0 VSCode Marketplace Publish Preparation
 
-Status: Planned
+Status: Current priority
 
 Goal:
 
@@ -1126,8 +1126,12 @@ Prepare Marketplace publishing materials and checks without compromising stabili
 Expected behavior:
 
 - audit extension README, icon, categories, and package metadata
+- add extension changelog and Marketplace publishing checklist
+- document publisher id confirmation and `VSCE_PAT` token handling
 - document publishing steps and required accounts or tokens
+- optionally prepare a manually triggered GitHub Actions publish workflow
 - avoid committing secrets or generated marketplace artifacts
+- do not actually publish to the Marketplace in this milestone
 - keep Marketplace publishing separate from RoboPilot core releases
 
 ## Future: v1.14.0 Examples / Tutorials / Demo Pack
@@ -1298,6 +1302,6 @@ v1.7.0 Migration Scaffold Preview
 v1.8.0 Migration Scaffold Generate
 ```
 
-Next planned milestone after v1.12.0: v1.13.0 VSCode Marketplace Publish Preparation.
+Next planned milestone after v1.13.0: v1.14.0 Examples / Tutorials / Demo Pack.
 
 RoboPilot should grow as a practical no-ROS-required ROS engineering toolchain, with CLI as the stable core and beginner-friendly interfaces layered on top.

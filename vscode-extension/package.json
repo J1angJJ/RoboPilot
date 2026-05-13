@@ -2,9 +2,8 @@
   "name": "robopilot-vscode",
   "displayName": "RoboPilot",
   "description": "VSCode integration for RoboPilot no-ROS-required static tooling",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "publisher": "j1angjj",
-  "private": true,
   "license": "MIT",
   "engines": {
     "vscode": "^1.90.0"
@@ -23,6 +22,10 @@
     "type": "git",
     "url": "https://github.com/J1angJJ/RoboPilot.git",
     "directory": "vscode-extension"
+  },
+  "homepage": "https://github.com/J1angJJ/RoboPilot#readme",
+  "bugs": {
+    "url": "https://github.com/J1angJJ/RoboPilot/issues"
   },
   "activationEvents": [
     "onCommand:robopilot.detectWorkspace",

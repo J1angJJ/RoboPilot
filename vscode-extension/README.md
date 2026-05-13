@@ -64,7 +64,7 @@ The package command runs the VSCode prepublish compile step and creates a `.vsix
 Install a local VSIX with:
 
 ```bash
-code --install-extension robopilot-vscode-0.3.0.vsix
+code --install-extension robopilot-vscode-0.4.0.vsix
 ```
 
 Uninstall with:
@@ -73,7 +73,11 @@ Uninstall with:
 code --uninstall-extension j1angjj.robopilot-vscode
 ```
 
-The `publisher` field is currently `j1angjj` for local packaging. Marketplace publishing may require confirming or changing the publisher id before any public release.
+## Marketplace Preparation
+
+Marketplace publishing is prepared but not performed. The `publisher` field is currently `j1angjj`; confirm that it matches the Visual Studio Marketplace publisher id before any public release.
+
+See `docs/vscode_marketplace.md` in the repository root for the publishing checklist, token safety guidance, and manual workflow notes.
 
 ## Safety
 
