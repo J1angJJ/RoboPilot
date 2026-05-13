@@ -51,6 +51,22 @@ export function previewMigrationArgs(planPath: string, workspacePath: string): s
   return ["migrate-preview", "--plan", planPath, "--project", workspacePath, "--json"];
 }
 
+export function previewMigrationScaffoldArgs(planPath: string): string[] {
+  return ["migrate-scaffold-preview", "--plan", planPath, "--json"];
+}
+
+export function generateMigrationScaffoldArgs(planPath: string, scaffoldDirectory: string): string[] {
+  return ["migrate-scaffold", "--plan", planPath, "--output", scaffoldDirectory, "--json"];
+}
+
+export function validateMigrationScaffoldArgs(planPath: string, scaffoldDirectory: string): string[] {
+  return ["migrate-scaffold-validate", "--plan", planPath, "--scaffold", scaffoldDirectory, "--json"];
+}
+
+export function generateScaffoldReportArgs(planPath: string, scaffoldDirectory: string, reportPath: string): string[] {
+  return ["migrate-scaffold-report", "--plan", planPath, "--scaffold", scaffoldDirectory, "--output", reportPath];
+}
+
 export function validateProjectSpecArgs(specPath: string): string[] {
   return ["validate", "--spec", specPath];
 }
@@ -64,6 +80,14 @@ export function resolveOutputDirectory(workspacePath: string, configuredDirector
 
 export function migrationPlanPath(outputDirectory: string): string {
   return path.join(outputDirectory, "migration_plan.json");
+}
+
+export function scaffoldDirectoryPath(outputDirectory: string): string {
+  return path.join(outputDirectory, "ros2_scaffold");
+}
+
+export function scaffoldReportPath(outputDirectory: string): string {
+  return path.join(outputDirectory, "scaffold_report.md");
 }
 
 export function parseJsonOutput<T>(stdout: string): T {

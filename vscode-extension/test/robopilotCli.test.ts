@@ -6,13 +6,19 @@ import {
   detectWorkspaceArgs,
   formatCliError,
   generateMigrationPlanArgs,
+  generateMigrationScaffoldArgs,
+  generateScaffoldReportArgs,
   inspectRos1Args,
   isMissingExecutableError,
   migrationPlanPath,
   parseJsonOutput,
   previewMigrationArgs,
+  previewMigrationScaffoldArgs,
   resolveOutputDirectory,
   runRobopilot,
+  scaffoldDirectoryPath,
+  scaffoldReportPath,
+  validateMigrationScaffoldArgs,
   validateProjectSpecArgs
 } from "../src/robopilotCli";
 
@@ -45,6 +51,40 @@ test("builds migration plan arguments", () => {
   ]);
 });
 
+test("builds migration scaffold workflow arguments", () => {
+  assert.deepStrictEqual(previewMigrationScaffoldArgs("/tmp/out/migration_plan.json"), [
+    "migrate-scaffold-preview",
+    "--plan",
+    "/tmp/out/migration_plan.json",
+    "--json"
+  ]);
+  assert.deepStrictEqual(generateMigrationScaffoldArgs("/tmp/out/migration_plan.json", "/tmp/out/ros2_scaffold"), [
+    "migrate-scaffold",
+    "--plan",
+    "/tmp/out/migration_plan.json",
+    "--output",
+    "/tmp/out/ros2_scaffold",
+    "--json"
+  ]);
+  assert.deepStrictEqual(validateMigrationScaffoldArgs("/tmp/out/migration_plan.json", "/tmp/out/ros2_scaffold"), [
+    "migrate-scaffold-validate",
+    "--plan",
+    "/tmp/out/migration_plan.json",
+    "--scaffold",
+    "/tmp/out/ros2_scaffold",
+    "--json"
+  ]);
+  assert.deepStrictEqual(generateScaffoldReportArgs("/tmp/out/migration_plan.json", "/tmp/out/ros2_scaffold", "/tmp/out/scaffold_report.md"), [
+    "migrate-scaffold-report",
+    "--plan",
+    "/tmp/out/migration_plan.json",
+    "--scaffold",
+    "/tmp/out/ros2_scaffold",
+    "--output",
+    "/tmp/out/scaffold_report.md"
+  ]);
+});
+
 test("parses JSON output", () => {
   const result = parseJsonOutput<{ project_type: string }>("{\"project_type\":\"robopilot_project\"}");
   assert.strictEqual(result.project_type, "robopilot_project");
@@ -63,6 +103,8 @@ test("detects missing executable errors", () => {
 test("resolves output directories", () => {
   assert.strictEqual(resolveOutputDirectory("/workspace", ".robopilot_vscode"), path.join("/workspace", ".robopilot_vscode"));
   assert.strictEqual(migrationPlanPath("/workspace/.robopilot_vscode"), path.join("/workspace/.robopilot_vscode", "migration_plan.json"));
+  assert.strictEqual(scaffoldDirectoryPath("/workspace/.robopilot_vscode"), path.join("/workspace/.robopilot_vscode", "ros2_scaffold"));
+  assert.strictEqual(scaffoldReportPath("/workspace/.robopilot_vscode"), path.join("/workspace/.robopilot_vscode", "scaffold_report.md"));
 });
 
 test("runRobopilot returns stdout stderr and exit code", async () => {

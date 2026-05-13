@@ -6,12 +6,18 @@ import {
   detectWorkspaceArgs,
   formatCliError,
   generateMigrationPlanArgs,
+  generateMigrationScaffoldArgs,
+  generateScaffoldReportArgs,
   inspectRos1Args,
   migrationPlanPath,
   parseJsonOutput,
   previewMigrationArgs,
+  previewMigrationScaffoldArgs,
   resolveOutputDirectory,
   runRobopilot,
+  scaffoldDirectoryPath,
+  scaffoldReportPath,
+  validateMigrationScaffoldArgs,
   validateProjectSpecArgs
 } from "./robopilotCli";
 import { RoboPilotOutput } from "./output";
@@ -21,6 +27,10 @@ import {
   DetectResult,
   MigrationPlanResult,
   MigrationPreviewResult,
+  MigrationScaffoldGenerationResult,
+  MigrationScaffoldPreviewResult,
+  MigrationScaffoldValidationResult,
+  ScaffoldFileItem,
   Ros1InspectionResult
 } from "./types";
 
@@ -38,6 +48,11 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(vscode.commands.registerCommand("robopilot.analyzeDependencies", analyzeDependencies));
   context.subscriptions.push(vscode.commands.registerCommand("robopilot.generateMigrationPlan", generateMigrationPlan));
   context.subscriptions.push(vscode.commands.registerCommand("robopilot.previewMigration", previewMigration));
+  context.subscriptions.push(vscode.commands.registerCommand("robopilot.previewMigrationScaffold", previewMigrationScaffold));
+  context.subscriptions.push(vscode.commands.registerCommand("robopilot.generateMigrationScaffold", generateMigrationScaffold));
+  context.subscriptions.push(vscode.commands.registerCommand("robopilot.validateMigrationScaffold", validateMigrationScaffold));
+  context.subscriptions.push(vscode.commands.registerCommand("robopilot.generateScaffoldReport", generateScaffoldReport));
+  context.subscriptions.push(vscode.commands.registerCommand("robopilot.openScaffoldReport", openScaffoldReport));
   context.subscriptions.push(vscode.commands.registerCommand("robopilot.validateProjectSpec", validateProjectSpec));
   context.subscriptions.push(vscode.commands.registerCommand("robopilot.showOutput", () => output.show()));
 }
@@ -57,7 +72,7 @@ async function detectWorkspace(): Promise<void> {
         `Signals: ${result.detected_signals.length}`
       ]);
       output.appendSection("Next Steps", result.suggested_next_steps);
-      tree.update({ projectType: result.project_type });
+      tree.update({ workspacePath: result.project_path, projectType: result.project_type });
     }
   );
 }
@@ -115,7 +130,7 @@ async function generateMigrationPlan(): Promise<void> {
     ]);
     output.appendSection("Risks", data.risks ?? []);
     output.appendSection("Next Steps", data.suggested_next_steps ?? []);
-    tree.update({ packageName: data.package_name, migrationPlanStatus: "generated" });
+    tree.update({ workspacePath, packageName: data.package_name, migrationPlanStatus: "generated" });
     output.show();
   } catch (error) {
     showFailure(error);
@@ -143,9 +158,170 @@ async function previewMigration(): Promise<void> {
       output.appendSection("Interface Review", result.interface_files_to_review);
       output.appendSection("Risks", result.risks);
       output.appendSection("Next Steps", result.suggested_next_steps);
-      tree.update({ packageName: result.package_name, migrationPlanStatus: "previewed" });
+      tree.update({ workspacePath, packageName: result.package_name, migrationPlanStatus: "previewed" });
     }
   );
+}
+
+async function previewMigrationScaffold(): Promise<void> {
+  const workspacePath = getWorkspacePath();
+  if (!workspacePath) {
+    return;
+  }
+  const planPath = migrationPlanPath(getOutputDirectory(workspacePath));
+  if (!(await pathExists(planPath))) {
+    vscode.window.showWarningMessage("No migration_plan.json found. Run RoboPilot: Generate Migration Plan first.");
+    return;
+  }
+  await runJsonCommand<MigrationScaffoldPreviewResult>(
+    "Preview Migration Scaffold",
+    () => previewMigrationScaffoldArgs(planPath),
+    (result) => {
+      output.appendSection("Scaffold Preview", [
+        `Package: ${result.package_name || "unknown"}`,
+        `Target style: ${result.target_style || "unknown"}`,
+        `Planned scaffold files: ${result.scaffold_files_to_create.length}`,
+        `Placeholder files: ${result.placeholder_files.length}`
+      ]);
+      output.appendSection("Scaffold Files to Create", formatScaffoldFiles(result.scaffold_files_to_create));
+      output.appendSection("Placeholder Files", formatScaffoldFiles(result.placeholder_files));
+      output.appendSection("Manual Migration Files", result.files_requiring_manual_migration);
+      output.appendSection("Risks", result.risks);
+      output.appendSection("Conflicts", result.conflicts);
+      output.appendSection("Next Steps", result.suggested_next_steps);
+      tree.update({
+        workspacePath,
+        packageName: result.package_name,
+        scaffoldPreviewStatus: result.conflicts.length ? "conflicts" : "previewed",
+        warningsCount: result.risks.length + result.conflicts.length
+      });
+    }
+  );
+}
+
+async function generateMigrationScaffold(): Promise<void> {
+  const workspacePath = getWorkspacePath();
+  if (!workspacePath) {
+    return;
+  }
+  const outputDir = getOutputDirectory(workspacePath);
+  const planPath = migrationPlanPath(outputDir);
+  const scaffoldDir = scaffoldDirectoryPath(outputDir);
+  if (!(await pathExists(planPath))) {
+    vscode.window.showWarningMessage("No migration_plan.json found. Run RoboPilot: Generate Migration Plan first.");
+    return;
+  }
+  await fs.mkdir(outputDir, { recursive: true });
+  const args = generateMigrationScaffoldArgs(planPath, scaffoldDir);
+  output.appendCommand(renderCommand(args), workspacePath);
+  try {
+    const commandResult = await runRobopilot(getExecutablePath(), args, { cwd: workspacePath });
+    const result = parseJsonOutput<MigrationScaffoldGenerationResult>(commandResult.stdout);
+    renderMigrationScaffoldGeneration(workspacePath, scaffoldDir, result);
+    if (commandResult.stderr.trim()) {
+      output.appendSection("stderr", [commandResult.stderr.trim()]);
+    }
+    output.show();
+  } catch (error) {
+    showFailure(error, [
+      "RoboPilot does not pass --overwrite from the extension. If the scaffold output already exists, review or choose a clean robopilot.outputDirectory before generating again."
+    ]);
+  }
+}
+
+async function validateMigrationScaffold(): Promise<void> {
+  const workspacePath = getWorkspacePath();
+  if (!workspacePath) {
+    return;
+  }
+  const outputDir = getOutputDirectory(workspacePath);
+  const planPath = migrationPlanPath(outputDir);
+  const scaffoldDir = scaffoldDirectoryPath(outputDir);
+  if (!(await pathExists(planPath))) {
+    vscode.window.showWarningMessage("No migration_plan.json found. Run RoboPilot: Generate Migration Plan first.");
+    return;
+  }
+  if (!(await pathExists(scaffoldDir))) {
+    vscode.window.showWarningMessage("No ros2_scaffold directory found. Run RoboPilot: Generate Migration Scaffold first.");
+    return;
+  }
+  await runJsonCommand<MigrationScaffoldValidationResult>(
+    "Validate Migration Scaffold",
+    () => validateMigrationScaffoldArgs(planPath, scaffoldDir),
+    (result) => {
+      output.appendSection("Scaffold Validation", [
+        `Valid: ${result.valid}`,
+        `Package: ${result.package_name || "unknown"}`,
+        `Target style: ${result.target_style || "unknown"}`
+      ]);
+      output.appendSection("Missing Files", result.missing_files);
+      output.appendSection("Unexpected Files", result.unexpected_files);
+      output.appendSection("Placeholder Checks", formatPlaceholderChecks(result.placeholder_checks));
+      output.appendSection("Issues", result.issues);
+      output.appendSection("Warnings", result.warnings);
+      output.appendSection("Next Steps", result.suggested_next_steps);
+      output.appendSection("Safety Note", [result.safety_note]);
+      tree.update({
+        workspacePath,
+        packageName: result.package_name,
+        scaffoldValidationStatus: result.valid ? "valid" : "invalid",
+        issuesCount: result.issues.length + result.missing_files.length,
+        warningsCount: result.warnings.length + result.unexpected_files.length
+      });
+    }
+  );
+}
+
+async function generateScaffoldReport(): Promise<void> {
+  const workspacePath = getWorkspacePath();
+  if (!workspacePath) {
+    return;
+  }
+  const outputDir = getOutputDirectory(workspacePath);
+  const planPath = migrationPlanPath(outputDir);
+  const scaffoldDir = scaffoldDirectoryPath(outputDir);
+  const reportPath = scaffoldReportPath(outputDir);
+  if (!(await pathExists(planPath))) {
+    vscode.window.showWarningMessage("No migration_plan.json found. Run RoboPilot: Generate Migration Plan first.");
+    return;
+  }
+  if (!(await pathExists(scaffoldDir))) {
+    vscode.window.showWarningMessage("No ros2_scaffold directory found. Run RoboPilot: Generate Migration Scaffold first.");
+    return;
+  }
+  await fs.mkdir(outputDir, { recursive: true });
+  const args = generateScaffoldReportArgs(planPath, scaffoldDir, reportPath);
+  output.appendCommand(renderCommand(args), workspacePath);
+  try {
+    const result = await runRobopilot(getExecutablePath(), args, { cwd: workspacePath });
+    output.appendSection("Scaffold Report", [`Report: ${reportPath}`, "Report generation completed."]);
+    if (result.stdout.trim()) {
+      output.appendSection("RoboPilot Output", result.stdout.trim().split(/\r?\n/));
+    }
+    if (result.stderr.trim()) {
+      output.appendSection("stderr", [result.stderr.trim()]);
+    }
+    tree.update({ workspacePath, scaffoldReportStatus: "generated" });
+    output.show();
+    vscode.window.showInformationMessage(`RoboPilot scaffold report written to ${reportPath}`);
+  } catch (error) {
+    showFailure(error);
+  }
+}
+
+async function openScaffoldReport(): Promise<void> {
+  const workspacePath = getWorkspacePath();
+  if (!workspacePath) {
+    return;
+  }
+  const reportPath = scaffoldReportPath(getOutputDirectory(workspacePath));
+  if (!(await pathExists(reportPath))) {
+    vscode.window.showWarningMessage("No scaffold_report.md found. Run RoboPilot: Generate Scaffold Report first.");
+    return;
+  }
+  const document = await vscode.workspace.openTextDocument(vscode.Uri.file(reportPath));
+  await vscode.window.showTextDocument(document);
+  tree.update({ workspacePath, scaffoldReportStatus: "opened" });
 }
 
 async function validateProjectSpec(): Promise<void> {
@@ -224,14 +400,70 @@ function quoteArg(arg: string): string {
   return arg.includes(" ") ? `"${arg}"` : arg;
 }
 
-function showFailure(error: unknown): void {
+function renderMigrationScaffoldGeneration(
+  workspacePath: string,
+  scaffoldDir: string,
+  result: MigrationScaffoldGenerationResult
+): void {
+  output.appendSection("Migration Scaffold", [
+    `Output: ${scaffoldDir}`,
+    `Package: ${result.package_name || "unknown"}`,
+    `Target style: ${result.target_style || "unknown"}`
+  ]);
+  output.appendSection("Files Created", result.files_created);
+  output.appendSection("Conflicts", result.conflicts);
+  output.appendSection("Skipped Files", result.skipped_files);
+  output.appendSection("Manual Migration Required", result.manual_migration_required);
+  output.appendSection("Risks", result.risks);
+  output.appendSection("Next Steps", result.suggested_next_steps);
+  output.appendSection("Safety Note", [result.safety_note]);
+  if (result.conflicts.length > 0) {
+    output.appendSection("Conflict Help", [
+      "RoboPilot does not pass --overwrite from the extension. Choose a clean output directory or remove stale generated scaffold files after review."
+    ]);
+  }
+  tree.update({
+    workspacePath,
+    packageName: result.package_name,
+    scaffoldDirectoryStatus: result.conflicts.length ? "conflicts" : "generated",
+    warningsCount: result.risks.length + result.conflicts.length + result.skipped_files.length
+  });
+}
+
+function showFailure(error: unknown, extraLines: readonly string[] = []): void {
   const maybeDetails = error as { stderr?: string };
   const message = formatCliError(error);
   output.appendError(message, maybeDetails.stderr);
+  if (extraLines.length > 0) {
+    output.appendSection("Help", extraLines);
+  }
   output.show();
   vscode.window.showErrorMessage(message);
 }
 
 function flattenRecord(record: Record<string, string[]>): string[] {
   return Object.entries(record).map(([key, values]) => `${key}: ${values.length ? values.join(", ") : "none"}`);
+}
+
+function formatScaffoldFiles(files: readonly ScaffoldFileItem[]): string[] {
+  return files.map((item) => {
+    const details = [item.purpose, item.status].filter(Boolean).join("; ");
+    return details ? `${item.path} (${details})` : item.path;
+  });
+}
+
+function formatPlaceholderChecks(checks: readonly { path: string; passed: boolean; missing_concepts: string[] }[]): string[] {
+  return checks.map((check) => {
+    const missing = check.missing_concepts.length ? `; missing: ${check.missing_concepts.join(", ")}` : "";
+    return `${check.path}: ${check.passed ? "passed" : "failed"}${missing}`;
+  });
+}
+
+async function pathExists(targetPath: string): Promise<boolean> {
+  try {
+    await fs.access(targetPath);
+    return true;
+  } catch {
+    return false;
+  }
 }

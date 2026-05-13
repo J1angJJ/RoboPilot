@@ -247,8 +247,10 @@ Possible VSCode MVP commands:
 - RoboPilot: Generate Migration Plan
 - RoboPilot: Preview Migration
 - RoboPilot: Preview Migration Scaffold
+- RoboPilot: Generate Migration Scaffold
 - RoboPilot: Validate Migration Scaffold
-- RoboPilot: Open Migration Scaffold Report
+- RoboPilot: Generate Scaffold Report
+- RoboPilot: Open Scaffold Report
 - RoboPilot: Validate ProjectSpec
 - RoboPilot: Open Report
 

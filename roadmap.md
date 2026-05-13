@@ -1092,6 +1092,7 @@ Make the completed migration scaffold review loop easier to use from VSCode whil
 Expected behavior:
 
 - expose the existing migration planning, scaffold preview, scaffold generation, scaffold validation, and scaffold report commands clearly
+- support `RoboPilot: Preview Migration Scaffold`, `RoboPilot: Generate Migration Scaffold`, `RoboPilot: Validate Migration Scaffold`, `RoboPilot: Generate Scaffold Report`, and `RoboPilot: Open Scaffold Report`
 - improve command palette labels, user-facing error messages, output display, and documentation links
 - keep the VSCode extension as a thin CLI/API wrapper
 - preserve no-ROS-required static behavior
@@ -1296,6 +1297,6 @@ v1.7.0 Migration Scaffold Preview
 v1.8.0 Migration Scaffold Generate
 ```
 
-Next recommended milestone: v1.11.0 VSCode Extension Migration Workflow Polish.
+Next planned milestone after v1.11.0: v1.12.0 VSCode Extension VSIX Packaging.
 
 RoboPilot should grow as a practical no-ROS-required ROS engineering toolchain, with CLI as the stable core and beginner-friendly interfaces layered on top.

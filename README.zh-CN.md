@@ -21,7 +21,7 @@ RoboPilot 是一个不依赖 ROS 环境的 ROS 风格项目静态工程工具链
 - 生成、校验、diff 和 preview ROS1 到 ROS2 的迁移计划。
 - 提供离线错误日志分析和 Mermaid workflow graph 工具。
 - 可选使用 LLM，但只用于生成或 refine 已校验的 `ProjectSpec` 数据。
-- 提供轻量 Python API 和 VSCode extension MVP 源码。
+- 提供轻量 Python API 和 VSCode extension 源码，并支持 migration scaffold workflow。
 
 RoboPilot 不会运行 ROS、ROS2、launch 文件、生成节点、`catkin_make` 或 `colcon`。
 
@@ -109,7 +109,7 @@ robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/
 - [Python API](docs/api.md)
 - [JSON Contracts](docs/json_contracts.md)
 - [Integration Notes](docs/integration_notes.md)
-- [VSCode Extension MVP](docs/vscode_extension.md)
+- [VSCode Extension](docs/vscode_extension.md)
 - [Developer Setup](docs/developer_setup.md)
 - [Testing](docs/testing.md)
 - [Release Process](docs/release_process.md)
@@ -144,7 +144,7 @@ examples/generated_projects/demo_detector/
 
 ## 项目状态
 
-当前版本线：`v1.10.0`。
+当前版本线：`v1.11.0`。
 
 RoboPilot 的 v1 基线仍然是不依赖 ROS 的静态工程工作流：
 
@@ -158,7 +158,7 @@ plan -> refine -> diff -> validate -> generate
       -> migrate-scaffold-report
 ```
 
-CLI 仍是主要用户界面；Python API、JSON contracts、增强的依赖分析器和 VSCode extension MVP 用于后续集成。
+CLI 仍是主要用户界面；Python API、JSON contracts、增强的依赖分析器和 VSCode extension 用于后续集成，并支持 migration scaffold workflow。
 
 ## 开发
 

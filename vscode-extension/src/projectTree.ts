@@ -17,11 +17,17 @@ export class RoboPilotProjectTreeProvider implements vscode.TreeDataProvider<Pro
 
   getChildren(): ProjectTreeItem[] {
     return [
+      new ProjectTreeItem("Workspace", this.state.workspacePath ?? "not opened"),
       new ProjectTreeItem("Project type", this.state.projectType ?? "unknown"),
       new ProjectTreeItem("Package", this.state.packageName ?? "unknown"),
       new ProjectTreeItem("Issues", String(this.state.issuesCount ?? 0)),
+      new ProjectTreeItem("Warnings", String(this.state.warningsCount ?? 0)),
       new ProjectTreeItem("Dependency warnings", String(this.state.dependencyWarningsCount ?? 0)),
-      new ProjectTreeItem("Migration plan", this.state.migrationPlanStatus ?? "not generated")
+      new ProjectTreeItem("Migration plan", this.state.migrationPlanStatus ?? "not generated"),
+      new ProjectTreeItem("Scaffold preview", this.state.scaffoldPreviewStatus ?? "not previewed"),
+      new ProjectTreeItem("Scaffold directory", this.state.scaffoldDirectoryStatus ?? "not generated"),
+      new ProjectTreeItem("Scaffold validation", this.state.scaffoldValidationStatus ?? "not validated"),
+      new ProjectTreeItem("Scaffold report", this.state.scaffoldReportStatus ?? "not generated")
     ];
   }
 }

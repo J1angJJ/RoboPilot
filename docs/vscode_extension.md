@@ -1,6 +1,6 @@
-# VSCode Extension MVP
+# VSCode Extension
 
-RoboPilot includes a lightweight VSCode extension MVP under `vscode-extension/`.
+RoboPilot includes a lightweight VSCode extension under `vscode-extension/`.
 
 The extension is a thin UI layer over the RoboPilot CLI. It does not reimplement RoboPilot logic in TypeScript, does not require ROS, and does not execute ROS launch files, generated nodes, catkin, or colcon.
 
@@ -36,10 +36,44 @@ robopilot.executablePath
 - `RoboPilot: Analyze Dependencies`
 - `RoboPilot: Generate Migration Plan`
 - `RoboPilot: Preview Migration`
+- `RoboPilot: Preview Migration Scaffold`
+- `RoboPilot: Generate Migration Scaffold`
+- `RoboPilot: Validate Migration Scaffold`
+- `RoboPilot: Generate Scaffold Report`
+- `RoboPilot: Open Scaffold Report`
 - `RoboPilot: Validate ProjectSpec`
 - `RoboPilot: Show Output`
 
 The extension calls documented CLI JSON commands where available and renders summaries in a RoboPilot OutputChannel and a small Explorer TreeView.
+
+## Migration Scaffold Workflow
+
+The extension uses `robopilot.outputDirectory` for generated integration files. The default is:
+
+```txt
+.robopilot_vscode
+```
+
+The migration scaffold workflow uses these paths:
+
+- `.robopilot_vscode/migration_plan.json`
+- `.robopilot_vscode/ros2_scaffold/`
+- `.robopilot_vscode/scaffold_report.md`
+
+Typical command order:
+
+```txt
+RoboPilot: Generate Migration Plan
+  -> RoboPilot: Preview Migration Scaffold
+  -> RoboPilot: Generate Migration Scaffold
+  -> RoboPilot: Validate Migration Scaffold
+  -> RoboPilot: Generate Scaffold Report
+  -> RoboPilot: Open Scaffold Report
+```
+
+The scaffold preview, generation, and validation commands consume RoboPilot CLI JSON output. `Generate Scaffold Report` writes a Markdown report and displays the report path; it does not rely on Rich terminal formatting.
+
+`Generate Migration Scaffold` writes only under the configured extension output directory and does not pass `--overwrite` by default. If the scaffold directory already contains conflicting files, the extension shows the RoboPilot failure and asks the user to review the output directory.
 
 ## Safety Model
 
@@ -53,6 +87,8 @@ The extension is static by default:
 - It does not modify source project files.
 
 `RoboPilot: Generate Migration Plan` writes only a migration plan JSON file to the configured extension output directory.
+`RoboPilot: Generate Migration Scaffold` writes only conservative scaffold placeholders to the configured extension output directory.
+`RoboPilot: Generate Scaffold Report` writes only `.robopilot_vscode/scaffold_report.md` unless the output directory setting changes.
 
 ## Run Locally
 

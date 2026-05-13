@@ -2,7 +2,7 @@
   "name": "robopilot-vscode",
   "displayName": "RoboPilot",
   "description": "VSCode integration for RoboPilot no-ROS-required static tooling",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "engines": {
     "vscode": "^1.90.0"
@@ -16,6 +16,11 @@
     "onCommand:robopilot.analyzeDependencies",
     "onCommand:robopilot.generateMigrationPlan",
     "onCommand:robopilot.previewMigration",
+    "onCommand:robopilot.previewMigrationScaffold",
+    "onCommand:robopilot.generateMigrationScaffold",
+    "onCommand:robopilot.validateMigrationScaffold",
+    "onCommand:robopilot.generateScaffoldReport",
+    "onCommand:robopilot.openScaffoldReport",
     "onCommand:robopilot.validateProjectSpec",
     "onCommand:robopilot.showOutput",
     "workspaceContains:robopilot.yaml",
@@ -43,6 +48,26 @@
       {
         "command": "robopilot.previewMigration",
         "title": "RoboPilot: Preview Migration"
+      },
+      {
+        "command": "robopilot.previewMigrationScaffold",
+        "title": "RoboPilot: Preview Migration Scaffold"
+      },
+      {
+        "command": "robopilot.generateMigrationScaffold",
+        "title": "RoboPilot: Generate Migration Scaffold"
+      },
+      {
+        "command": "robopilot.validateMigrationScaffold",
+        "title": "RoboPilot: Validate Migration Scaffold"
+      },
+      {
+        "command": "robopilot.generateScaffoldReport",
+        "title": "RoboPilot: Generate Scaffold Report"
+      },
+      {
+        "command": "robopilot.openScaffoldReport",
+        "title": "RoboPilot: Open Scaffold Report"
       },
       {
         "command": "robopilot.validateProjectSpec",

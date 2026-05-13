@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v1.11.0 VSCode extension migration workflow polish.
+- VSCode commands for migration scaffold preview, scaffold generation, scaffold validation, scaffold report generation, and opening scaffold reports.
+- VSCode OutputChannel and TreeView summaries for migration scaffold target style, generated files, validation status, issues, warnings, and report path.
 - v1.10.0 migration scaffold Markdown report workflow.
 - `robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/ros2_scaffold` command for printing deterministic Markdown reports.
 - `robopilot migrate-scaffold-report --output scaffold_report.md` file export with no overwrite by default and explicit `--overwrite` for report files.
@@ -65,6 +68,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated VSCode extension package metadata to `0.2.0`.
+- Updated package and generated demo metadata to `1.11.0`.
+- Updated README, workflow, integration, VSCode extension, roadmap, and agent guidance with VSCode migration scaffold workflow polish.
 - Updated package and generated demo metadata to `1.10.0`.
 - Updated README, command reference, workflow, architecture, API, roadmap, and agent guidance with migration scaffold reports.
 - Updated package and generated demo metadata to `1.9.0`.

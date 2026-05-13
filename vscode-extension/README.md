@@ -1,6 +1,6 @@
-# RoboPilot VSCode Extension MVP
+# RoboPilot VSCode Extension
 
-This is a lightweight VSCode extension MVP for RoboPilot. It wraps the installed `robopilot` CLI and consumes documented JSON outputs.
+This is a lightweight VSCode extension for RoboPilot. It wraps the installed `robopilot` CLI and consumes documented JSON outputs.
 
 The extension does not reimplement RoboPilot logic in TypeScript. The Python CLI remains the source of truth.
 
@@ -36,4 +36,4 @@ Open this folder in VSCode and run the extension in an Extension Development Hos
 
 The extension calls static RoboPilot commands. It does not run ROS, ROS2, catkin, colcon, launch files, generated nodes, or external APIs.
 
-The migration plan command writes only to the configured extension output directory.
+Migration workflow commands write only to the configured extension output directory. The scaffold report command writes `.robopilot_vscode/scaffold_report.md` by default.

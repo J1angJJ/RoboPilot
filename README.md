@@ -23,7 +23,7 @@ It helps robotics learners and developers plan, refine, validate, generate, insp
 - Optionally uses an LLM only to produce or refine validated `ProjectSpec` data.
 - Provides a lightweight Python API layer for scripts and future integrations.
 - Documents stable top-level JSON keys for integration-oriented `--json` outputs.
-- Includes a VSCode extension MVP source tree that wraps the RoboPilot CLI JSON outputs.
+- Includes a VSCode extension source tree that wraps the RoboPilot CLI JSON outputs, including the migration scaffold review workflow.
 
 RoboPilot does not run ROS, ROS2, launch files, generated code, `catkin_make`, or `colcon`.
 
@@ -118,7 +118,7 @@ robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/
 - [Python API](docs/api.md)
 - [JSON Contracts](docs/json_contracts.md)
 - [Integration Notes](docs/integration_notes.md)
-- [VSCode Extension MVP](docs/vscode_extension.md)
+- [VSCode Extension](docs/vscode_extension.md)
 - [Developer Setup](docs/developer_setup.md)
 - [Testing](docs/testing.md)
 - [Release Process](docs/release_process.md)
@@ -158,7 +158,7 @@ Transient generated projects should go under `outputs/`, which is intentionally 
 
 ## Project Status
 
-Current release line: `v1.10.0`.
+Current release line: `v1.11.0`.
 
 RoboPilot's no-ROS-required static engineering workflow remains the stable v1 baseline:
 
@@ -172,9 +172,9 @@ plan -> refine -> diff -> validate -> generate
       -> migrate-scaffold-report
 ```
 
-The Python API layer, documented CLI JSON contracts, ROS2 static inspector, enhanced dependency analyzer, and VSCode extension MVP source are available for integration work while the CLI remains the primary user interface.
+The Python API layer, documented CLI JSON contracts, ROS2 static inspector, enhanced dependency analyzer, and VSCode extension source are available for integration work while the CLI remains the primary user interface.
 
-The VSCode extension lives under `vscode-extension/`, requires the RoboPilot CLI to be installed, and is documented in [docs/vscode_extension.md](docs/vscode_extension.md).
+The VSCode extension lives under `vscode-extension/`, requires the RoboPilot CLI to be installed, supports the migration scaffold workflow, and is documented in [docs/vscode_extension.md](docs/vscode_extension.md).
 
 Post-v1.10 roadmap work is aimed at v2.0 as a stage-completion release: polish the VSCode migration workflow, package the extension, improve examples and tutorials, and stabilize compatibility. v2.0 is not intended to imply a breaking rewrite unless a future release plan says so.
 

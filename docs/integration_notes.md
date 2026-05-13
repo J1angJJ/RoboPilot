@@ -62,9 +62,9 @@ External tools must keep RoboPilot's safety model visible:
 - Surface conflicts, skipped files, backup paths, and safety notes to users.
 - Do not bypass ProjectSpec validation, apply-preview, apply-plan, or rollback safety checks.
 
-## VSCode Extension MVP
+## VSCode Extension
 
-The VSCode extension MVP under `vscode-extension/` is thin:
+The VSCode extension under `vscode-extension/` is thin:
 
 ```txt
 VSCode command
@@ -76,3 +76,5 @@ VSCode command
 This keeps the extension decoupled from RoboPilot internals and avoids duplicating static analysis, migration, or apply logic.
 
 The extension should continue to use documented JSON contracts and should not parse Rich human-readable output.
+
+For the migration scaffold workflow, the extension should consume JSON from `migrate-scaffold-preview --json`, `migrate-scaffold --json`, and `migrate-scaffold-validate --json`. `migrate-scaffold-report` is a Markdown report command; integrations should treat its stdout as human text and use the explicit report file path for opening or displaying the report.

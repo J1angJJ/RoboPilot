@@ -132,6 +132,21 @@ This workflow is read-only for the source ROS1 project. `migrate-preview` report
 
 This completes the first migration scaffold review loop. Post-v1.10 work should focus on VSCode accessibility, examples, documentation, and UX polish for this existing loop rather than migration apply, automatic source conversion, ROS/ROS2 execution, colcon execution, or launch execution before v2.0.
 
+## VSCode-Assisted Migration Scaffold Workflow
+
+The VSCode extension can drive the same migration scaffold review loop through the RoboPilot CLI. It stores integration outputs under `.robopilot_vscode` by default:
+
+```txt
+RoboPilot: Generate Migration Plan
+  -> RoboPilot: Preview Migration Scaffold
+  -> RoboPilot: Generate Migration Scaffold
+  -> RoboPilot: Validate Migration Scaffold
+  -> RoboPilot: Generate Scaffold Report
+  -> RoboPilot: Open Scaffold Report
+```
+
+The extension remains a thin wrapper over CLI JSON contracts and Markdown report output. It does not run ROS, ROS2, colcon, launch files, or generated code.
+
 ## Offline Utilities
 
 Analyze common robotics error logs:
