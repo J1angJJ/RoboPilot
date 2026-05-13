@@ -50,6 +50,7 @@ Static detection supports these categories:
 - ROS2 ament C++ package detection
 - ROS2 ament Python package static inspection
 - ROS2 ament C++ package static inspection
+- ROS2 migration scaffold static validation
 - mixed ROS-style project
 - non-ROS project
 - unknown project
@@ -64,6 +65,7 @@ The following areas are heuristic and conservative:
 - launch file package reference detection
 - ROS1-to-ROS2 migration planning
 - migration preview classifications
+- migration scaffold validation checks
 
 RoboPilot should report uncertainty instead of pretending static analysis is runtime validation.
 

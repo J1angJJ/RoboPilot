@@ -999,9 +999,9 @@ Expected preview:
 
 This should remain read-only.
 
-## Current: v1.8.0 Migration Scaffold Generate
+## Completed: v1.8.0 Migration Scaffold Generate
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -1022,31 +1022,44 @@ Expected behavior:
 - support dry-run / preview where practical
 - avoid executing ROS2 or colcon
 
-## Future: v1.9.0 Optional LLM Report Explanation
+## Current: v1.9.0 Migration Scaffold Validate
+
+Status: Current work
+
+Goal:
+
+Validate generated ROS2 migration scaffolds against migration plans and RoboPilot scaffold expectations.
+
+Expected command:
+
+```bash
+robopilot migrate-scaffold-validate --plan migration_plan.yaml --scaffold ros2_package/
+```
+
+Expected behavior:
+
+- read-only validation
+- deterministic `--json` output
+- reuse migration plan validation, scaffold preview/generation expectations, and ROS2 static inspection
+- report missing files, unexpected files, placeholder safety wording gaps, and `MIGRATION_NOTES.md` status
+- do not modify the source project, migration plan, or scaffold
+- do not run ROS, ROS2, catkin, colcon, launch files, or generated code
+- do not import generated scaffold modules
+
+## Future: v1.10.0 Migration Scaffold Report or VSCode Extension Polish
 
 Status: Planned
 
 Goal:
 
-Add optional LLM explanation for static analysis and migration reports.
+Improve scaffold validation and migration review ergonomics without adding runtime ROS behavior.
 
-Possible command:
+Possible directions:
 
-```bash
-robopilot explain --report report.md --planner llm
-```
-
-LLM rules:
-
-- explain existing reports
-- clarify warnings
-- summarize risks
-- suggest manual next steps
-- do not modify files
-- do not generate project files directly
-- do not execute commands
-
-This feature should remain optional and should require explicit LLM configuration.
+- export a concise scaffold validation report
+- improve VSCode display of migration scaffold validation JSON
+- keep the VSCode extension as a thin CLI/API wrapper
+- preserve no-ROS-required static behavior
 
 ## Long-term: VSCode Extension Expansion
 
@@ -1117,5 +1130,7 @@ v1.7.0 Migration Scaffold Preview
         ↓
 v1.8.0 Migration Scaffold Generate
 ```
+
+Next recommended milestone: v1.10.0 Migration Scaffold Report or VSCode Extension Polish.
 
 RoboPilot should grow as a practical no-ROS-required ROS engineering toolchain, with CLI as the stable core and beginner-friendly interfaces layered on top.

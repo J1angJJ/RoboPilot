@@ -18,7 +18,7 @@ It helps robotics learners and developers plan, refine, validate, generate, insp
 - Detects RoboPilot, ROS1, ROS2, mixed, non-ROS, and unknown project types.
 - Statically inspects ROS1 catkin and ROS2 ament packages.
 - Analyzes declared and detected dependencies.
-- Builds static ROS1-to-ROS2 migration plans, validates/diffs them, previews file-level migration work, and generates conservative ROS2 scaffold placeholders.
+- Builds static ROS1-to-ROS2 migration plans, validates/diffs them, previews file-level migration work, generates conservative ROS2 scaffold placeholders, and validates generated scaffolds.
 - Provides small offline utilities for robotics error logs and Mermaid workflow graphs.
 - Optionally uses an LLM only to produce or refine validated `ProjectSpec` data.
 - Provides a lightweight Python API layer for scripts and future integrations.
@@ -106,6 +106,7 @@ robopilot migrate-plan-validate --plan migration_plan.yaml
 robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_package
 robopilot migrate-scaffold-preview --plan migration_plan.yaml
 robopilot migrate-scaffold --plan migration_plan.yaml --output path/to/ros2_scaffold
+robopilot migrate-scaffold-validate --plan migration_plan.yaml --scaffold path/to/ros2_scaffold
 ```
 
 ## Documentation
@@ -140,6 +141,7 @@ RoboPilot is designed around static analysis and explicit review:
 - `rollback` is dry-run by default and restores only files from RoboPilot backup directories.
 - Migration planning, validation, diff, and preview do not modify source projects.
 - Migration scaffold generation writes only to the explicit output directory, refuses overwrites by default, and does not modify the original ROS1 project.
+- Migration scaffold validation is read-only and checks generated placeholders without executing or importing scaffold code.
 - Optional LLM paths are limited to `ProjectSpec` planning/refinement and must pass validation before generation or apply workflows.
 
 ## Example Output
@@ -154,7 +156,7 @@ Transient generated projects should go under `outputs/`, which is intentionally 
 
 ## Project Status
 
-Current release line: `v1.8.0`.
+Current release line: `v1.9.0`.
 
 RoboPilot's no-ROS-required static engineering workflow remains the stable v1 baseline:
 
@@ -164,7 +166,7 @@ plan -> refine -> diff -> validate -> generate
       -> inspect -> repair-suggest -> report
       -> detect -> inspect-ros1 -> inspect-ros2 -> deps
       -> migrate-plan -> migrate-plan-validate -> migrate-plan-diff -> migrate-preview
-      -> migrate-scaffold-preview -> migrate-scaffold
+      -> migrate-scaffold-preview -> migrate-scaffold -> migrate-scaffold-validate
 ```
 
 The Python API layer, documented CLI JSON contracts, ROS2 static inspector, enhanced dependency analyzer, and VSCode extension MVP source are available for integration work while the CLI remains the primary user interface.

@@ -76,6 +76,7 @@ python -m pytest tests/test_json_contracts.py
 robopilot --help
 robopilot detect --help
 robopilot migrate-plan --help
+robopilot migrate-scaffold-validate --help
 ```
 
 ## Try the Python API

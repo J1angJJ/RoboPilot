@@ -18,6 +18,7 @@ from robopilot.api.migration import (
     generate_migration_scaffold as api_generate_migration_scaffold,
     preview_migration_plan as api_preview_migration_plan,
     preview_migration_scaffold as api_preview_migration_scaffold,
+    validate_migration_scaffold as api_validate_migration_scaffold,
     validate_migration_plan_file as api_validate_migration_plan_file,
 )
 from robopilot.api.static_analysis import (
@@ -50,6 +51,7 @@ from robopilot.migration.plan_validator import (
 from robopilot.migration.preview import MigrationPreviewResult
 from robopilot.migration.scaffold_generator import MigrationScaffoldGenerationResult
 from robopilot.migration.scaffold_preview import MigrationScaffoldPreviewResult, ScaffoldFile
+from robopilot.migration.scaffold_validator import MigrationScaffoldValidationResult
 from robopilot.planner import (
     LLMProviderConfig,
     LLMPlanner,
@@ -1289,6 +1291,70 @@ def _print_migration_scaffold_generation(result: MigrationScaffoldGenerationResu
 
     console.print(Panel.fit("Risks", style="bold cyan"))
     _print_scalar_values(result.risks)
+
+    console.print(Panel.fit("Suggested Next Steps", style="bold cyan"))
+    _print_scalar_values(result.suggested_next_steps)
+
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    console.print(result.safety_note)
+
+
+@app.command("migrate-scaffold-validate")
+def migrate_scaffold_validate(
+    plan: Annotated[
+        Path,
+        typer.Option("--plan", "-p", help="Path to a ROS1-to-ROS2 migration plan."),
+    ],
+    scaffold: Annotated[
+        Path,
+        typer.Option("--scaffold", "-s", help="Generated ROS2 scaffold directory to validate."),
+    ],
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Validate a generated migration scaffold without modifying files."""
+    try:
+        result = api_validate_migration_scaffold(plan, scaffold, as_dict=False)
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    if json_output:
+        print(json.dumps(result.to_dict(), indent=2))
+    else:
+        _print_migration_scaffold_validation(result)
+
+    if not result.valid:
+        raise typer.Exit(code=1)
+
+
+def _print_migration_scaffold_validation(result: MigrationScaffoldValidationResult) -> None:
+    console.print(Panel.fit("Migration Scaffold Validation Summary", style="bold cyan"))
+    console.print(f"[bold]Plan path:[/bold] {result.plan_path}")
+    console.print(f"[bold]Scaffold path:[/bold] {result.scaffold_path}")
+    console.print(f"[bold]Package:[/bold] {result.package_name or 'unknown'}")
+    console.print(f"[bold]Target Style:[/bold] {result.target_style}")
+    console.print(f"[bold]Valid:[/bold] {result.valid}")
+
+    console.print(Panel.fit("Missing Files", style="bold cyan"))
+    _print_scalar_values(result.missing_files)
+
+    console.print(Panel.fit("Placeholder Checks", style="bold cyan"))
+    if not result.placeholder_checks:
+        console.print("- none")
+    for check in result.placeholder_checks:
+        status = "pass" if check.passed else "fail"
+        console.print(f"- {check.path}: {status}")
+        if check.missing_concepts:
+            console.print(f"  missing: {', '.join(check.missing_concepts)}")
+
+    console.print(Panel.fit("Issues", style="bold cyan"))
+    _print_scalar_values(result.issues)
+
+    console.print(Panel.fit("Warnings", style="bold cyan"))
+    _print_scalar_values(result.warnings)
 
     console.print(Panel.fit("Suggested Next Steps", style="bold cyan"))
     _print_scalar_values(result.suggested_next_steps)

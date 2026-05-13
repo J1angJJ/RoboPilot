@@ -660,6 +660,79 @@ Minimal output:
 }
 ```
 
+## `migrate-scaffold-validate --json`
+
+Purpose: validate a generated migration scaffold against a migration plan and RoboPilot scaffold expectations.
+
+Example:
+
+```bash
+robopilot migrate-scaffold-validate --plan migration_plan.yaml --scaffold path/to/ros2_scaffold --json
+```
+
+Top-level stable keys:
+
+- `plan_path`
+- `scaffold_path`
+- `source_path`
+- `target`
+- `package_name`
+- `target_style`
+- `valid`
+- `expected_files`
+- `present_files`
+- `missing_files`
+- `unexpected_files`
+- `placeholder_checks`
+- `migration_notes_present`
+- `ros2_inspection_summary`
+- `issues`
+- `warnings`
+- `suggested_next_steps`
+- `safety_note`
+
+Essential nested keys:
+
+- `placeholder_checks` items: `path`, `passed`, `missing_concepts`
+- `ros2_inspection_summary`: `exists`, `package_name`, `detected_project_type`, `build_system`, `files`, `nodes`, `issues`
+
+Experimental fields: placeholder concept labels, ROS2 inspection warning wording, and unexpected-file policy.
+
+Safety notes: read-only; does not modify the scaffold, source project, or migration plan. It does not require ROS/ROS2, run build tools, execute launch files, execute generated code, or import generated scaffold modules.
+
+Minimal output:
+
+```json
+{
+  "plan_path": "migration_plan.yaml",
+  "scaffold_path": "path/to/ros2_scaffold",
+  "source_path": "path/to/ros1_package",
+  "target": "ros2",
+  "package_name": "demo_pkg",
+  "target_style": "ament_python",
+  "valid": true,
+  "expected_files": ["package.xml", "setup.py", "MIGRATION_NOTES.md"],
+  "present_files": ["package.xml", "setup.py", "MIGRATION_NOTES.md"],
+  "missing_files": [],
+  "unexpected_files": [],
+  "placeholder_checks": [],
+  "migration_notes_present": true,
+  "ros2_inspection_summary": {
+    "exists": true,
+    "package_name": "demo_pkg",
+    "detected_project_type": "ros2_ament_python_package",
+    "build_system": {},
+    "files": {},
+    "nodes": {},
+    "issues": []
+  },
+  "issues": [],
+  "warnings": [],
+  "suggested_next_steps": [],
+  "safety_note": "Read-only scaffold validation."
+}
+```
+
 ## `apply-preview --json`
 
 Purpose: compare a ProjectSpec with a project directory before apply.

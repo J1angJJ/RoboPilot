@@ -283,6 +283,43 @@ def test_migrate_scaffold_json_has_expected_top_level_keys(tmp_path: Path) -> No
     ]
 
 
+def test_migrate_scaffold_validate_json_has_expected_top_level_keys(tmp_path: Path) -> None:
+    project = tmp_path / "ros1_demo"
+    _write_ros1_package(project)
+    plan = _write_migration_plan(tmp_path, project=project)
+    output = tmp_path / "ros2_scaffold"
+    generated = CliRunner().invoke(
+        app,
+        ["migrate-scaffold", "--plan", str(plan), "--output", str(output)],
+    )
+    assert generated.exit_code == 0, generated.output
+
+    data = _invoke_json(
+        ["migrate-scaffold-validate", "--plan", str(plan), "--scaffold", str(output), "--json"]
+    )
+
+    assert list(data.keys()) == [
+        "plan_path",
+        "scaffold_path",
+        "source_path",
+        "target",
+        "package_name",
+        "target_style",
+        "valid",
+        "expected_files",
+        "present_files",
+        "missing_files",
+        "unexpected_files",
+        "placeholder_checks",
+        "migration_notes_present",
+        "ros2_inspection_summary",
+        "issues",
+        "warnings",
+        "suggested_next_steps",
+        "safety_note",
+    ]
+
+
 def test_apply_preview_json_has_expected_top_level_keys(tmp_path: Path) -> None:
     spec_path = _write_demo_spec(tmp_path)
 

@@ -86,6 +86,13 @@ robopilot detect examples/generated_projects/demo_detector
 robopilot deps examples/generated_projects/demo_detector
 ```
 
+Migration scaffold validation smoke checks can be run after generating a temporary migration scaffold:
+
+```bash
+robopilot migrate-scaffold-validate --plan .pytest_tmp/migration_plan.yaml --scaffold .pytest_tmp/ros2_scaffold
+robopilot migrate-scaffold-validate --plan .pytest_tmp/migration_plan.yaml --scaffold .pytest_tmp/ros2_scaffold --json
+```
+
 ## Packaging Checks
 
 For packaging or release-readiness changes, run:

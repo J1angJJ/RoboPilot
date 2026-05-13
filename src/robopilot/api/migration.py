@@ -22,6 +22,10 @@ from robopilot.migration.scaffold_generator import (
     MigrationScaffoldGenerationResult,
     generate_migration_scaffold as core_generate_migration_scaffold,
 )
+from robopilot.migration.scaffold_validator import (
+    MigrationScaffoldValidationResult,
+    validate_migration_scaffold as core_validate_migration_scaffold,
+)
 
 
 def create_ros1_to_ros2_migration_plan(
@@ -100,5 +104,19 @@ def generate_migration_scaffold(
         normalize_path(plan_path),
         normalize_path(output_path),
         overwrite=overwrite,
+    )
+    return to_structured_result(result) if as_dict else result
+
+
+def validate_migration_scaffold(
+    plan_path: PathLike,
+    scaffold_path: PathLike,
+    *,
+    as_dict: bool = True,
+) -> StructuredResult | MigrationScaffoldValidationResult:
+    """Validate a generated migration scaffold without modifying files."""
+    result = core_validate_migration_scaffold(
+        normalize_path(plan_path),
+        normalize_path(scaffold_path),
     )
     return to_structured_result(result) if as_dict else result
