@@ -39,7 +39,7 @@ RoboPilot should avoid competing directly with general-purpose coding agents. It
 The current stable baseline is:
 
 ```txt
-v1.9.0
+v1.10.0
 ```
 
 The stable baseline includes:
@@ -65,24 +65,22 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v1.10.0 Migration Scaffold Report
+v1.11.0 VSCode Extension Migration Workflow Polish
 ```
 
-The goal is to export a deterministic Markdown report for generated ROS2 migration scaffolds.
+The goal is to make the completed migration scaffold review loop easier to use from VSCode without moving core logic into the extension.
 
 This milestone should focus on:
 
-- `robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/ros2_scaffold --output scaffold_report.md`
-- printing Markdown to stdout when `--output` is omitted
-- writing only the explicit report output file when `--output` is provided
-- no overwrite by default for report files
-- reuse of migration scaffold validation results
-- report sections for validation, files, placeholder checks, ROS2 inspection summary, manual migration items, issues, warnings, next steps, and safety notes
-- source project and migration plan remaining unchanged
-- scaffold remaining unchanged
+- exposing the existing migration flow in a beginner-friendly VSCode path:
+  `migrate-plan -> migrate-scaffold-preview -> migrate-scaffold -> migrate-scaffold-validate -> migrate-scaffold-report`
+- keeping the VSCode extension as a thin wrapper over CLI/API/JSON contracts
+- improving command palette labels, output display, error messages, and documentation links
+- avoiding duplicated TypeScript implementations of RoboPilot core behavior
+- preserving no-ROS-required static behavior
 - no ROS, ROS2, catkin, colcon, launch execution, generated code execution, or generated module imports
 
-This milestone must not write scaffold files.
+This milestone should polish access to existing workflows. It should not add migration apply, automatic source conversion, automatic colcon execution, ROS runtime execution, or launch execution.
 
 ## Near-term Direction
 
@@ -90,10 +88,21 @@ After v1.10.0, the recommended direction is:
 
 ```txt
 v1.10.0 Migration Scaffold Report
-v1.11.0 VSCode Extension Polish or Migration Scaffold Diff
+v1.11.0 VSCode Extension Migration Workflow Polish
+v1.12.0 VSCode Extension VSIX Packaging
+v1.13.0 VSCode Marketplace Publish Preparation
+v1.14.0 Examples / Tutorials / Demo Pack
+v1.15.0 Migration Workflow UX Polish
+v1.16.0 Stability / Compatibility / Cleanup
+v2.0.0-rc.1
+v2.0.0
 ```
 
 The VSCode extension should be a thin beginner-friendly interface over the CLI / API layer. It should not duplicate RoboPilot core logic.
+
+RoboPilot should treat v2.0.0 as a stage-completion milestone for the mature v1.x toolchain, not as an excuse for risky expansion. Unless explicitly planned otherwise, v2.0.0 is not intended to be a breaking rewrite.
+
+Before v2.0.0, do not pursue full automatic ROS1-to-ROS2 migration, migration apply, automatic source code conversion, automatic ROS/ROS2 execution, automatic `colcon` execution, or launch execution. Focus on making the existing static migration assistant workflow usable, documented, beginner-friendly, and VSCode-accessible.
 
 ## Important Constraints
 
@@ -237,10 +246,13 @@ Possible VSCode MVP commands:
 - RoboPilot: Analyze Dependencies
 - RoboPilot: Generate Migration Plan
 - RoboPilot: Preview Migration
+- RoboPilot: Preview Migration Scaffold
+- RoboPilot: Validate Migration Scaffold
+- RoboPilot: Open Migration Scaffold Report
 - RoboPilot: Validate ProjectSpec
 - RoboPilot: Open Report
 
-Do not start VSCode extension work until packaging and API-layer planning are complete.
+VSCode work should continue to wrap the RoboPilot CLI/API instead of reimplementing core logic in TypeScript.
 
 ## Development Philosophy
 
@@ -582,17 +594,17 @@ robopilot deps --help
 Implement:
 
 ```txt
-v1.10.0 Migration Scaffold Report
+v1.11.0 VSCode Extension Migration Workflow Polish
 ```
 
-This milestone should add `robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/ros2_scaffold --output scaffold_report.md` as a Markdown report export workflow.
+This milestone should polish VSCode access to the existing migration scaffold review loop.
 
 Suggested implementation items:
 
 ```txt
-src/robopilot/migration/scaffold_report.py
-tests/test_migration_scaffold_report.py
-docs/command_reference.md
+vscode-extension/
+docs/vscode_extension.md
+docs/workflows.md
 ```
 
-Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, VSCode Marketplace publishing, or new LLM behavior during this milestone unless explicitly requested.
+Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, automatic source conversion, VSCode Marketplace publishing, or new LLM behavior during this milestone unless explicitly requested.

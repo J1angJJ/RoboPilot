@@ -1046,9 +1046,9 @@ Expected behavior:
 - do not run ROS, ROS2, catkin, colcon, launch files, or generated code
 - do not import generated scaffold modules
 
-## Current: v1.10.0 Migration Scaffold Report
+## Completed: v1.10.0 Migration Scaffold Report
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -1071,20 +1071,141 @@ Expected behavior:
 - do not run ROS, ROS2, catkin, colcon, launch files, or generated code
 - do not import generated scaffold modules
 
-## Future: v1.11.0 VSCode Extension Polish or Migration Scaffold Diff
+This milestone completes the first migration scaffold review loop:
+
+```txt
+migrate-plan
+  -> migrate-scaffold-preview
+  -> migrate-scaffold
+  -> migrate-scaffold-validate
+  -> migrate-scaffold-report
+```
+
+## Current: v1.11.0 VSCode Extension Migration Workflow Polish
+
+Status: Current priority
+
+Goal:
+
+Make the completed migration scaffold review loop easier to use from VSCode while keeping the CLI/API/JSON contracts as the source of truth.
+
+Expected behavior:
+
+- expose the existing migration planning, scaffold preview, scaffold generation, scaffold validation, and scaffold report commands clearly
+- improve command palette labels, user-facing error messages, output display, and documentation links
+- keep the VSCode extension as a thin CLI/API wrapper
+- preserve no-ROS-required static behavior
+- do not duplicate RoboPilot migration logic in TypeScript
+- do not add migration apply, automatic source conversion, ROS execution, ROS2 execution, colcon execution, or launch execution
+
+## Future: v1.12.0 VSCode Extension VSIX Packaging
 
 Status: Planned
 
 Goal:
 
-Improve migration review ergonomics while keeping the CLI/API as the source of truth.
+Prepare a local VSIX packaging flow for the existing VSCode extension without changing RoboPilot core behavior.
 
-Possible directions:
+Expected behavior:
 
-- improve VSCode display of scaffold validation/report workflows
-- add a read-only diff between scaffold report revisions
-- keep the VSCode extension as a thin CLI/API wrapper
-- preserve no-ROS-required static behavior
+- document repeatable VSIX build steps
+- keep packaging metadata accurate and conservative
+- keep the extension optional
+- run extension compile/test checks when extension files change
+
+## Future: v1.13.0 VSCode Marketplace Publish Preparation
+
+Status: Planned
+
+Goal:
+
+Prepare Marketplace publishing materials and checks without compromising stability.
+
+Expected behavior:
+
+- audit extension README, icon, categories, and package metadata
+- document publishing steps and required accounts or tokens
+- avoid committing secrets or generated marketplace artifacts
+- keep Marketplace publishing separate from RoboPilot core releases
+
+## Future: v1.14.0 Examples / Tutorials / Demo Pack
+
+Status: Planned
+
+Goal:
+
+Make the existing workflows easier to learn with concise examples and tutorials.
+
+Expected behavior:
+
+- add or refresh demo projects and walkthroughs
+- show the complete migration scaffold review loop
+- keep examples small, static, and no-ROS-required
+- avoid promising automatic migration correctness
+
+## Future: v1.15.0 Migration Workflow UX Polish
+
+Status: Planned
+
+Goal:
+
+Improve the usability of the existing migration assistant workflow without expanding into risky automation.
+
+Expected behavior:
+
+- improve wording, next steps, and report readability
+- tighten documentation around manual review responsibilities
+- preserve deterministic static behavior
+- do not add migration apply or automatic source conversion
+
+## Future: v1.16.0 Stability / Compatibility / Cleanup
+
+Status: Planned
+
+Goal:
+
+Prepare the v2.0 release candidate by cleaning up documentation, compatibility notes, tests, and packaging checks.
+
+Expected behavior:
+
+- audit command help, docs, examples, and JSON contract notes
+- verify no-ROS-required behavior remains intact
+- clarify stable, experimental, and internal surfaces
+- remove stale roadmap promises
+- avoid new product capabilities unless needed for stabilization
+
+## Future: v2.0.0-rc.1
+
+Status: Planned
+
+Goal:
+
+Run a release-candidate stabilization pass for the mature v1.x toolchain.
+
+Expected behavior:
+
+- no broad rewrite
+- no risky automatic migration features
+- full tests, packaging checks, CLI help checks, and documentation audit
+- clear notes about compatibility and any intentionally changed behavior
+
+## Future: v2.0.0
+
+Status: Planned
+
+Goal:
+
+Mark RoboPilot's static engineering and migration assistant workflow as a completed stage.
+
+v2.0.0 is a stage-completion milestone, not necessarily a breaking rewrite. If no breaking changes are intended, release documentation should say that clearly.
+
+Expected behavior:
+
+- stable no-ROS-required CLI baseline
+- documented migration scaffold review loop
+- optional VSCode access to existing CLI/API workflows
+- clear safety boundaries
+- no automatic full ROS1-to-ROS2 migration claim
 
 ## Long-term: VSCode Extension Expansion
 
@@ -1120,6 +1241,9 @@ RoboPilot will not focus on the following unless the project direction explicitl
 - complex multi-agent orchestration
 - replacing general-purpose coding agents
 - automatic full project migration without manual review
+- migration apply before v2.0
+- automatic source code conversion before v2.0
+- automatic ROS, ROS2, colcon, or launch execution before v2.0
 
 ## Development Priorities After v1.0.0
 
@@ -1139,6 +1263,22 @@ Priority order:
 ## Recommended Path
 
 ```txt
+v1.10.0 Migration Scaffold Report
+  -> v1.11.0 VSCode Extension Migration Workflow Polish
+  -> v1.12.0 VSCode Extension VSIX Packaging
+  -> v1.13.0 VSCode Marketplace Publish Preparation
+  -> v1.14.0 Examples / Tutorials / Demo Pack
+  -> v1.15.0 Migration Workflow UX Polish
+  -> v1.16.0 Stability / Compatibility / Cleanup
+  -> v2.0.0-rc.1
+  -> v2.0.0
+```
+
+v2.0.0 should mark stage completion for the v1.x static engineering toolchain. It is not intended to be a breaking rewrite unless a future release plan explicitly says so.
+
+## Historical Path Through v1.8.0
+
+```txt
 v1.1.0 Packaging & Public Developer Experience
         ↓
 v1.2.0 API Layer Refactor
@@ -1156,6 +1296,6 @@ v1.7.0 Migration Scaffold Preview
 v1.8.0 Migration Scaffold Generate
 ```
 
-Next recommended milestone: v1.11.0 VSCode Extension Polish or Migration Scaffold Diff.
+Next recommended milestone: v1.11.0 VSCode Extension Migration Workflow Polish.
 
 RoboPilot should grow as a practical no-ROS-required ROS engineering toolchain, with CLI as the stable core and beginner-friendly interfaces layered on top.

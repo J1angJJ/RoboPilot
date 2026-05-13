@@ -176,6 +176,8 @@ The Python API layer, documented CLI JSON contracts, ROS2 static inspector, enha
 
 The VSCode extension lives under `vscode-extension/`, requires the RoboPilot CLI to be installed, and is documented in [docs/vscode_extension.md](docs/vscode_extension.md).
 
+Post-v1.10 roadmap work is aimed at v2.0 as a stage-completion release: polish the VSCode migration workflow, package the extension, improve examples and tutorials, and stabilize compatibility. v2.0 is not intended to imply a breaking rewrite unless a future release plan says so.
+
 ## Development
 
 Run tests:

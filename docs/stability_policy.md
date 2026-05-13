@@ -53,3 +53,5 @@ Internal areas are implementation details and may change without compatibility g
 After v1.0.0, documented command names, safety behavior, and stable JSON keys should change only with strong justification and changelog notes. Experimental areas may still evolve, but they must preserve RoboPilot's no-ROS-required and safety-first boundaries.
 
 Machine consumers should use documented `--json` outputs or the Python API. They should not parse Rich human-readable output.
+
+Post-v1.10 work should move toward v2.0 as a stage-completion release for the mature static toolchain. v2.0.0 is not necessarily a breaking rewrite; if no breaking changes are intended, release notes should say so clearly. Before v2.0, RoboPilot should avoid migration apply, automatic source conversion, ROS/ROS2 runtime execution, `colcon` execution, and launch execution.

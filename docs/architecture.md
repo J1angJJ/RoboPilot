@@ -110,6 +110,8 @@ ROS1-to-ROS2 migration support is currently planning and preview only:
 
 Migration modules do not modify the source project, modify migration plans, run ROS tooling, import generated scaffold modules, or claim full automatic migration. Scaffold generation is conservative, refuses to overwrite existing files by default, and writes only placeholder files under the requested output directory. Scaffold validation is read-only and reports missing files, placeholder safety wording gaps, ROS2 inspection warnings, and unexpected files. Scaffold reports are read-only unless writing to an explicit Markdown output path.
 
+After v1.10, migration architecture should mature the existing assistant loop instead of expanding into risky automation before v2.0. In particular, RoboPilot should not add migration apply, automatic source code conversion, automatic ROS/ROS2 execution, automatic `colcon` execution, or launch execution before the v2.0 stage-completion release.
+
 ## Optional LLM Boundaries
 
 LLM features are optional and off by default. The safe boundary is:
