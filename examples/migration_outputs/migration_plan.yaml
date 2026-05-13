@@ -1,0 +1,114 @@
+generated_by: "RoboPilot ROS1ToROS2MigrationPlan"
+source_path: "examples/ros1_migration_demo"
+target: "ros2"
+source_project_type: "ros1_catkin_package"
+package_name: "ros1_migration_demo"
+confidence: "high"
+summary: "Static migration plan for ROS1 catkin package 'ros1_migration_demo' toward ROS2."
+package_xml_migration:
+  - "Migrate package.xml toward ROS2 package format 3 if the project still uses ROS1 package metadata."
+  - "Replace catkin buildtool dependency with ament_cmake build metadata after choosing the final ROS2 package style."
+  - "Review build, exec, run, and test dependencies and move ROS2 runtime dependencies to exec_depend where appropriate."
+  - "Check ROS2 equivalents for every ROS1 dependency before editing package.xml."
+  - "Remove <buildtool_depend>catkin</buildtool_depend> during ROS2 migration."
+build_system_migration:
+  - "Migrate catkin CMakeLists.txt to ROS2 ament_cmake for C++ nodes."
+  - "Use ament_cmake as the primary ROS2 build system and review Python script installation rules."
+  - "Replace catkin_package() with ament_package()."
+  - "Replace find_package(catkin REQUIRED COMPONENTS ...) with explicit ROS2-style find_package(...) calls."
+  - "Review install rules for Python scripts, C++ executables, launch files, and interface files."
+source_code_migration:
+  - "rospy nodes should be migrated toward rclpy."
+  - "rospy.init_node, rospy.Publisher, rospy.Subscriber, rospy.Rate, and rospy.spin patterns require manual migration."
+  - "roscpp nodes should be migrated toward rclcpp."
+  - "ros::init, ros::NodeHandle, ros::Publisher, ros::Subscriber, and ros::spin patterns require manual migration."
+  - "Review parameters, time APIs, logging APIs, QoS settings, callback behavior, and spin behavior."
+launch_migration:
+  - "Migrate ROS1 XML launch files toward ROS2 Python launch files."
+  - "Review node declarations, remaps, params, namespaces, arguments, and environment assumptions manually."
+  - "Create launch/*.launch.py equivalents for detected ROS1 launch files."
+interface_migration:
+  - "msg files are likely reusable with ROS2 interface review."
+  - "srv files are likely reusable with ROS2 interface review."
+  - "action files require ROS2 action interface review."
+  - "Migrate message generation rules from catkin to the ROS2 build system."
+dependency_migration:
+  declared_ros1_dependencies:
+    buildtool:
+      - "catkin"
+    build:
+      - "message_generation"
+      - "roscpp"
+      - "rospy"
+      - "std_msgs"
+    exec:
+      - "message_runtime"
+      - "roscpp"
+      - "rospy"
+      - "std_msgs"
+    run:
+    test:
+  detected_usage_dependencies:
+    inferred_dependencies:
+      - "message_generation"
+      - "roscpp"
+      - "rospy"
+      - "std_msgs"
+    python_imports:
+      - "rospy"
+      - "std_msgs"
+    cpp_includes:
+      - "ros/ros.h"
+      - "std_msgs/String.h"
+    catkin_components:
+      - "message_generation"
+      - "roscpp"
+      - "rospy"
+      - "std_msgs"
+  possibly_missing:
+  possibly_unused:
+  ros2_equivalent_hints:
+    - "message_generation -> rosidl_default_generators"
+    - "message_runtime -> rosidl_default_runtime"
+    - "roscpp -> rclcpp"
+    - "rospy -> rclpy"
+    - "std_msgs -> check ROS2 package availability and API differences"
+  dependency_analyzer_migration_hints:
+    - "migration_hint: ROS1 dependency 'catkin' should be reviewed for ROS2 direction: ament_cmake or ament_python after choosing the target ROS2 package style"
+    - "migration_hint: ROS1 dependency 'message_generation' should be reviewed for ROS2 direction: rosidl_default_generators for ROS2 interface generation"
+    - "migration_hint: ROS1 dependency 'message_runtime' should be reviewed for ROS2 direction: rosidl_default_runtime for ROS2 interface runtime dependencies"
+    - "migration_hint: ROS1 dependency 'roscpp' should be reviewed for ROS2 direction: rclcpp, with manual review of NodeHandle, publishers, subscribers, parameters, and executors"
+    - "migration_hint: ROS1 dependency 'rospy' should be reviewed for ROS2 direction: rclpy, with manual review of node lifecycle, parameters, logging, and spin behavior"
+    - "migration_hint: ROS1 dependency 'std_msgs' should be reviewed for ROS2 direction: std_msgs, usually with message import/build metadata review"
+    - "migration_hint: ROS1 launch references should be reviewed for the ROS2 Python launch system"
+    - "migration_hint: ROS1 interface dependencies message_generation/message_runtime usually migrate toward rosidl_default_generators/rosidl_default_runtime"
+  dependency_analyzer_rosdep_hints:
+    - "rosdep_hint: Python import 'rospy' may require rospy"
+    - "rosdep_hint: Python import 'std_msgs' may require std_msgs"
+    - "rosdep_hint: C++ include 'ros/ros.h' may require roscpp"
+    - "rosdep_hint: C++ include 'std_msgs/String.h' may require std_msgs"
+    - "rosdep_hint: ROS1 interface files usually need message_generation and message_runtime review"
+  manual_review_dependencies:
+suggested_file_changes:
+  - "create ROS2-style package.xml"
+  - "create ROS2 ament_cmake CMakeLists.txt"
+  - "create launch/*.launch.py equivalents"
+  - "migrate scripts/*.py to ROS2 rclpy node structure"
+  - "migrate src/*.cpp to rclcpp node structure"
+  - "keep msg/srv/action files for ROS2 interface review"
+manual_review_items:
+  - "custom CMake macros or non-standard catkin logic"
+  - "parameters, namespace behavior, remapping behavior, timing behavior, and QoS behavior"
+  - "hardware drivers, serial devices, sensors, and platform-specific assumptions"
+  - "dependencies without obvious ROS2 equivalents"
+  - "dynamic launch logic and launch-time substitutions"
+  - "custom messages, services, and actions"
+risks:
+  - "ROS1 inspection reported package structure issues that may affect migration planning"
+  - "ROS1 action migration can require manual ROS2 action API review"
+suggested_next_steps:
+  - "Review this migration plan before editing files."
+  - "Run robopilot deps on the source package and review dependency hints."
+  - "Create a separate branch or copy before manually migrating files."
+  - "Use a future migration preview/apply workflow before automated file changes."
+safety_note: "This migration plan is generated from static inspection only. RoboPilot did not modify source files, generate migrated files, validate runtime behavior, require ROS, run catkin_make, run colcon, execute launch files, execute code, or import user project modules."

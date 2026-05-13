@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v1.14.0 examples, tutorials, and demo pack for the no-ROS-required migration scaffold workflow.
+- `examples/ros1_migration_demo/` static ROS1-style catkin package for migration tutorials.
+- `examples/ros2_scaffold_demo/` representative ROS2 scaffold-only demo with manual migration TODO notes.
+- `examples/migration_outputs/` sample migration plan and scaffold report artifacts.
+- `docs/tutorial_ros1_to_ros2_migration.md` CLI tutorial for detect, inspect, deps, plan, scaffold, validate, and report steps.
+- `docs/tutorial_vscode_migration_workflow.md` VSCode-assisted migration workflow tutorial.
+- `docs/demo_walkthrough.md` concise CLI and VSCode presentation script.
 - v1.13.0 VSCode Marketplace publish preparation.
 - `vscode-extension/CHANGELOG.md` with extension release notes from `0.1.0` through `0.4.0`.
 - `docs/vscode_marketplace.md` with publisher-id, PAT, `VSCE_PAT`, manual publishing, GitHub Actions, listing verification, and rollback guidance.
@@ -76,6 +83,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated README, workflow docs, roadmap, and project guidance for the v1.14.0 tutorial/demo milestone.
+- Updated package and generated demo metadata to `1.14.0`.
 - Updated VSCode extension package metadata to `0.4.0` with homepage, bugs URL, and Marketplace-ready publisher documentation.
 - Updated package and generated demo metadata to `1.13.0`.
 - Updated README, VSCode docs, developer setup, testing docs, roadmap, and agent guidance with Marketplace preparation notes.

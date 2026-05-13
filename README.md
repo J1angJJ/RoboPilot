@@ -121,6 +121,9 @@ robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/
 - [VSCode Extension](docs/vscode_extension.md)
 - [VSCode Packaging](docs/vscode_packaging.md)
 - [VSCode Marketplace Publishing](docs/vscode_marketplace.md)
+- [ROS1 to ROS2 Migration Tutorial](docs/tutorial_ros1_to_ros2_migration.md)
+- [VSCode Migration Tutorial](docs/tutorial_vscode_migration_workflow.md)
+- [Demo Walkthrough](docs/demo_walkthrough.md)
 - [Developer Setup](docs/developer_setup.md)
 - [Testing](docs/testing.md)
 - [Release Process](docs/release_process.md)
@@ -156,11 +159,21 @@ A static generated demo project is committed at:
 examples/generated_projects/demo_detector/
 ```
 
+Migration tutorial examples are committed at:
+
+```txt
+examples/ros1_migration_demo/
+examples/ros2_scaffold_demo/
+examples/migration_outputs/
+```
+
+Start with [the ROS1-to-ROS2 migration tutorial](docs/tutorial_ros1_to_ros2_migration.md), the [VSCode migration tutorial](docs/tutorial_vscode_migration_workflow.md), or the [demo walkthrough](docs/demo_walkthrough.md).
+
 Transient generated projects should go under `outputs/`, which is intentionally ignored by git.
 
 ## Project Status
 
-Current release line: `v1.13.0`.
+Current release line: `v1.14.0`.
 
 RoboPilot's no-ROS-required static engineering workflow remains the stable v1 baseline:
 

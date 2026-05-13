@@ -75,6 +75,8 @@ The scaffold preview, generation, and validation commands consume RoboPilot CLI 
 
 `Generate Migration Scaffold` writes only under the configured extension output directory and does not pass `--overwrite` by default. If the scaffold directory already contains conflicting files, the extension shows the RoboPilot failure and asks the user to review the output directory.
 
+For a step-by-step tutorial, see [Tutorial: VSCode-Assisted Migration Scaffold Workflow](tutorial_vscode_migration_workflow.md).
+
 ## Safety Model
 
 The extension is static by default:

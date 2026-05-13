@@ -39,7 +39,7 @@ RoboPilot should avoid competing directly with general-purpose coding agents. It
 The current stable baseline is:
 
 ```txt
-v1.12.0
+v1.13.0
 ```
 
 The stable baseline includes:
@@ -65,22 +65,22 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v1.13.0 VSCode Marketplace Publish Preparation
+v1.14.0 Examples / Tutorials / Demo Pack
 ```
 
-The goal is to prepare the existing VSCode extension for future Visual Studio Marketplace publishing without publishing it.
+The goal is to make the no-ROS-required ROS engineering and ROS1-to-ROS2 migration scaffold workflows easier to learn and demonstrate.
 
 This milestone should focus on:
 
-- Marketplace-ready extension metadata
-- `vscode-extension/CHANGELOG.md`
-- documentation for publisher id confirmation, PAT handling, `VSCE_PAT`, manual publishing, and listing verification
-- a safety-first, manually triggered GitHub Actions publishing workflow if included
-- preserving local VSIX packaging as the required pre-publish check
-- preserving no-ROS-required static behavior
+- static ROS1 migration demo package
+- representative ROS2 scaffold demo
+- sample migration plan and scaffold report artifacts
+- concise CLI and VSCode tutorials
+- presentation-friendly demo walkthrough
+- README and workflow links into the examples
 - no ROS, ROS2, catkin, colcon, launch execution, generated code execution, or generated module imports
 
-This milestone must not publish to the VSCode Marketplace, add real tokens, commit secrets, add new product commands, migration apply, automatic source conversion, automatic colcon execution, ROS runtime execution, or launch execution.
+This milestone must not add new product commands, change Python migration logic, publish to the VSCode Marketplace, add migration apply, automatic source conversion, automatic colcon execution, ROS runtime execution, or launch execution.
 
 ## Near-term Direction
 
@@ -596,19 +596,20 @@ robopilot deps --help
 Implement:
 
 ```txt
-v1.13.0 VSCode Marketplace Publish Preparation
+v1.14.0 Examples / Tutorials / Demo Pack
 ```
 
-This milestone should prepare the existing VSCode extension for future Visual Studio Marketplace publishing while keeping actual publishing as a separate explicit release action.
+This milestone should add static examples and tutorials for the existing no-ROS-required migration scaffold review loop.
 
 Suggested implementation items:
 
 ```txt
-vscode-extension/
-docs/vscode_extension.md
-docs/vscode_packaging.md
-docs/vscode_marketplace.md
-.github/workflows/vscode-publish.yml
+examples/ros1_migration_demo/
+examples/ros2_scaffold_demo/
+examples/migration_outputs/
+docs/tutorial_ros1_to_ros2_migration.md
+docs/tutorial_vscode_migration_workflow.md
+docs/demo_walkthrough.md
 ```
 
 Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, automatic source conversion, actual VSCode Marketplace publishing, real tokens, or new LLM behavior during this milestone unless explicitly requested.

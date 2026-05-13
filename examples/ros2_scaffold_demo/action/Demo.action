@@ -1,0 +1,5 @@
+string goal_label
+---
+bool completed
+---
+string status

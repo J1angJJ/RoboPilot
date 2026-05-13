@@ -21,6 +21,6 @@ Current limitations:
 - Rollback restores backed-up files but does not delete newly created files in current behavior.
 - LLM output must be validated and may still be wrong or incomplete.
 - Default tests do not call real LLM providers.
-- VSCode extension is not implemented yet.
+- VSCode extension is available as source and local VSIX packaging, but Marketplace availability is not claimed until explicitly published.
 
 These limitations are part of RoboPilot's safety model. The tool should help users review structure and plans before they use real ROS tooling.

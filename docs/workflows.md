@@ -132,6 +132,17 @@ This workflow is read-only for the source ROS1 project. `migrate-preview` report
 
 This completes the first migration scaffold review loop. Post-v1.10 work should focus on VSCode accessibility, examples, documentation, and UX polish for this existing loop rather than migration apply, automatic source conversion, ROS/ROS2 execution, colcon execution, or launch execution before v2.0.
 
+For a runnable no-ROS-required walkthrough, use the checked-in demo package:
+
+```bash
+robopilot detect examples/ros1_migration_demo
+robopilot migrate-plan --from examples/ros1_migration_demo --to ros2 --output .pytest_tmp_v114_manual/migration_plan.yaml
+robopilot migrate-scaffold --plan .pytest_tmp_v114_manual/migration_plan.yaml --output .pytest_tmp_v114_manual/ros2_scaffold
+robopilot migrate-scaffold-report --plan .pytest_tmp_v114_manual/migration_plan.yaml --scaffold .pytest_tmp_v114_manual/ros2_scaffold --output .pytest_tmp_v114_manual/scaffold_report.md
+```
+
+See [Tutorial: ROS1 to ROS2 Migration Scaffold Workflow](tutorial_ros1_to_ros2_migration.md) for the full CLI tutorial, [Tutorial: VSCode-Assisted Migration Scaffold Workflow](tutorial_vscode_migration_workflow.md) for the extension-guided version, and [Demo Walkthrough](demo_walkthrough.md) for a short presentation script.
+
 ## VSCode-Assisted Migration Scaffold Workflow
 
 The VSCode extension can drive the same migration scaffold review loop through the RoboPilot CLI. It stores integration outputs under `.robopilot_vscode` by default:
@@ -146,6 +157,8 @@ RoboPilot: Generate Migration Plan
 ```
 
 The extension remains a thin wrapper over CLI JSON contracts and Markdown report output. It does not run ROS, ROS2, colcon, launch files, or generated code.
+
+For a step-by-step demo, see [Tutorial: VSCode-Assisted Migration Scaffold Workflow](tutorial_vscode_migration_workflow.md).
 
 ## Offline Utilities
 

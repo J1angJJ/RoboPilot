@@ -1,0 +1,4 @@
+ros1_migration_demo:
+  ros__parameters:
+    # TODO: Review ROS1 private/global parameters and migrate them manually.
+    rate_hz: 1.0

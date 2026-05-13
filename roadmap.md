@@ -1115,9 +1115,9 @@ Expected behavior:
 - run extension compile/test checks when extension files change
 - do not publish to the VSCode Marketplace
 
-## Current: v1.13.0 VSCode Marketplace Publish Preparation
+## Completed: v1.13.0 VSCode Marketplace Publish Preparation
 
-Status: Current priority
+Status: Completed
 
 Goal:
 
@@ -1134,9 +1134,9 @@ Expected behavior:
 - do not actually publish to the Marketplace in this milestone
 - keep Marketplace publishing separate from RoboPilot core releases
 
-## Future: v1.14.0 Examples / Tutorials / Demo Pack
+## Current: v1.14.0 Examples / Tutorials / Demo Pack
 
-Status: Planned
+Status: Current priority
 
 Goal:
 
@@ -1302,6 +1302,6 @@ v1.7.0 Migration Scaffold Preview
 v1.8.0 Migration Scaffold Generate
 ```
 
-Next planned milestone after v1.13.0: v1.14.0 Examples / Tutorials / Demo Pack.
+Next planned milestone after v1.14.0: v1.15.0 Migration Workflow UX Polish.
 
 RoboPilot should grow as a practical no-ROS-required ROS engineering toolchain, with CLI as the stable core and beginner-friendly interfaces layered on top.

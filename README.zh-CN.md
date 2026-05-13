@@ -112,6 +112,9 @@ robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/
 - [VSCode Extension](docs/vscode_extension.md)
 - [VSCode Packaging](docs/vscode_packaging.md)
 - [VSCode Marketplace Publishing](docs/vscode_marketplace.md)
+- [ROS1 to ROS2 Migration Tutorial](docs/tutorial_ros1_to_ros2_migration.md)
+- [VSCode Migration Tutorial](docs/tutorial_vscode_migration_workflow.md)
+- [Demo Walkthrough](docs/demo_walkthrough.md)
 - [Developer Setup](docs/developer_setup.md)
 - [Testing](docs/testing.md)
 - [Release Process](docs/release_process.md)
@@ -142,11 +145,17 @@ robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/
 examples/generated_projects/demo_detector/
 ```
 
+```txt
+examples/ros1_migration_demo/
+examples/ros2_scaffold_demo/
+examples/migration_outputs/
+```
+
 临时生成项目应放在 `outputs/` 下，该目录会被 git 忽略。
 
 ## 项目状态
 
-当前版本线：`v1.13.0`。
+当前版本线：`v1.14.0`。
 
 RoboPilot 的 v1 基线仍然是不依赖 ROS 的静态工程工作流：
 
