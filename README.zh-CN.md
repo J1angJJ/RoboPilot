@@ -110,6 +110,7 @@ robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/
 - [JSON Contracts](docs/json_contracts.md)
 - [Integration Notes](docs/integration_notes.md)
 - [VSCode Extension](docs/vscode_extension.md)
+- [VSCode Packaging](docs/vscode_packaging.md)
 - [Developer Setup](docs/developer_setup.md)
 - [Testing](docs/testing.md)
 - [Release Process](docs/release_process.md)
@@ -144,7 +145,7 @@ examples/generated_projects/demo_detector/
 
 ## 项目状态
 
-当前版本线：`v1.11.0`。
+当前版本线：`v1.12.0`。
 
 RoboPilot 的 v1 基线仍然是不依赖 ROS 的静态工程工作流：
 
@@ -159,6 +160,7 @@ plan -> refine -> diff -> validate -> generate
 ```
 
 CLI 仍是主要用户界面；Python API、JSON contracts、增强的依赖分析器和 VSCode extension 用于后续集成，并支持 migration scaffold workflow。
+VSCode extension 现在可以本地打包为 VSIX；参见 [docs/vscode_packaging.md](docs/vscode_packaging.md)。
 
 ## 开发
 

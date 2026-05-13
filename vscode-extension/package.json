@@ -2,14 +2,28 @@
   "name": "robopilot-vscode",
   "displayName": "RoboPilot",
   "description": "VSCode integration for RoboPilot no-ROS-required static tooling",
-  "version": "0.2.0",
+  "version": "0.3.0",
+  "publisher": "j1angjj",
   "private": true,
+  "license": "MIT",
   "engines": {
     "vscode": "^1.90.0"
   },
   "categories": [
     "Other"
   ],
+  "keywords": [
+    "robotics",
+    "ros",
+    "ros2",
+    "migration",
+    "static-analysis"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/J1angJJ/RoboPilot.git",
+    "directory": "vscode-extension"
+  },
   "activationEvents": [
     "onCommand:robopilot.detectWorkspace",
     "onCommand:robopilot.inspectRos1",
@@ -104,11 +118,14 @@
   },
   "scripts": {
     "compile": "tsc -p ./",
-    "test": "npm run compile && node --test out/test/robopilotCli.test.js"
+    "test": "npm run compile && node --test out/test/robopilotCli.test.js",
+    "vscode:prepublish": "npm run compile",
+    "package": "vsce package"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.90.0",
+    "@vscode/vsce": "^2.32.0",
     "typescript": "^5.5.0"
   }
 }

@@ -14,10 +14,13 @@ jobs:
           node-version: "20"
       - name: Install dependencies
         working-directory: vscode-extension
-        run: npm install
+        run: npm ci
       - name: Compile extension
         working-directory: vscode-extension
         run: npm run compile
       - name: Run extension tests
         working-directory: vscode-extension
         run: npm test
+      - name: Package extension VSIX
+        working-directory: vscode-extension
+        run: npm run package

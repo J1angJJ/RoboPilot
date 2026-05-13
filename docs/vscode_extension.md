@@ -101,17 +101,24 @@ npm test
 
 Open the repository in VSCode, open the Run and Debug view, and start an Extension Development Host using the extension entry point.
 
-## Packaging Later
+## Local VSIX Packaging
 
-This milestone does not publish the extension to the VSCode Marketplace.
-
-A later packaging flow may use `@vscode/vsce` to create a VSIX:
+The extension can be packaged locally as a VSIX for testing:
 
 ```bash
 cd vscode-extension
 npm install
 npm run compile
-npx @vscode/vsce package
+npm test
+npm run package
 ```
 
-Do not publish a VSIX until the release process and Marketplace metadata are reviewed.
+Install the generated VSIX locally with:
+
+```bash
+code --install-extension robopilot-vscode-0.3.0.vsix
+```
+
+See [VSCode Extension Packaging](vscode_packaging.md) for troubleshooting and uninstall steps.
+
+This milestone does not publish the extension to the VSCode Marketplace. Marketplace publishing may require confirming the publisher id and reviewing metadata in a later milestone.

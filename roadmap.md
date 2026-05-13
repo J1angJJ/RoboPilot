@@ -1081,9 +1081,9 @@ migrate-plan
   -> migrate-scaffold-report
 ```
 
-## Current: v1.11.0 VSCode Extension Migration Workflow Polish
+## Completed: v1.11.0 VSCode Extension Migration Workflow Polish
 
-Status: Current priority
+Status: Completed
 
 Goal:
 
@@ -1099,9 +1099,9 @@ Expected behavior:
 - do not duplicate RoboPilot migration logic in TypeScript
 - do not add migration apply, automatic source conversion, ROS execution, ROS2 execution, colcon execution, or launch execution
 
-## Future: v1.12.0 VSCode Extension VSIX Packaging
+## Current: v1.12.0 VSCode Extension VSIX Packaging
 
-Status: Planned
+Status: Current priority
 
 Goal:
 
@@ -1113,6 +1113,7 @@ Expected behavior:
 - keep packaging metadata accurate and conservative
 - keep the extension optional
 - run extension compile/test checks when extension files change
+- do not publish to the VSCode Marketplace
 
 ## Future: v1.13.0 VSCode Marketplace Publish Preparation
 
@@ -1297,6 +1298,6 @@ v1.7.0 Migration Scaffold Preview
 v1.8.0 Migration Scaffold Generate
 ```
 
-Next planned milestone after v1.11.0: v1.12.0 VSCode Extension VSIX Packaging.
+Next planned milestone after v1.12.0: v1.13.0 VSCode Marketplace Publish Preparation.
 
 RoboPilot should grow as a practical no-ROS-required ROS engineering toolchain, with CLI as the stable core and beginner-friendly interfaces layered on top.

@@ -106,6 +106,18 @@ npm test
 
 Then launch an Extension Development Host from VSCode. The extension requires the `robopilot` CLI to be installed or configured with `robopilot.executablePath`.
 
+For local VSIX packaging:
+
+```bash
+cd vscode-extension
+npm install
+npm run compile
+npm test
+npm run package
+```
+
+The package command creates a local `.vsix` for installation testing. It does not publish to the VSCode Marketplace.
+
 ## Packaging Checks
 
 For local package verification:

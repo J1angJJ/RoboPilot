@@ -39,7 +39,7 @@ RoboPilot should avoid competing directly with general-purpose coding agents. It
 The current stable baseline is:
 
 ```txt
-v1.10.0
+v1.11.0
 ```
 
 The stable baseline includes:
@@ -65,22 +65,22 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v1.11.0 VSCode Extension Migration Workflow Polish
+v1.12.0 VSCode Extension VSIX Packaging
 ```
 
-The goal is to make the completed migration scaffold review loop easier to use from VSCode without moving core logic into the extension.
+The goal is to make the existing VSCode extension packageable as a local VSIX for installation testing.
 
 This milestone should focus on:
 
-- exposing the existing migration flow in a beginner-friendly VSCode path:
-  `migrate-plan -> migrate-scaffold-preview -> migrate-scaffold -> migrate-scaffold-validate -> migrate-scaffold-report`
-- keeping the VSCode extension as a thin wrapper over CLI/API/JSON contracts
-- improving command palette labels, output display, error messages, and documentation links
-- avoiding duplicated TypeScript implementations of RoboPilot core behavior
+- package metadata needed for local VSIX generation
+- project-local `@vscode/vsce` dependency and `npm run package`
+- `.vscodeignore` coverage for source, tests, local temp files, and generated artifacts
+- documentation for local VSIX packaging, install, uninstall, and troubleshooting
+- CI checks that compile, test, and package the extension without publishing
 - preserving no-ROS-required static behavior
 - no ROS, ROS2, catkin, colcon, launch execution, generated code execution, or generated module imports
 
-This milestone should polish access to existing workflows. It should not add migration apply, automatic source conversion, automatic colcon execution, ROS runtime execution, or launch execution.
+This milestone should not publish to the VSCode Marketplace. It should not add new product commands, migration apply, automatic source conversion, automatic colcon execution, ROS runtime execution, or launch execution.
 
 ## Near-term Direction
 
@@ -596,17 +596,18 @@ robopilot deps --help
 Implement:
 
 ```txt
-v1.11.0 VSCode Extension Migration Workflow Polish
+v1.12.0 VSCode Extension VSIX Packaging
 ```
 
-This milestone should polish VSCode access to the existing migration scaffold review loop.
+This milestone should prepare the existing VSCode extension for local VSIX packaging and local installation testing.
 
 Suggested implementation items:
 
 ```txt
 vscode-extension/
 docs/vscode_extension.md
-docs/workflows.md
+docs/vscode_packaging.md
+.github/workflows/vscode-extension.yml
 ```
 
 Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, automatic source conversion, VSCode Marketplace publishing, or new LLM behavior during this milestone unless explicitly requested.

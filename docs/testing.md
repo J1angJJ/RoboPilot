@@ -107,6 +107,18 @@ python -m twine check dist/*
 
 These checks do not publish anything. They only verify that the local source distribution and wheel can be built and rendered cleanly.
 
+For VSCode extension packaging changes, run:
+
+```bash
+cd vscode-extension
+npm install
+npm run compile
+npm test
+npm run package
+```
+
+The VSIX package command is a local packaging check only. It must not publish to the VSCode Marketplace.
+
 ## Expected Test Behavior
 
 - Tests should create temporary files only under pytest-managed temp directories or `.pytest_tmp`.

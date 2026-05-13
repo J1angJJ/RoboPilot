@@ -1,0 +1,15 @@
+src/**
+test/**
+node_modules/**
+.vscode-test/**
+coverage/**
+out/test/**
+**/*.map
+*.tsbuildinfo
+tsconfig.json
+package-lock.json
+.gitignore
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+*.vsix

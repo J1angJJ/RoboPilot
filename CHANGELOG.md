@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v1.12.0 VSCode extension local VSIX packaging readiness.
+- Project-local `@vscode/vsce` packaging script for generating a local `.vsix` without Marketplace publishing.
+- `docs/vscode_packaging.md` with Node 20, build, package, local install, uninstall, configuration, and troubleshooting guidance.
+- `.vscodeignore` for keeping local VSIX packages focused on compiled extension output and user-facing docs.
 - v1.11.0 VSCode extension migration workflow polish.
 - VSCode commands for migration scaffold preview, scaffold generation, scaffold validation, scaffold report generation, and opening scaffold reports.
 - VSCode OutputChannel and TreeView summaries for migration scaffold target style, generated files, validation status, issues, warnings, and report path.
@@ -68,6 +72,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated VSCode extension package metadata to `0.3.0` with repository, license, keywords, and local packaging publisher metadata.
+- Updated package and generated demo metadata to `1.12.0`.
+- Updated VSCode extension CI to run local VSIX packaging checks without publishing.
 - Updated VSCode extension package metadata to `0.2.0`.
 - Updated package and generated demo metadata to `1.11.0`.
 - Updated README, workflow, integration, VSCode extension, roadmap, and agent guidance with VSCode migration scaffold workflow polish.
