@@ -39,7 +39,7 @@ RoboPilot should avoid competing directly with general-purpose coding agents. It
 The current stable baseline is:
 
 ```txt
-v1.8.0
+v1.9.0
 ```
 
 The stable baseline includes:
@@ -65,18 +65,19 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v1.9.0 Migration Scaffold Validate
+v1.10.0 Migration Scaffold Report
 ```
 
-The goal is to validate generated ROS2 migration scaffolds against an existing ROS1-to-ROS2 migration plan.
+The goal is to export a deterministic Markdown report for generated ROS2 migration scaffolds.
 
 This milestone should focus on:
 
-- `robopilot migrate-scaffold-validate --plan migration_plan.yaml --scaffold path/to/ros2_scaffold`
-- deterministic `--json` output
-- reuse of migration plan validation, scaffold preview/generation expectations, and static ROS2 inspection
-- missing file, unexpected file, placeholder wording, and `MIGRATION_NOTES.md` checks
-- read-only validation
+- `robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/ros2_scaffold --output scaffold_report.md`
+- printing Markdown to stdout when `--output` is omitted
+- writing only the explicit report output file when `--output` is provided
+- no overwrite by default for report files
+- reuse of migration scaffold validation results
+- report sections for validation, files, placeholder checks, ROS2 inspection summary, manual migration items, issues, warnings, next steps, and safety notes
 - source project and migration plan remaining unchanged
 - scaffold remaining unchanged
 - no ROS, ROS2, catkin, colcon, launch execution, generated code execution, or generated module imports
@@ -85,11 +86,11 @@ This milestone must not write scaffold files.
 
 ## Near-term Direction
 
-After v1.9.0, the recommended direction is:
+After v1.10.0, the recommended direction is:
 
 ```txt
-v1.9.0 Migration Scaffold Validate
-v1.10.0 Migration Scaffold Report or VSCode Extension Polish
+v1.10.0 Migration Scaffold Report
+v1.11.0 VSCode Extension Polish or Migration Scaffold Diff
 ```
 
 The VSCode extension should be a thin beginner-friendly interface over the CLI / API layer. It should not duplicate RoboPilot core logic.
@@ -445,6 +446,10 @@ robopilot migrate-scaffold-validate --plan migration_plan.yaml --scaffold path/t
 ```
 
 ```bash
+robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/ros2_scaffold --output scaffold_report.md
+```
+
+```bash
 robopilot inspect outputs/demo_detector
 ```
 
@@ -577,17 +582,17 @@ robopilot deps --help
 Implement:
 
 ```txt
-v1.9.0 Migration Scaffold Validate
+v1.10.0 Migration Scaffold Report
 ```
 
-This milestone should add `robopilot migrate-scaffold-validate --plan migration_plan.yaml --scaffold path/to/ros2_scaffold` as a read-only scaffold validation workflow.
+This milestone should add `robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/ros2_scaffold --output scaffold_report.md` as a Markdown report export workflow.
 
 Suggested implementation items:
 
 ```txt
-src/robopilot/migration/scaffold_validator.py
-tests/test_migration_scaffold_validator.py
-docs/json_contracts.md
+src/robopilot/migration/scaffold_report.py
+tests/test_migration_scaffold_report.py
+docs/command_reference.md
 ```
 
 Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, VSCode Marketplace publishing, or new LLM behavior during this milestone unless explicitly requested.

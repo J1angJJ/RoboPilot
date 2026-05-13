@@ -22,6 +22,10 @@ from robopilot.migration.scaffold_generator import (
     MigrationScaffoldGenerationResult,
     generate_migration_scaffold as core_generate_migration_scaffold,
 )
+from robopilot.migration.scaffold_report import (
+    generate_migration_scaffold_report as core_generate_migration_scaffold_report,
+    write_migration_scaffold_report as core_write_migration_scaffold_report,
+)
 from robopilot.migration.scaffold_validator import (
     MigrationScaffoldValidationResult,
     validate_migration_scaffold as core_validate_migration_scaffold,
@@ -120,3 +124,23 @@ def validate_migration_scaffold(
         normalize_path(scaffold_path),
     )
     return to_structured_result(result) if as_dict else result
+
+
+def generate_migration_scaffold_report(
+    plan_path: PathLike,
+    scaffold_path: PathLike,
+    *,
+    output_path: PathLike | None = None,
+    overwrite: bool = False,
+) -> str:
+    """Generate a Markdown migration scaffold report, writing only when requested."""
+    normalized_plan = normalize_path(plan_path)
+    normalized_scaffold = normalize_path(scaffold_path)
+    if output_path is None:
+        return core_generate_migration_scaffold_report(normalized_plan, normalized_scaffold)
+    return core_write_migration_scaffold_report(
+        normalized_plan,
+        normalized_scaffold,
+        normalize_path(output_path),
+        overwrite=overwrite,
+    )

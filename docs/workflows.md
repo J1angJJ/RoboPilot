@@ -125,9 +125,10 @@ robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_pack
 robopilot migrate-scaffold-preview --plan migration_plan.yaml
 robopilot migrate-scaffold --plan migration_plan.yaml --output path/to/ros2_scaffold
 robopilot migrate-scaffold-validate --plan migration_plan.yaml --scaffold path/to/ros2_scaffold
+robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/ros2_scaffold --output scaffold_report.md
 ```
 
-This workflow is read-only for the source ROS1 project. `migrate-preview` reports impact against the existing source project. `migrate-scaffold-preview` previews the ROS2 target package scaffold. `migrate-scaffold` writes conservative placeholder scaffold files only to the explicit output directory, refuses overwrites by default, and does not automatically migrate business logic. `migrate-scaffold-validate` is read-only and checks the generated scaffold against the plan before manual migration work continues.
+This workflow is read-only for the source ROS1 project. `migrate-preview` reports impact against the existing source project. `migrate-scaffold-preview` previews the ROS2 target package scaffold. `migrate-scaffold` writes conservative placeholder scaffold files only to the explicit output directory, refuses overwrites by default, and does not automatically migrate business logic. `migrate-scaffold-validate` is read-only and checks the generated scaffold against the plan before manual migration work continues. `migrate-scaffold-report` turns validation results into a Markdown report and writes only the explicit report file when `--output` is provided.
 
 ## Offline Utilities
 

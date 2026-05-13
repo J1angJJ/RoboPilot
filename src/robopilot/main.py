@@ -15,6 +15,7 @@ from robopilot.api.apply import (
 )
 from robopilot.api.migration import (
     create_ros1_to_ros2_migration_plan as api_create_ros1_to_ros2_migration_plan,
+    generate_migration_scaffold_report as api_generate_migration_scaffold_report,
     generate_migration_scaffold as api_generate_migration_scaffold,
     preview_migration_plan as api_preview_migration_plan,
     preview_migration_scaffold as api_preview_migration_scaffold,
@@ -1359,6 +1360,51 @@ def _print_migration_scaffold_validation(result: MigrationScaffoldValidationResu
     console.print(Panel.fit("Suggested Next Steps", style="bold cyan"))
     _print_scalar_values(result.suggested_next_steps)
 
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    console.print(result.safety_note)
+
+
+@app.command("migrate-scaffold-report")
+def migrate_scaffold_report(
+    plan: Annotated[
+        Path,
+        typer.Option("--plan", "-p", help="Path to a ROS1-to-ROS2 migration plan."),
+    ],
+    scaffold: Annotated[
+        Path,
+        typer.Option("--scaffold", "-s", help="Generated ROS2 scaffold directory to report on."),
+    ],
+    output: Annotated[
+        Path | None,
+        typer.Option("--output", "-o", help="Optional Markdown report output path."),
+    ] = None,
+    overwrite: Annotated[
+        bool,
+        typer.Option("--overwrite", help="Overwrite an existing report output file."),
+    ] = False,
+) -> None:
+    """Export a Markdown report for a generated migration scaffold."""
+    try:
+        markdown = api_generate_migration_scaffold_report(
+            plan,
+            scaffold,
+            output_path=output,
+            overwrite=overwrite,
+        )
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    if output is None:
+        print(markdown)
+        return
+
+    result = api_validate_migration_scaffold(plan, scaffold, as_dict=False)
+    console.print(Panel.fit("Migration Scaffold Report", style="bold cyan"))
+    console.print(f"[bold]Report path:[/bold] {output}")
+    console.print(f"[bold]Validation status:[/bold] {result.valid}")
+    console.print(f"[bold]Issue count:[/bold] {len(result.issues)}")
+    console.print(f"[bold]Warning count:[/bold] {len(result.warnings)}")
     console.print(Panel.fit("Safety Note", style="bold cyan"))
     console.print(result.safety_note)
 

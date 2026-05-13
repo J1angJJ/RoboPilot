@@ -106,8 +106,9 @@ ROS1-to-ROS2 migration support is currently planning and preview only:
 - `migrate-scaffold-preview` turns a plan into a read-only ROS2 target scaffold preview for future generation.
 - `migrate-scaffold` writes conservative ROS2 scaffold placeholders to an explicit output directory.
 - `migrate-scaffold-validate` checks a generated scaffold against the plan and RoboPilot scaffold expectations.
+- `migrate-scaffold-report` turns scaffold validation results into a deterministic Markdown report.
 
-Migration modules do not modify the source project, modify migration plans, run ROS tooling, import generated scaffold modules, or claim full automatic migration. Scaffold generation is conservative, refuses to overwrite existing files by default, and writes only placeholder files under the requested output directory. Scaffold validation is read-only and reports missing files, placeholder safety wording gaps, ROS2 inspection warnings, and unexpected files.
+Migration modules do not modify the source project, modify migration plans, run ROS tooling, import generated scaffold modules, or claim full automatic migration. Scaffold generation is conservative, refuses to overwrite existing files by default, and writes only placeholder files under the requested output directory. Scaffold validation is read-only and reports missing files, placeholder safety wording gaps, ROS2 inspection warnings, and unexpected files. Scaffold reports are read-only unless writing to an explicit Markdown output path.
 
 ## Optional LLM Boundaries
 

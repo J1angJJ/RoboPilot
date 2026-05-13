@@ -91,6 +91,8 @@ Migration scaffold validation smoke checks can be run after generating a tempora
 ```bash
 robopilot migrate-scaffold-validate --plan .pytest_tmp/migration_plan.yaml --scaffold .pytest_tmp/ros2_scaffold
 robopilot migrate-scaffold-validate --plan .pytest_tmp/migration_plan.yaml --scaffold .pytest_tmp/ros2_scaffold --json
+robopilot migrate-scaffold-report --plan .pytest_tmp/migration_plan.yaml --scaffold .pytest_tmp/ros2_scaffold
+robopilot migrate-scaffold-report --plan .pytest_tmp/migration_plan.yaml --scaffold .pytest_tmp/ros2_scaffold --output .pytest_tmp/scaffold_report.md
 ```
 
 ## Packaging Checks

@@ -14,6 +14,10 @@ from robopilot.migration.scaffold_preview import (
     MigrationScaffoldPreviewResult,
     preview_migration_scaffold,
 )
+from robopilot.migration.scaffold_report import (
+    generate_migration_scaffold_report,
+    write_migration_scaffold_report,
+)
 from robopilot.migration.scaffold_validator import (
     MigrationScaffoldValidationResult,
     validate_migration_scaffold,
@@ -39,11 +43,13 @@ __all__ = [
     "diff_migration_plans",
     "generate_migration_plan",
     "generate_migration_scaffold",
+    "generate_migration_scaffold_report",
     "load_migration_plan",
     "preview_migration",
     "preview_migration_scaffold",
     "validate_migration_scaffold",
     "validate_migration_plan_file",
     "validate_migration_plan",
+    "write_migration_scaffold_report",
     "write_migration_plan",
 ]

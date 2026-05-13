@@ -56,6 +56,7 @@ print(validation["is_valid"])
 ```python
 from robopilot.api.migration import (
     create_ros1_to_ros2_migration_plan,
+    generate_migration_scaffold_report,
     generate_migration_scaffold,
     preview_migration_plan,
     preview_migration_scaffold,
@@ -87,6 +88,12 @@ validation = validate_migration_scaffold(
     "path/to/ros2_scaffold",
 )
 print(validation["valid"])
+
+report = generate_migration_scaffold_report(
+    "migration_plan.yaml",
+    "path/to/ros2_scaffold",
+)
+print(report.splitlines()[0])
 ```
 
 ## Apply Example
@@ -104,6 +111,6 @@ history = read_project_history("outputs/demo_detector")
 
 - `robopilot.api.project`: ProjectSpec planning, refinement, validation, diff, and generation wrappers.
 - `robopilot.api.static_analysis`: project detection, inspection, ROS1 inspection, ROS2 inspection, dependency analysis, and report export wrappers.
-- `robopilot.api.migration`: ROS1-to-ROS2 migration plan, validation, diff, preview, scaffold preview, scaffold generation, and scaffold validation wrappers.
+- `robopilot.api.migration`: ROS1-to-ROS2 migration plan, validation, diff, preview, scaffold preview, scaffold generation, scaffold validation, and scaffold report wrappers.
 - `robopilot.api.apply`: apply-preview, apply-plan export/validation, apply, rollback, and history wrappers.
 - `robopilot.api.models`: small helper aliases for path-like inputs and structured results.

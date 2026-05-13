@@ -98,6 +98,7 @@ robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_pack
 robopilot migrate-scaffold-preview --plan migration_plan.yaml
 robopilot migrate-scaffold --plan migration_plan.yaml --output path/to/ros2_scaffold
 robopilot migrate-scaffold-validate --plan migration_plan.yaml --scaffold path/to/ros2_scaffold
+robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/ros2_scaffold --output scaffold_report.md
 ```
 
 ## 文档
@@ -143,7 +144,7 @@ examples/generated_projects/demo_detector/
 
 ## 项目状态
 
-当前版本线：`v1.9.0`。
+当前版本线：`v1.10.0`。
 
 RoboPilot 的 v1 基线仍然是不依赖 ROS 的静态工程工作流：
 
@@ -154,6 +155,7 @@ plan -> refine -> diff -> validate -> generate
       -> detect -> inspect-ros1 -> inspect-ros2 -> deps
       -> migrate-plan -> migrate-plan-validate -> migrate-plan-diff -> migrate-preview
       -> migrate-scaffold-preview -> migrate-scaffold -> migrate-scaffold-validate
+      -> migrate-scaffold-report
 ```
 
 CLI 仍是主要用户界面；Python API、JSON contracts、增强的依赖分析器和 VSCode extension MVP 用于后续集成。

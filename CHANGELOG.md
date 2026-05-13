@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v1.10.0 migration scaffold Markdown report workflow.
+- `robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/ros2_scaffold` command for printing deterministic Markdown reports.
+- `robopilot migrate-scaffold-report --output scaffold_report.md` file export with no overwrite by default and explicit `--overwrite` for report files.
+- Markdown scaffold reports covering validation results, expected/present/missing/unexpected files, placeholder checks, ROS2 static inspection summary, manual migration items, interface and dependency review items, issues, warnings, next steps, and safety notes.
+- `robopilot.api.migration.generate_migration_scaffold_report` API wrapper.
 - v1.9.0 read-only migration scaffold validation workflow.
 - `robopilot migrate-scaffold-validate --plan migration_plan.yaml --scaffold path/to/ros2_scaffold` command with readable terminal output.
 - `robopilot migrate-scaffold-validate --json` deterministic JSON output for integrations.
@@ -60,6 +65,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated package and generated demo metadata to `1.10.0`.
+- Updated README, command reference, workflow, architecture, API, roadmap, and agent guidance with migration scaffold reports.
 - Updated package and generated demo metadata to `1.9.0`.
 - Updated README, command reference, workflow, architecture, API, JSON contract, roadmap, and agent guidance with migration scaffold validation.
 - Tightened mixed scaffold package metadata so conservative mixed-review scaffolds do not claim a specific ROS2 build system before manual review.

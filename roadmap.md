@@ -1022,9 +1022,9 @@ Expected behavior:
 - support dry-run / preview where practical
 - avoid executing ROS2 or colcon
 
-## Current: v1.9.0 Migration Scaffold Validate
+## Completed: v1.9.0 Migration Scaffold Validate
 
-Status: Current work
+Status: Completed
 
 Goal:
 
@@ -1046,18 +1046,43 @@ Expected behavior:
 - do not run ROS, ROS2, catkin, colcon, launch files, or generated code
 - do not import generated scaffold modules
 
-## Future: v1.10.0 Migration Scaffold Report or VSCode Extension Polish
+## Current: v1.10.0 Migration Scaffold Report
+
+Status: Current work
+
+Goal:
+
+Turn scaffold validation results into a deterministic human-readable Markdown report.
+
+Expected command:
+
+```bash
+robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold ros2_package/ --output scaffold_report.md
+```
+
+Expected behavior:
+
+- print Markdown to stdout when `--output` is omitted
+- write only the explicit report output file when `--output` is provided
+- refuse to overwrite existing report files by default
+- reuse migration scaffold validation
+- include validation status, files, placeholder checks, ROS2 static inspection summary, manual migration items, issues, warnings, next steps, and safety notes
+- do not modify the source project, migration plan, or scaffold
+- do not run ROS, ROS2, catkin, colcon, launch files, or generated code
+- do not import generated scaffold modules
+
+## Future: v1.11.0 VSCode Extension Polish or Migration Scaffold Diff
 
 Status: Planned
 
 Goal:
 
-Improve scaffold validation and migration review ergonomics without adding runtime ROS behavior.
+Improve migration review ergonomics while keeping the CLI/API as the source of truth.
 
 Possible directions:
 
-- export a concise scaffold validation report
-- improve VSCode display of migration scaffold validation JSON
+- improve VSCode display of scaffold validation/report workflows
+- add a read-only diff between scaffold report revisions
 - keep the VSCode extension as a thin CLI/API wrapper
 - preserve no-ROS-required static behavior
 
@@ -1131,6 +1156,6 @@ v1.7.0 Migration Scaffold Preview
 v1.8.0 Migration Scaffold Generate
 ```
 
-Next recommended milestone: v1.10.0 Migration Scaffold Report or VSCode Extension Polish.
+Next recommended milestone: v1.11.0 VSCode Extension Polish or Migration Scaffold Diff.
 
 RoboPilot should grow as a practical no-ROS-required ROS engineering toolchain, with CLI as the stable core and beginner-friendly interfaces layered on top.

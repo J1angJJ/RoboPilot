@@ -77,6 +77,7 @@ robopilot --help
 robopilot detect --help
 robopilot migrate-plan --help
 robopilot migrate-scaffold-validate --help
+robopilot migrate-scaffold-report --help
 ```
 
 ## Try the Python API

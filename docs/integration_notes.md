@@ -47,6 +47,8 @@ result = detect_project_type("path/to/project")
 
 The API avoids Rich rendering and direct stdout printing. It is newer than the CLI and should be treated as maturing until a future stable API contract is published.
 
+Markdown report commands such as `migrate-scaffold-report` are intended for human review. External tools should display or save the Markdown directly and continue using documented `--json` commands for machine-readable control flow.
+
 ## File-Writing Workflows
 
 External tools must keep RoboPilot's safety model visible:
@@ -55,6 +57,7 @@ External tools must keep RoboPilot's safety model visible:
 - Use dry-run commands before confirmed writes.
 - For `migrate-scaffold`, show the output directory and conflict list before treating generation as successful.
 - For `migrate-scaffold-validate`, show missing files, failed placeholder checks, warnings, and the safety note before presenting the scaffold as ready for manual migration.
+- For `migrate-scaffold-report`, write only to an explicit user-selected report path and avoid overwriting existing reports unless the user requests `--overwrite`.
 - Do not call `apply --confirm` or `rollback --confirm` without an explicit user confirmation step.
 - Surface conflicts, skipped files, backup paths, and safety notes to users.
 - Do not bypass ProjectSpec validation, apply-preview, apply-plan, or rollback safety checks.

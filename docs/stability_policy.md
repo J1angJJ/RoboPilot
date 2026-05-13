@@ -11,7 +11,7 @@ Stable areas are expected to remain backward-compatible unless a major release n
 - No-ROS-required default behavior.
 - Rule-based `ProjectSpec` planning and generation.
 - `robopilot.yaml` as the generated ProjectSpec metadata file.
-- Read-only behavior for `inspect`, `report`, `repair-suggest`, `detect`, `inspect-ros1`, `inspect-ros2`, `deps`, migration validation, migration diff, migration preview, migration scaffold preview, and migration scaffold validation.
+- Read-only behavior for `inspect`, `report`, `repair-suggest`, `detect`, `inspect-ros1`, `inspect-ros2`, `deps`, migration validation, migration diff, migration preview, migration scaffold preview, migration scaffold validation, and migration scaffold report generation without `--output`.
 - Conservative behavior for `migrate-scaffold`: writes only to an explicit output directory, refuses overwrites by default, and does not modify the source project or migration plan.
 - Dry-run-first behavior for `apply` and `rollback`.
 - Confirmed apply writing only through validated apply plans.
@@ -29,6 +29,7 @@ Experimental areas may change before v1.0 final as safety and usability improve.
 - Migration scaffold preview.
 - Migration scaffold generation.
 - Migration scaffold validation.
+- Migration scaffold report generation.
 - Migration plan diff.
 - Python API layer before a documented stable API contract.
 - Nested heuristic JSON fields not documented as stable in `docs/json_contracts.md`.
