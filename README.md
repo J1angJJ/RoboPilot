@@ -175,9 +175,11 @@ Transient generated projects should go under `outputs/`, which is intentionally 
 
 ## Project Status
 
-Current release line: `v1.18.0`.
+Current release line: `v2.0.0-rc.1`.
 
-RoboPilot's no-ROS-required static engineering workflow remains the stable v1 baseline:
+This is the first release candidate for RoboPilot v2.0.0. Stable users can stay on the latest v1.x release while RC validation finishes. The v2.0.0 final release is expected after release-candidate validation, and it is planned as a stage-completion release rather than a breaking rewrite.
+
+RoboPilot's no-ROS-required static engineering workflow remains the release-candidate baseline:
 
 ```txt
 plan -> refine -> diff -> validate -> generate
@@ -189,7 +191,7 @@ plan -> refine -> diff -> validate -> generate
       -> migrate-scaffold-report
 ```
 
-The Python API layer, documented CLI JSON contracts, ROS2 static inspector, enhanced dependency analyzer, and VSCode extension source are available for integration work while the CLI remains the primary user interface.
+The Python API layer, documented CLI JSON contracts, ROS2 static inspector, enhanced dependency analyzer, and VSCode extension source are available for integration work while the CLI remains the primary user interface. The no-ROS-required safety model is unchanged in this release candidate.
 
 The VSCode extension is available from Visual Studio Marketplace as `j1angjj.robopilot-vscode`, and the source lives under `vscode-extension/`. The extension requires the RoboPilot CLI to be installed, supports the migration scaffold workflow, and remains a thin wrapper over CLI/API/JSON contracts.
 
@@ -200,7 +202,7 @@ code --install-extension j1angjj.robopilot-vscode
 
 See [docs/vscode_extension.md](docs/vscode_extension.md), [docs/vscode_packaging.md](docs/vscode_packaging.md), and [docs/vscode_marketplace.md](docs/vscode_marketplace.md).
 
-Final pre-v2.0 roadmap work is aimed at stability / compatibility cleanup and release-candidate readiness. v2.0 is intended as a stage-completion release for the current static toolchain, not a breaking rewrite unless a future release plan says so.
+The Python package version for this release candidate is `2.0.0rc1`; the human-facing tag and release name should be `v2.0.0-rc.1`. The VSCode extension is versioned separately and remains available as `j1angjj.robopilot-vscode`.
 
 ## Development
 

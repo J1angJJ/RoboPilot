@@ -21,19 +21,19 @@ Talking points:
 Generate and review the migration workflow artifacts:
 
 ```bash
-robopilot migrate-plan --from examples/ros1_migration_demo --to ros2 --output .pytest_tmp_v115_manual/migration_plan.yaml
-robopilot migrate-plan-validate --plan .pytest_tmp_v115_manual/migration_plan.yaml
-robopilot migrate-scaffold-preview --plan .pytest_tmp_v115_manual/migration_plan.yaml
-robopilot migrate-scaffold --plan .pytest_tmp_v115_manual/migration_plan.yaml --output .pytest_tmp_v115_manual/ros2_scaffold
-robopilot migrate-scaffold-validate --plan .pytest_tmp_v115_manual/migration_plan.yaml --scaffold .pytest_tmp_v115_manual/ros2_scaffold
-robopilot migrate-scaffold-report --plan .pytest_tmp_v115_manual/migration_plan.yaml --scaffold .pytest_tmp_v115_manual/ros2_scaffold --output .pytest_tmp_v115_manual/scaffold_report.md
+robopilot migrate-plan --from examples/ros1_migration_demo --to ros2 --output .pytest_tmp/migration_plan.yaml
+robopilot migrate-plan-validate --plan .pytest_tmp/migration_plan.yaml
+robopilot migrate-scaffold-preview --plan .pytest_tmp/migration_plan.yaml
+robopilot migrate-scaffold --plan .pytest_tmp/migration_plan.yaml --output .pytest_tmp/ros2_scaffold
+robopilot migrate-scaffold-validate --plan .pytest_tmp/migration_plan.yaml --scaffold .pytest_tmp/ros2_scaffold
+robopilot migrate-scaffold-report --plan .pytest_tmp/migration_plan.yaml --scaffold .pytest_tmp/ros2_scaffold --output .pytest_tmp/scaffold_report.md
 ```
 
 Expected artifacts:
 
-- `.pytest_tmp_v115_manual/migration_plan.yaml`
-- `.pytest_tmp_v115_manual/ros2_scaffold/`
-- `.pytest_tmp_v115_manual/scaffold_report.md`
+- `.pytest_tmp/migration_plan.yaml`
+- `.pytest_tmp/ros2_scaffold/`
+- `.pytest_tmp/scaffold_report.md`
 
 Safety reminders:
 

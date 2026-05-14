@@ -1,6 +1,16 @@
 # Stability Policy
 
-This policy describes what is considered stable, experimental, or internal as of RoboPilot v1.0.0.
+This policy describes what is considered stable, experimental, or internal as of RoboPilot v2.0.0-rc.1.
+
+## Release Candidate Policy
+
+RoboPilot v2.0.0-rc.1 is under feature freeze.
+
+- Do not add new CLI commands during the RC phase unless a release-blocking issue requires it.
+- Do not add new product features, migration apply, automatic source conversion, ROS/ROS2 runtime execution, catkin/colcon execution, launch execution, generated node execution, new LLM behavior, or complex VSCode Webview UI.
+- Limit RC changes to bug fixes, documentation fixes, packaging fixes, and release-readiness fixes.
+- v2.0.0 final is expected to preserve v2.0.0-rc.1 behavior unless validation finds issues that must be corrected.
+- v2.0.0 is planned as a stage-completion release, not a breaking rewrite.
 
 ## Stable
 
@@ -20,7 +30,7 @@ Stable areas are expected to remain backward-compatible unless a major release n
 
 ## Experimental
 
-Experimental areas may change before v1.0 final as safety and usability improve.
+Experimental areas may change in future releases as safety and usability improve, but v2.0.0-rc.1 is feature-frozen except for release-blocking fixes.
 
 - LLM planner.
 - LLM refiner.
@@ -54,4 +64,4 @@ After v1.0.0, documented command names, safety behavior, and stable JSON keys sh
 
 Machine consumers should use documented `--json` outputs or the Python API. They should not parse Rich human-readable output.
 
-Post-v1.17 work should move toward v2.0 as a stage-completion release for the mature static toolchain. The final pre-v2.0 route is stability / compatibility cleanup and a release candidate. v2.0.0 is not necessarily a breaking rewrite; if no breaking changes are introduced, release notes should say so clearly. Before v2.0, RoboPilot should avoid migration apply, automatic source conversion, automatic source patching, ROS/ROS2 runtime execution, `catkin_make`, `colcon`, launch execution, generated node execution, new LLM agent behavior, and complex Webview UI.
+RoboPilot is now in the v2.0 release-candidate phase for the mature static toolchain. v2.0.0 is not necessarily a breaking rewrite; if no breaking changes are introduced, release notes should say so clearly. During the RC phase, RoboPilot should avoid migration apply, automatic source conversion, automatic source patching, ROS/ROS2 runtime execution, `catkin_make`, `colcon`, launch execution, generated node execution, new LLM agent behavior, and complex Webview UI.

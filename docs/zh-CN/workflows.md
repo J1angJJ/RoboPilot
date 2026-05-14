@@ -47,7 +47,7 @@ robopilot migrate-scaffold-validate --plan migration_plan.yaml --scaffold path/t
 robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/ros2_scaffold --output scaffold_report.md
 ```
 
-这是一条静态 review loop。它不会修改源 ROS1 项目，也不会自动迁移业务逻辑。
+这是一条静态 review loop。它不会修改源 ROS1 项目，也不会自动迁移业务逻辑。v2.0.0-rc.1 期间已经进入 feature freeze；除 release-blocking 修复外，不应新增命令、migration apply、自动源码转换或 ROS/ROS2 runtime 执行。
 
 详细教程见 [ROS1 到 ROS2 迁移脚手架教程](tutorial_ros1_to_ros2_migration.md)。
 

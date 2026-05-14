@@ -24,11 +24,27 @@ For Python package metadata, release candidates must use the PEP 440 form in `py
 version = "1.0.0rc1"
 ```
 
+For the v2.0.0 release candidate, use:
+
+```toml
+version = "2.0.0rc1"
+```
+
 Use the human-facing git tag form for tags and GitHub Releases:
 
 ```txt
 v1.0.0-rc.1
 ```
+
+For v2.0.0-rc.1:
+
+```txt
+v2.0.0-rc.1
+```
+
+PyPI displays the PEP 440 package version (`2.0.0rc1`). GitHub Releases and documentation should use the human-facing form (`v2.0.0-rc.1`). The final v2.0 release should use `2.0.0` in `pyproject.toml` and `v2.0.0` for the tag.
+
+The VSCode extension is versioned separately from the Python package. Do not change `vscode-extension/package.json` for a Python-only RC unless the extension package itself changes.
 
 ## Changelog
 
@@ -38,6 +54,12 @@ For a release tag, move relevant notes under a dated release heading when approp
 
 ```md
 ## [1.0.0] - YYYY-MM-DD
+```
+
+Release candidate heading example:
+
+```md
+## [2.0.0-rc.1] - YYYY-MM-DD
 ```
 
 Keep release notes focused on user-visible changes, documentation, safety behavior, compatibility, and known limitations.

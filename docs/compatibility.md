@@ -17,6 +17,8 @@ Package metadata declares:
 
 RoboPilot does not currently claim Python 3.12 or 3.13 support. Python 3.12 was not available during this release validation pass. Manual checks found Typer / CLI compatibility issues with Python 3.13, so the supported range should remain conservative until the full test suite passes on newer versions.
 
+For v2.0.0-rc.1, the Python package version uses the PEP 440 form `2.0.0rc1`; the human-facing release and tag form is `v2.0.0-rc.1`.
+
 ## Operating Systems
 
 Expected to work on:
@@ -26,6 +28,8 @@ Expected to work on:
 - macOS
 
 Current development and manual checks include Windows. CI runs on Ubuntu. Path handling uses `pathlib` to keep behavior portable.
+
+On Windows, legacy PowerShell or CMD sessions may display Rich table borders or Chinese text incorrectly unless UTF-8 output is configured. Use `PYTHONIOENCODING=utf-8`, Windows Terminal, PowerShell 7, or documented `--json` outputs for automation.
 
 ## ROS Runtime Compatibility
 
@@ -39,6 +43,8 @@ RoboPilot does not require:
 - simulator runtimes
 
 Generated files are ROS-style skeletons and pseudocode where runtime dependencies are unavailable.
+
+The VSCode extension is available from Visual Studio Marketplace as `j1angjj.robopilot-vscode`, but it remains a thin wrapper over the installed RoboPilot CLI and does not add ROS runtime behavior.
 
 ## Supported Project Categories
 

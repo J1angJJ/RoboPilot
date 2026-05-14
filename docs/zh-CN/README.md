@@ -4,6 +4,8 @@
 
 RoboPilot 默认不会运行 ROS、ROS2、`catkin_make`、`colcon`、launch 文件或生成的节点代码。
 
+当前 Python package release candidate 是 `2.0.0rc1`，面向用户的 release / tag 名称是 `v2.0.0-rc.1`。v2.0.0 计划作为阶段完成版本发布，不是 breaking rewrite。
+
 ## 快速入口
 
 - [中文 README](../../README.zh-CN.md)

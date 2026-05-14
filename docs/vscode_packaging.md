@@ -86,6 +86,6 @@ Delete that directory manually if stale migration plans, scaffold directories, o
 
 ## Marketplace Boundary
 
-The extension package metadata includes a `publisher` value for local VSIX packaging. Marketplace publishing requires confirming that this value matches the Visual Studio Marketplace publisher id.
+The extension package metadata includes a `publisher` value for local VSIX packaging. Marketplace publishing requires confirming that this value matches the Visual Studio Marketplace publisher id. The RoboPilot Python package and VSCode extension are versioned separately; do not change the extension version for a Python-only release candidate.
 
 See [VSCode Marketplace Publishing](vscode_marketplace.md) for the current Marketplace listing, install command, and future update checklist. Do not publish new Marketplace versions unless a release task explicitly asks for it.

@@ -97,7 +97,7 @@ These modules must not execute launch files, import user code, or run build tool
 
 ## Migration Planning Modules
 
-ROS1-to-ROS2 migration support is currently planning and preview only:
+ROS1-to-ROS2 migration support is currently planning, preview, conservative scaffold generation, scaffold validation, and report export only:
 
 - `migrate-plan` creates a static migration plan from detection, ROS1 inspection, and dependency analysis.
 - `migrate-plan-validate` checks plan shape and supported target values.

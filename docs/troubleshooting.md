@@ -95,13 +95,13 @@ Close editors or terminals that may be holding files open before deleting temp d
 Use a fresh output directory:
 
 ```bash
-robopilot migrate-scaffold --plan migration_plan.yaml --output .pytest_tmp_v115_manual/ros2_scaffold
+robopilot migrate-scaffold --plan migration_plan.yaml --output .pytest_tmp/ros2_scaffold
 ```
 
 Only use `--overwrite` after reviewing the target directory:
 
 ```bash
-robopilot migrate-scaffold --plan migration_plan.yaml --output .pytest_tmp_v115_manual/ros2_scaffold --overwrite
+robopilot migrate-scaffold --plan migration_plan.yaml --output .pytest_tmp/ros2_scaffold --overwrite
 ```
 
 RoboPilot overwrites only intended scaffold files, not arbitrary source project files.
@@ -111,8 +111,8 @@ RoboPilot overwrites only intended scaffold files, not arbitrary source project 
 If validation or scaffold commands report that a migration plan cannot be loaded, confirm the path and regenerate the plan if needed:
 
 ```bash
-robopilot migrate-plan --from examples/ros1_migration_demo --to ros2 --output .pytest_tmp_v115_manual/migration_plan.yaml
-robopilot migrate-plan-validate --plan .pytest_tmp_v115_manual/migration_plan.yaml
+robopilot migrate-plan --from examples/ros1_migration_demo --to ros2 --output .pytest_tmp/migration_plan.yaml
+robopilot migrate-plan-validate --plan .pytest_tmp/migration_plan.yaml
 ```
 
 ## Invalid Migration Plan
@@ -130,8 +130,8 @@ If required fields are missing or the target is unsupported, regenerate the plan
 If scaffold validation reports a missing scaffold path, generate the scaffold first:
 
 ```bash
-robopilot migrate-scaffold --plan migration_plan.yaml --output .pytest_tmp_v115_manual/ros2_scaffold
-robopilot migrate-scaffold-validate --plan migration_plan.yaml --scaffold .pytest_tmp_v115_manual/ros2_scaffold
+robopilot migrate-scaffold --plan migration_plan.yaml --output .pytest_tmp/ros2_scaffold
+robopilot migrate-scaffold-validate --plan migration_plan.yaml --scaffold .pytest_tmp/ros2_scaffold
 ```
 
 ## Missing `MIGRATION_NOTES.md`

@@ -130,15 +130,15 @@ robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/
 
 This workflow is read-only for the source ROS1 project. `migrate-preview` reports impact against the existing source project. `migrate-scaffold-preview` previews the ROS2 target package scaffold. `migrate-scaffold` writes conservative placeholder scaffold files only to the explicit output directory, refuses overwrites by default, and does not automatically migrate business logic. `migrate-scaffold-validate` is read-only and checks the generated scaffold against the plan before manual migration work continues. `migrate-scaffold-report` turns validation results into a Markdown report and writes only the explicit report file when `--output` is provided.
 
-This completes the first migration scaffold review loop. Final pre-v2.0 work should focus on stability / compatibility cleanup and release-candidate readiness for this existing loop rather than migration apply, automatic source conversion, ROS/ROS2 execution, catkin/colcon execution, or launch execution before v2.0.
+This completes the first migration scaffold review loop. During v2.0.0-rc.1, feature freeze is active: work should focus on validation and release-blocking fixes for this existing loop rather than migration apply, automatic source conversion, ROS/ROS2 execution, catkin/colcon execution, or launch execution before v2.0 final.
 
 For a runnable no-ROS-required walkthrough, use the checked-in demo package:
 
 ```bash
 robopilot detect examples/ros1_migration_demo
-robopilot migrate-plan --from examples/ros1_migration_demo --to ros2 --output .pytest_tmp_v115_manual/migration_plan.yaml
-robopilot migrate-scaffold --plan .pytest_tmp_v115_manual/migration_plan.yaml --output .pytest_tmp_v115_manual/ros2_scaffold
-robopilot migrate-scaffold-report --plan .pytest_tmp_v115_manual/migration_plan.yaml --scaffold .pytest_tmp_v115_manual/ros2_scaffold --output .pytest_tmp_v115_manual/scaffold_report.md
+robopilot migrate-plan --from examples/ros1_migration_demo --to ros2 --output .pytest_tmp/migration_plan.yaml
+robopilot migrate-scaffold --plan .pytest_tmp/migration_plan.yaml --output .pytest_tmp/ros2_scaffold
+robopilot migrate-scaffold-report --plan .pytest_tmp/migration_plan.yaml --scaffold .pytest_tmp/ros2_scaffold --output .pytest_tmp/scaffold_report.md
 ```
 
 See [Tutorial: ROS1 to ROS2 Migration Scaffold Workflow](tutorial_ros1_to_ros2_migration.md) for the full CLI tutorial, [Tutorial: VSCode-Assisted Migration Scaffold Workflow](tutorial_vscode_migration_workflow.md) for the extension-guided version, [Demo Walkthrough](demo_walkthrough.md) for a short presentation script, and [Troubleshooting](troubleshooting.md) for common setup and migration workflow issues.

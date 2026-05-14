@@ -83,9 +83,11 @@ robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/
 
 ## 项目状态
 
-当前版本线：`v1.18.0`。
+当前版本线：`v2.0.0-rc.1`。
 
-RoboPilot 的 v1 基线是 no-ROS-required 静态工程工作流：
+这是 RoboPilot v2.0.0 的第一个 release candidate。稳定用户可以继续使用最新的 v1.x 版本，等待 RC 验证完成。v2.0.0 final 计划作为阶段完成版本发布，不是 breaking rewrite。
+
+RoboPilot 的 release-candidate 基线是 no-ROS-required 静态工程工作流：
 
 ```txt
 plan -> refine -> diff -> validate -> generate
@@ -105,6 +107,8 @@ code --install-extension j1angjj.robopilot-vscode
 ```
 
 扩展不会运行 ROS、ROS2、`catkin_make`、`colcon`、launch 文件或生成节点，也不会自动完成完整迁移。
+
+Python package 的 RC 版本号是 `2.0.0rc1`；面向用户的 tag / release 名称应使用 `v2.0.0-rc.1`。VSCode extension 单独版本化，当前仍使用 Marketplace 上的 `j1angjj.robopilot-vscode`。
 
 ## 开发
 

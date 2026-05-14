@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+No changes yet.
+
+## [2.0.0-rc.1] - 2026-05-14
+
+### Changed
+
+- Prepared RoboPilot `v2.0.0-rc.1` as the first release candidate for the v2.0.0 stage-completion release.
+- Updated Python package metadata and generated demo metadata to the PEP 440 release-candidate version `2.0.0rc1`.
+- Kept the human-facing tag and release form documented as `v2.0.0-rc.1`.
+- Kept the VSCode extension version separate from the Python package version.
+- Documented the v2.0.0 release-candidate feature freeze: no new product features, no new CLI commands, no migration apply, no automatic ROS1-to-ROS2 source conversion, no ROS/ROS2 runtime execution, no catkin/colcon execution, no launch execution, no generated node execution, no new LLM behavior, and no complex VSCode Webview UI.
+- Clarified that v2.0.0 is planned as a stage-completion release, not a breaking rewrite.
+- Focused this release candidate on validation readiness for PyPI packaging, VSCode Marketplace extension availability, English and Chinese documentation, examples, JSON contracts, API docs, and the no-ROS-required migration scaffold workflow.
+
+### Verified
+
+- Release-candidate validation should include full Python tests, Python build and twine checks, VSCode extension compile/test/package checks, and the no-ROS-required CLI migration scaffold workflow.
+
+## [1.18.0] - 2026-05-14
+
 ### Added
 
 - v1.18.0 stability, compatibility, documentation, packaging, and release-readiness cleanup before the v2.0 release candidate.

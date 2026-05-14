@@ -1213,9 +1213,9 @@ Expected behavior:
 - avoided committed secrets or hardcoded PAT values
 - avoided new VSCode product features during publishing work
 
-## Current: v1.18.0 Stability / Compatibility / Cleanup
+## Completed: v1.18.0 Stability / Compatibility / Cleanup
 
-Status: Current priority
+Status: Completed
 
 Goal:
 
@@ -1245,9 +1245,9 @@ Expected behavior:
 - remove stale roadmap promises
 - do not add major features
 
-## Future: v2.0.0-rc.1
+## Current: v2.0.0-rc.1
 
-Status: Planned
+Status: Current priority
 
 Goal:
 
@@ -1268,6 +1268,10 @@ Expected behavior:
 - validate examples and tutorials
 - validate English and Chinese docs
 - prepare release notes
+- use Python package version `2.0.0rc1`
+- use human-facing tag / release name `v2.0.0-rc.1`
+- keep the VSCode extension version tracked separately unless extension package files change
+- preserve v2.0.0 RC behavior for v2.0.0 final unless release-candidate validation finds issues
 
 ## Future: v2.0.0
 
@@ -1398,6 +1402,6 @@ v1.7.0 Migration Scaffold Preview
 v1.8.0 Migration Scaffold Generate
 ```
 
-Next planned milestone after v1.18.0: v2.0.0-rc.1.
+Next planned milestone after v2.0.0-rc.1: v2.0.0.
 
 RoboPilot should grow as a practical no-ROS-required ROS engineering toolchain, with CLI as the stable core and beginner-friendly interfaces layered on top.
