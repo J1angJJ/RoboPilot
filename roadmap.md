@@ -1245,9 +1245,9 @@ Expected behavior:
 - remove stale roadmap promises
 - do not add major features
 
-## Current: v2.0.0-rc.1
+## Completed: v2.0.0-rc.1
 
-Status: Current priority
+Status: Completed
 
 Goal:
 
@@ -1271,17 +1271,18 @@ Expected behavior:
 - use Python package version `2.0.0rc1`
 - use human-facing tag / release name `v2.0.0-rc.1`
 - keep the VSCode extension version tracked separately unless extension package files change
-- preserve v2.0.0 RC behavior for v2.0.0 final unless release-candidate validation finds issues
+- completed validation with no release-blocking issues found
+- preserved v2.0.0 RC behavior for v2.0.0 final
 
-## Future: v2.0.0
+## Completed: v2.0.0
 
-Status: Planned
+Status: Current stable release
 
 Goal:
 
 Mark RoboPilot's static engineering and migration assistant workflow as a completed stage.
 
-v2.0.0 is a stage-completion milestone, not necessarily a breaking rewrite. If no breaking changes are introduced, documentation should say: "v2.0.0 is a stage-completion release, not a breaking rewrite."
+v2.0.0 is a stage-completion milestone, not a breaking rewrite.
 
 Expected behavior:
 
@@ -1297,7 +1298,7 @@ Expected behavior:
 - migration scaffold preview / generate / validate / report workflow
 - no-ROS-required safety model
 
-Explicit non-goals before v2.0:
+Explicit non-goals preserved in v2.0:
 
 - no migration apply
 - no automatic ROS1-to-ROS2 business logic conversion
@@ -1310,6 +1311,18 @@ Explicit non-goals before v2.0:
 - no generated node execution
 - no new LLM agent behavior
 - no complex Webview UI
+
+## Future Direction After v2.0.0
+
+Status: Conservative maintenance direction
+
+Future work should avoid speculative rewrites and focus on:
+
+- maintenance and bug fixes
+- compatibility improvements
+- documentation and tutorial polish
+- optional VSCode UI polish while keeping the extension a thin CLI/API wrapper
+- carefully scoped ROS ecosystem support that preserves no-ROS-required behavior
 
 ## Long-term: VSCode Extension Expansion
 
@@ -1402,6 +1415,6 @@ v1.7.0 Migration Scaffold Preview
 v1.8.0 Migration Scaffold Generate
 ```
 
-Next planned milestone after v2.0.0-rc.1: v2.0.0.
+Next work after v2.0.0 should be conservative maintenance, bug fixes, compatibility improvements, documentation quality, and carefully scoped polish.
 
 RoboPilot should grow as a practical no-ROS-required ROS engineering toolchain, with CLI as the stable core and beginner-friendly interfaces layered on top.

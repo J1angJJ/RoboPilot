@@ -34,7 +34,7 @@ Marketplace 发布独立于 Python package 发布和本地 VSIX 打包。
 
 RoboPilot VSCode extension 仍然是已安装 `robopilot` CLI 的薄包装。扩展不会运行 ROS、ROS2、`catkin_make`、`colcon`、launch 文件或生成节点，也不会自动完成完整 ROS1 到 ROS2 迁移。
 
-RoboPilot Python package 和 VSCode extension 分开版本化。RoboPilot v2.0.0-rc.1 的 Python package 版本是 `2.0.0rc1`；除非有单独的 extension release 任务，否则 VSCode extension 保持自己的 Marketplace 版本。
+RoboPilot Python package 和 VSCode extension 分开版本化。RoboPilot v2.0.0 的 Python package 版本是 `2.0.0`；除非有单独的 extension release 任务，否则 VSCode extension 保持自己的 Marketplace 版本。
 
 ## Publisher id
 

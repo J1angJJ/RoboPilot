@@ -10,7 +10,7 @@ Marketplace publishing is separate from local VSIX packaging and from the Python
 
 RoboPilot's VSCode extension remains a thin wrapper over the installed RoboPilot CLI. Publishing the extension does not add ROS, ROS2, catkin, colcon, launch execution, generated node execution, or new LLM behavior.
 
-The RoboPilot Python package and VSCode extension are versioned separately. RoboPilot v2.0.0-rc.1 uses Python package version `2.0.0rc1`; the VSCode extension remains at its own Marketplace version unless an extension release task changes it.
+The RoboPilot Python package and VSCode extension are versioned separately. RoboPilot v2.0.0 uses Python package version `2.0.0`; the VSCode extension remains at its own Marketplace version unless an extension release task changes it.
 
 Users still need the RoboPilot CLI installed:
 

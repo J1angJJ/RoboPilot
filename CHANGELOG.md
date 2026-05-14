@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 No changes yet.
 
+## [2.0.0] - 2026-05-14
+
+### Changed
+
+- Promoted RoboPilot from `v2.0.0-rc.1` to the stable `v2.0.0` stage-completion release.
+- Updated Python package metadata and generated demo metadata from `2.0.0rc1` to `2.0.0`.
+- Kept the VSCode extension version separate from the Python package version.
+- Confirmed v2.0.0-rc.1 validation completed successfully with no release-blocking issues found.
+- Confirmed no major product features, CLI commands, migration apply, automatic ROS1-to-ROS2 source conversion, ROS/ROS2 runtime execution, catkin/colcon execution, launch execution, generated node execution, new LLM behavior, or complex VSCode Webview UI were added after the release candidate.
+- Clarified that v2.0.0 is a stable stage-completion release for the current no-ROS-required static ROS engineering workflow, not a breaking rewrite.
+- Confirmed PyPI packaging readiness, VSCode Marketplace extension availability, English and Chinese documentation, examples, JSON contracts, API docs, and the migration scaffold workflow as part of the v2.0.0 release scope.
+
 ## [2.0.0-rc.1] - 2026-05-14
 
 ### Changed

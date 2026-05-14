@@ -143,6 +143,6 @@ Users still need the RoboPilot CLI installed:
 pip install robopilot
 ```
 
-RoboPilot's Python package and VSCode extension are versioned separately. The v2.0.0-rc.1 Python package uses `2.0.0rc1`; the Marketplace extension keeps its own version unless an extension release changes it.
+RoboPilot's Python package and VSCode extension are versioned separately. The v2.0.0 Python package uses `2.0.0`; the Marketplace extension keeps its own version unless an extension release changes it.
 
 Marketplace publishing notes are documented in [VSCode Marketplace Publishing](vscode_marketplace.md).

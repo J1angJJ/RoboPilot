@@ -17,7 +17,7 @@ Package metadata declares:
 
 RoboPilot does not currently claim Python 3.12 or 3.13 support. Python 3.12 was not available during this release validation pass. Manual checks found Typer / CLI compatibility issues with Python 3.13, so the supported range should remain conservative until the full test suite passes on newer versions.
 
-For v2.0.0-rc.1, the Python package version uses the PEP 440 form `2.0.0rc1`; the human-facing release and tag form is `v2.0.0-rc.1`.
+For v2.0.0 final, the Python package version is `2.0.0`; the human-facing release and tag form is `v2.0.0`.
 
 ## Operating Systems
 

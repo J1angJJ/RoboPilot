@@ -44,7 +44,19 @@ v2.0.0-rc.1
 
 PyPI displays the PEP 440 package version (`2.0.0rc1`). GitHub Releases and documentation should use the human-facing form (`v2.0.0-rc.1`). The final v2.0 release should use `2.0.0` in `pyproject.toml` and `v2.0.0` for the tag.
 
-The VSCode extension is versioned separately from the Python package. Do not change `vscode-extension/package.json` for a Python-only RC unless the extension package itself changes.
+For the v2.0.0 final release, use:
+
+```toml
+version = "2.0.0"
+```
+
+Use the human-facing tag form:
+
+```txt
+v2.0.0
+```
+
+The VSCode extension is versioned separately from the Python package. Do not change `vscode-extension/package.json` for a Python-only release unless the extension package itself changes.
 
 ## Changelog
 
@@ -60,6 +72,12 @@ Release candidate heading example:
 
 ```md
 ## [2.0.0-rc.1] - YYYY-MM-DD
+```
+
+Stable v2.0.0 heading example:
+
+```md
+## [2.0.0] - YYYY-MM-DD
 ```
 
 Keep release notes focused on user-visible changes, documentation, safety behavior, compatibility, and known limitations.

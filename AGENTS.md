@@ -39,7 +39,7 @@ RoboPilot should avoid competing directly with general-purpose coding agents. It
 The current stable baseline is:
 
 ```txt
-v1.18.0
+v2.0.0
 ```
 
 The stable baseline includes:
@@ -69,37 +69,37 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v2.0.0-rc.1
+v2.0.0
 ```
 
-The goal is to validate the v2.0.0 stage-completion release candidate under feature freeze.
+The goal is to maintain the stable v2.0.0 stage-completion release.
 
-This milestone should focus on:
+This release represents:
 
 - preserving existing CLI behavior
-- validating the complete no-ROS-required workflow
-- validating PyPI package metadata, build, and twine checks
-- validating VSCode extension compile/test/package checks without publishing
-- validating examples, tutorials, JSON contracts, API docs, and English/Chinese docs
-- fixing only release-blocking bugs, documentation issues, or packaging issues
+- the complete no-ROS-required static ROS engineering workflow
+- PyPI package metadata and build readiness
+- VSCode Marketplace extension availability
+- examples, tutorials, JSON contracts, API docs, and English/Chinese docs
+- stable CLI and documented JSON contract expectations
 - no ignored build artifacts committed
 
-Feature freeze is active. This milestone must not add product features, Python CLI commands, migration apply, automatic source conversion, ROS runtime execution, ROS2 runtime execution, automatic colcon execution, launch execution, new LLM behavior, or broad VSCode UI changes.
+v2.0.0 is a stage-completion release, not a breaking rewrite. Future changes should remain conservative and preserve documented CLI behavior, JSON contracts, and the no-ROS-required safety model unless a compatibility change is explicitly planned and documented.
 
 ## Near-term Direction
 
 After v1.15.0, the final pre-v2.0 direction is:
 
 ```txt
-v2.0.0-rc.1
-v2.0.0
+v2.0.0-rc.1 completed
+v2.0.0 completed
 ```
 
 The VSCode extension should be a thin beginner-friendly interface over the CLI / API layer. It should not duplicate RoboPilot core logic.
 
 RoboPilot should treat v2.0.0 as a stage-completion milestone for the mature v1.x toolchain, not as an excuse for risky expansion. Unless explicitly planned otherwise, v2.0.0 is not intended to be a breaking rewrite.
 
-During the v2.0.0 release-candidate phase, do not pursue full automatic ROS1-to-ROS2 migration, migration apply, automatic source code conversion, automatic source patching, automatic ROS/ROS2 execution, `catkin_make`, `colcon`, launch execution, generated node execution, new LLM agent behavior, or complex Webview UI. Focus only on release-blocking fixes and release readiness for the existing static migration assistant workflow.
+After v2.0.0, do not pursue risky expansion by default. Any future work should prioritize maintenance, bug fixes, compatibility improvements, documentation quality, optional VSCode UI polish, and carefully scoped ROS ecosystem support while preserving the existing static migration assistant workflow.
 
 v2.0.0 should represent:
 
@@ -617,10 +617,10 @@ robopilot deps --help
 Implement:
 
 ```txt
-v2.0.0-rc.1
+v2.0.0
 ```
 
-This milestone should prepare and validate the first v2.0.0 release candidate.
+This milestone prepares the final v2.0.0 stable stage-completion release after successful v2.0.0-rc.1 validation.
 
 Suggested implementation items:
 
