@@ -9,11 +9,11 @@
 
 ![RoboPilot 横幅](docs/assets/branding/robopilot-banner.png)
 
-RoboPilot 是一个不依赖 ROS 的 ROS 风格项目与 ROS1-to-ROS2 migration scaffold 静态工程工具链。
+RoboPilot 是一个无需 ROS 环境即可使用的 ROS 风格工程静态辅助工具链，面向静态检查、依赖分析和 ROS1 到 ROS2 迁移 scaffold 工作流。
 
 它帮助机器人学习者和开发者在不安装 ROS、ROS2、catkin、colcon、仿真器或机器人硬件的情况下，规划、验证、生成、检查、更新、回滚、分析和迁移 ROS/ROS2 风格项目结构。
 
-RoboPilot 不会运行 ROS、ROS2、launch 文件、生成节点、`catkin_make` 或 `colcon`。
+RoboPilot 不会运行 ROS、ROS2、launch 文件、生成节点、`catkin_make` 或 `colcon`。迁移 scaffold 是保守的人工审查起点，不是完整自动迁移。
 
 ## 快速开始
 
@@ -86,6 +86,8 @@ robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/
 - [VSCode 辅助迁移教程](docs/zh-CN/tutorial_vscode_migration_workflow.md)
 - [常见问题排查](docs/zh-CN/troubleshooting.md)
 - [主要工作流](docs/zh-CN/workflows.md)
+- [VSCode 扩展](docs/zh-CN/vscode_extension.md)
+- [VSCode Marketplace](docs/zh-CN/vscode_marketplace.md)
 - [已知限制](docs/zh-CN/known_limitations.md)
 - [演示讲稿](docs/zh-CN/demo_walkthrough.md)
 

@@ -28,9 +28,10 @@ It helps robotics learners and developers plan, refine, validate, generate, insp
 - Optionally uses an LLM only to produce or refine validated `ProjectSpec` data.
 - Provides a lightweight Python API layer for scripts and future integrations.
 - Documents stable top-level JSON keys for integration-oriented `--json` outputs.
-- Includes a VSCode extension source tree that wraps the RoboPilot CLI JSON outputs, including the migration scaffold review workflow.
+- Provides a VSCode Marketplace extension that wraps RoboPilot CLI JSON outputs, including the migration scaffold review workflow.
 
 RoboPilot does not run ROS, ROS2, launch files, generated code, `catkin_make`, or `colcon`.
+Migration scaffolds are conservative review artifacts, not full automatic migrations; manual review is still required.
 
 ## Quick Start
 
@@ -136,6 +137,7 @@ robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/
 - [VSCode Migration Tutorial](docs/tutorial_vscode_migration_workflow.md)
 - [Demo Walkthrough](docs/demo_walkthrough.md)
 - [Troubleshooting](docs/troubleshooting.md)
+- [Examples](examples/README.md)
 - [Developer Setup](docs/developer_setup.md)
 - [Testing](docs/testing.md)
 - [Release Process](docs/release_process.md)
@@ -144,7 +146,6 @@ robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/
 - [Known Limitations](docs/known_limitations.md)
 - [Stability Policy](docs/stability_policy.md)
 - [Demo Script](docs/demo_script.md)
-- [v1.0.0 Scope](docs/v1_scope.md)
 - [Changelog](CHANGELOG.md)
 - [Roadmap](roadmap.md)
 
