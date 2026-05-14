@@ -3,8 +3,13 @@
 [English](README.md) | [中文文档](docs/zh-CN/README.md)
 
 [![Tests](https://github.com/J1angJJ/RoboPilot/actions/workflows/tests.yml/badge.svg)](https://github.com/J1angJJ/RoboPilot/actions/workflows/tests.yml)
+[![PyPI](https://img.shields.io/pypi/v/robopilot)](https://pypi.org/project/robopilot/)
+[![Python](https://img.shields.io/pypi/pyversions/robopilot)](https://pypi.org/project/robopilot/)
+[![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/j1angjj.robopilot-vscode)](https://marketplace.visualstudio.com/items?itemName=j1angjj.robopilot-vscode)
 
-RoboPilot 是一个不依赖 ROS 的 ROS 风格项目静态工程工具链。
+![RoboPilot 横幅](docs/assets/branding/robopilot-banner.png)
+
+RoboPilot 是一个不依赖 ROS 的 ROS 风格项目与 ROS1-to-ROS2 migration scaffold 静态工程工具链。
 
 它帮助机器人学习者和开发者在不安装 ROS、ROS2、catkin、colcon、仿真器或机器人硬件的情况下，规划、验证、生成、检查、更新、回滚、分析和迁移 ROS/ROS2 风格项目结构。
 
@@ -14,21 +19,26 @@ RoboPilot 不会运行 ROS、ROS2、launch 文件、生成节点、`catkin_make`
 
 当前支持 Python 3.10 和 3.11。包元数据声明 `>=3.10,<3.12`；Python 3.12 暂不声明支持，Python 3.13 暂不支持。
 
-从源码安装：
+从 PyPI 安装：
+
+```bash
+pip install robopilot
+robopilot --help
+```
+
+安装 VSCode 扩展：
+
+```bash
+code --install-extension j1angjj.robopilot-vscode
+```
+
+从源码安装只作为开发方式：
 
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
 python -m pip install -U pip
 pip install -e ".[dev]"
-robopilot --help
-```
-
-PyPI 发布后：
-
-```bash
-pip install robopilot
-robopilot --help
 ```
 
 Windows 上如果 pytest 临时目录有权限问题：

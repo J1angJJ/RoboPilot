@@ -3,8 +3,13 @@
 [English](README.md) | [中文](README.zh-CN.md)
 
 [![Tests](https://github.com/J1angJJ/RoboPilot/actions/workflows/tests.yml/badge.svg)](https://github.com/J1angJJ/RoboPilot/actions/workflows/tests.yml)
+[![PyPI](https://img.shields.io/pypi/v/robopilot)](https://pypi.org/project/robopilot/)
+[![Python](https://img.shields.io/pypi/pyversions/robopilot)](https://pypi.org/project/robopilot/)
+[![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/j1angjj.robopilot-vscode)](https://marketplace.visualstudio.com/items?itemName=j1angjj.robopilot-vscode)
 
-RoboPilot is a no-ROS-required static engineering toolchain for ROS-style projects.
+![RoboPilot Banner](docs/assets/branding/robopilot-banner.png)
+
+RoboPilot is a no-ROS-required static engineering toolchain for ROS-style projects and ROS1-to-ROS2 migration scaffolds.
 
 It helps robotics learners and developers plan, refine, validate, generate, inspect, update, roll back, document, and review ROS/ROS2-style project structure without installing ROS, ROS2, catkin, colcon, simulator runtimes, or robot hardware.
 
@@ -31,21 +36,26 @@ RoboPilot does not run ROS, ROS2, launch files, generated code, `catkin_make`, o
 
 Supported Python versions for this release line are Python 3.10 and 3.11. Package metadata declares `>=3.10,<3.12`; Python 3.12 and 3.13 are not claimed until the test suite passes there.
 
-Install from source for now:
+Install from PyPI:
+
+```bash
+pip install robopilot
+robopilot --help
+```
+
+Install the VSCode extension from Visual Studio Marketplace:
+
+```bash
+code --install-extension j1angjj.robopilot-vscode
+```
+
+Source install is for development:
 
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
 python -m pip install -U pip
 pip install -e ".[dev]"
-robopilot --help
-```
-
-After PyPI release:
-
-```bash
-pip install robopilot
-robopilot --help
 ```
 
 On Windows, if pytest has temporary directory permission issues:
