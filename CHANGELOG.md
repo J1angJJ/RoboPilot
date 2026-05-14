@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v1.16.0 Chinese documentation expansion and encoding guardrails.
+- `docs/zh-CN/` Chinese documentation index, tutorials, troubleshooting, VSCode, workflow, limitation, and demo walkthrough docs.
+- `.editorconfig` UTF-8 defaults for common source and documentation files.
+- `tests/test_docs_encoding.py` to verify Chinese Markdown UTF-8 decoding, no BOM, no replacement characters, and non-empty files.
 - v1.15.0 migration workflow UX polish for the existing no-ROS-required scaffold review loop.
 - `docs/troubleshooting.md` with CLI, VSCode, conda, Windows encoding, pytest temp, scaffold conflict, missing plan, missing scaffold, and Python version guidance.
 - v1.14.0 examples, tutorials, and demo pack for the no-ROS-required migration scaffold workflow.
@@ -85,6 +89,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Rewrote `README.zh-CN.md` as a concise UTF-8 Chinese homepage that links to `docs/zh-CN/README.md`.
+- Updated README, developer setup, testing docs, roadmap, and agent guidance for v1.16.0 Chinese documentation and encoding checks.
+- Updated package and generated demo metadata to `1.16.0`.
 - Improved migration plan, scaffold preview, scaffold generation, scaffold validation, and scaffold report next-step guidance.
 - Improved migration scaffold report readability with a recommended next action and `What To Do Next` section.
 - Updated migration tutorials, demo walkthrough, command reference, README links, roadmap, and agent guidance for v1.15.0 UX polish.

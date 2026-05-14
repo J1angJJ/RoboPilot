@@ -37,6 +37,14 @@ On Windows, if pytest cannot access the default temporary directory, use the pro
 python -m pytest --basetemp=".pytest_tmp" -p no:cacheprovider
 ```
 
+Run Chinese Markdown encoding checks:
+
+```bash
+python -m pytest tests/test_docs_encoding.py
+```
+
+Chinese Markdown files should be UTF-8 without BOM. Do not save them as GBK, ANSI, or UTF-8 with BOM.
+
 ## Run Selected Tests
 
 Run one file:

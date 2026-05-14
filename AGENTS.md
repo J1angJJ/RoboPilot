@@ -39,7 +39,7 @@ RoboPilot should avoid competing directly with general-purpose coding agents. It
 The current stable baseline is:
 
 ```txt
-v1.14.0
+v1.15.0
 ```
 
 The stable baseline includes:
@@ -56,6 +56,8 @@ The stable baseline includes:
 - ROS1-to-ROS2 migration planning
 - migration plan validation and diff
 - migration preview
+- migration scaffold preview / generate / validate / report workflow
+- examples, tutorials, demo pack, and migration workflow UX polish
 - optional LLM planner / refiner boundaries
 
 Do not break the v1.0.0 command surface or documented safety model unless the task explicitly asks for a planned compatibility change.
@@ -65,35 +67,33 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v1.15.0 Migration Workflow UX Polish
+v1.16.0 Chinese Documentation Expansion + Encoding Guardrails
 ```
 
-The goal is to polish the existing migration scaffold workflow user experience before the v2.0 stabilization phase.
+The goal is to expand beginner-facing Chinese documentation so Chinese users can learn and use RoboPilot without relying only on English docs.
 
 This milestone should focus on:
 
-- clearer migration command output and next-step guidance
-- clearer common error messages
-- more readable migration scaffold reports
-- beginner-friendly troubleshooting documentation
-- polished CLI and VSCode migration tutorials
-- preserving existing CLI and JSON contracts
-- no ROS, ROS2, catkin, colcon, launch execution, generated code execution, or generated module imports
+- `docs/zh-CN/README.md` as a Chinese documentation index
+- Chinese versions of key beginner-facing tutorials and workflow docs
+- Chinese troubleshooting, VSCode extension, VSIX packaging, Marketplace, known limitations, and demo walkthrough docs
+- concise `README.zh-CN.md` that links to the Chinese documentation index
+- command names kept in English
+- technical terms translated clearly and naturally
+- UTF-8 without BOM guardrails for Chinese Markdown
+- `tests/test_docs_encoding.py` coverage for Chinese documentation encoding
+- no product behavior changes
 
-This milestone must not add migration apply, automatic source conversion, ROS runtime execution, ROS2 runtime execution, automatic colcon execution, launch execution, new LLM behavior, or broad new product features.
+This milestone must not add product features, CLI commands, migration apply, automatic source conversion, ROS runtime execution, ROS2 runtime execution, automatic colcon execution, launch execution, new LLM behavior, or broad VSCode UI changes.
 
 ## Near-term Direction
 
-After v1.10.0, the recommended direction is:
+After v1.15.0, the final pre-v2.0 direction is:
 
 ```txt
-v1.10.0 Migration Scaffold Report
-v1.11.0 VSCode Extension Migration Workflow Polish
-v1.12.0 VSCode Extension VSIX Packaging
-v1.13.0 VSCode Marketplace Publish Preparation
-v1.14.0 Examples / Tutorials / Demo Pack
-v1.15.0 Migration Workflow UX Polish
-v1.16.0 Stability / Compatibility / Cleanup
+v1.16.0 Chinese Documentation Expansion + Encoding Guardrails
+v1.17.0 VSCode Marketplace Publish
+v1.18.0 Stability / Compatibility / Cleanup
 v2.0.0-rc.1
 v2.0.0
 ```
@@ -102,7 +102,23 @@ The VSCode extension should be a thin beginner-friendly interface over the CLI /
 
 RoboPilot should treat v2.0.0 as a stage-completion milestone for the mature v1.x toolchain, not as an excuse for risky expansion. Unless explicitly planned otherwise, v2.0.0 is not intended to be a breaking rewrite.
 
-Before v2.0.0, do not pursue full automatic ROS1-to-ROS2 migration, migration apply, automatic source code conversion, automatic ROS/ROS2 execution, automatic `colcon` execution, or launch execution. Focus on making the existing static migration assistant workflow usable, documented, beginner-friendly, and VSCode-accessible.
+Before v2.0.0, do not pursue full automatic ROS1-to-ROS2 migration, migration apply, automatic source code conversion, automatic source patching, automatic ROS/ROS2 execution, `catkin_make`, `colcon`, launch execution, generated node execution, new LLM agent behavior, or complex Webview UI. Focus on Chinese documentation, Marketplace publishing, final stability cleanup, and release readiness for the existing static migration assistant workflow.
+
+v2.0.0 should represent:
+
+- PyPI-distributed CLI
+- Python API layer
+- documented JSON contracts
+- optional VSCode extension
+- English and Chinese documentation
+- examples, tutorials, and demo pack
+- static ROS1 / ROS2 inspection
+- dependency analysis
+- ROS1-to-ROS2 migration planning
+- migration scaffold preview / generate / validate / report workflow
+- no-ROS-required safety model
+
+If no breaking changes are introduced, v2.0.0 should be described as a stage-completion release, not a breaking rewrite.
 
 ## Important Constraints
 
@@ -343,6 +359,14 @@ Avoid:
 - dense README content that should live in `docs/`
 - duplicated command documentation across many files
 - outdated roadmap promises
+
+Chinese documentation rules:
+
+- Chinese Markdown must be UTF-8 without BOM.
+- Do not use GBK, ANSI, or UTF-8 with BOM.
+- Avoid wholesale rewrites for encoding-only changes.
+- Prefer minimal patches.
+- Use `python -m pytest tests/test_docs_encoding.py` to verify Chinese documentation encoding.
 
 ## Safety Rules
 
@@ -596,20 +620,27 @@ robopilot deps --help
 Implement:
 
 ```txt
-v1.15.0 Migration Workflow UX Polish
+v1.16.0 Chinese Documentation Expansion + Encoding Guardrails
 ```
 
-This milestone should improve consistency, readability, errors, reports, and troubleshooting for the existing no-ROS-required migration scaffold review loop.
+This milestone should expand Chinese documentation for the existing no-ROS-required RoboPilot workflow and add encoding guardrails without changing product behavior.
 
 Suggested implementation items:
 
 ```txt
-src/robopilot/migration/
-src/robopilot/main.py
-docs/tutorial_ros1_to_ros2_migration.md
-docs/tutorial_vscode_migration_workflow.md
-docs/demo_walkthrough.md
-docs/troubleshooting.md
+docs/zh-CN/README.md
+docs/zh-CN/tutorial_ros1_to_ros2_migration.md
+docs/zh-CN/tutorial_vscode_migration_workflow.md
+docs/zh-CN/troubleshooting.md
+docs/zh-CN/vscode_extension.md
+docs/zh-CN/vscode_packaging.md
+docs/zh-CN/vscode_marketplace.md
+docs/zh-CN/workflows.md
+docs/zh-CN/known_limitations.md
+docs/zh-CN/demo_walkthrough.md
+README.zh-CN.md
+.editorconfig
+tests/test_docs_encoding.py
 ```
 
-Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, automatic source conversion, actual VSCode Marketplace publishing, real tokens, or new LLM behavior during this milestone unless explicitly requested.
+Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, automatic source conversion, VSCode Marketplace publishing, real tokens, new CLI commands, Python logic changes, VSCode extension code changes, tests, or new LLM behavior during this milestone unless explicitly requested.

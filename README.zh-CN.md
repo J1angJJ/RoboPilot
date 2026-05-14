@@ -1,33 +1,18 @@
 # RoboPilot
 
-[English](README.md) | [中文](README.zh-CN.md)
+[English](README.md) | [中文文档](docs/zh-CN/README.md)
 
 [![Tests](https://github.com/J1angJJ/RoboPilot/actions/workflows/tests.yml/badge.svg)](https://github.com/J1angJJ/RoboPilot/actions/workflows/tests.yml)
 
-RoboPilot 是一个不依赖 ROS 环境的 ROS 风格项目静态工程工具链。
+RoboPilot 是一个不依赖 ROS 的 ROS 风格项目静态工程工具链。
 
-它帮助机器人学习者和开发者在不安装 ROS、ROS2、catkin、colcon、仿真器或机器人硬件的情况下，规划、校验、生成、检查、更新、回滚、分析和迁移 ROS/ROS2 风格项目结构。
-
-## RoboPilot 能做什么
-
-- 从任务描述创建并校验 `ProjectSpec`。
-- 生成确定性的 ROS 风格 Python package 骨架。
-- 在生成前 refine 和 diff spec。
-- 通过 apply-preview、apply-plan、apply、rollback、history 形成安全更新闭环。
-- 静态 inspect 项目并导出报告。
-- 检测 RoboPilot、ROS1、ROS2、mixed、non-ROS 和 unknown 项目类型。
-- 静态检查 ROS1 catkin 和 ROS2 ament package。
-- 静态分析声明依赖和检测到的依赖使用。
-- 生成、校验、diff 和 preview ROS1 到 ROS2 的迁移计划。
-- 提供离线错误日志分析和 Mermaid workflow graph 工具。
-- 可选使用 LLM，但只用于生成或 refine 已校验的 `ProjectSpec` 数据。
-- 提供轻量 Python API 和 VSCode extension 源码，并支持 migration scaffold workflow。
+它帮助机器人学习者和开发者在不安装 ROS、ROS2、catkin、colcon、仿真器或机器人硬件的情况下，规划、验证、生成、检查、更新、回滚、分析和迁移 ROS/ROS2 风格项目结构。
 
 RoboPilot 不会运行 ROS、ROS2、launch 文件、生成节点、`catkin_make` 或 `colcon`。
 
-## Quick Start
+## 快速开始
 
-当前支持 Python 3.10 和 3.11。包元数据声明 `>=3.10,<3.12`；Python 3.12 和 3.13 暂不声明支持。
+当前支持 Python 3.10 和 3.11。包元数据声明 `>=3.10,<3.12`；Python 3.12 暂不声明支持，Python 3.13 暂不支持。
 
 从源码安装：
 
@@ -46,7 +31,7 @@ pip install robopilot
 robopilot --help
 ```
 
-Windows 下如果 pytest 临时目录有权限问题：
+Windows 上如果 pytest 临时目录有权限问题：
 
 ```bash
 python -m pytest --basetemp=".pytest_tmp" -p no:cacheprovider
@@ -62,25 +47,7 @@ robopilot validate --spec robopilot.yaml
 robopilot generate --spec robopilot.yaml
 ```
 
-安全更新闭环：
-
-```bash
-robopilot apply-preview --spec refined.yaml --project outputs/demo_detector
-robopilot apply-plan --spec refined.yaml --project outputs/demo_detector --output apply_plan.yaml
-robopilot apply --plan apply_plan.yaml
-robopilot apply --plan apply_plan.yaml --confirm
-robopilot history --project outputs/demo_detector
-```
-
-静态项目检查：
-
-```bash
-robopilot inspect examples/generated_projects/demo_detector
-robopilot repair-suggest examples/generated_projects/demo_detector
-robopilot report examples/generated_projects/demo_detector --output report.md
-```
-
-ROS 风格静态分析：
+静态分析：
 
 ```bash
 robopilot detect path/to/project
@@ -89,76 +56,36 @@ robopilot inspect-ros2 path/to/ros2_package
 robopilot deps path/to/project
 ```
 
-ROS1 到 ROS2 迁移规划：
+ROS1 到 ROS2 迁移辅助：
 
 ```bash
 robopilot migrate-plan --from path/to/ros1_package --to ros2 --output migration_plan.yaml
 robopilot migrate-plan-validate --plan migration_plan.yaml
-robopilot migrate-preview --plan migration_plan.yaml --project path/to/ros1_package
 robopilot migrate-scaffold-preview --plan migration_plan.yaml
 robopilot migrate-scaffold --plan migration_plan.yaml --output path/to/ros2_scaffold
 robopilot migrate-scaffold-validate --plan migration_plan.yaml --scaffold path/to/ros2_scaffold
 robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/ros2_scaffold --output scaffold_report.md
 ```
 
-## 文档
+迁移 scaffold 是保守的人工审查起点，不是完整自动迁移。生成的 scaffold 没有经过 ROS2 runtime validation。
 
-- [Command Reference](docs/command_reference.md)
-- [Workflows](docs/workflows.md)
-- [Architecture](docs/architecture.md)
-- [Python API](docs/api.md)
-- [JSON Contracts](docs/json_contracts.md)
-- [Integration Notes](docs/integration_notes.md)
-- [VSCode Extension](docs/vscode_extension.md)
-- [VSCode Packaging](docs/vscode_packaging.md)
-- [VSCode Marketplace Publishing](docs/vscode_marketplace.md)
-- [ROS1 to ROS2 Migration Tutorial](docs/tutorial_ros1_to_ros2_migration.md)
-- [VSCode Migration Tutorial](docs/tutorial_vscode_migration_workflow.md)
-- [Demo Walkthrough](docs/demo_walkthrough.md)
-- [Troubleshooting](docs/troubleshooting.md)
-- [Developer Setup](docs/developer_setup.md)
-- [Testing](docs/testing.md)
-- [Release Process](docs/release_process.md)
-- [PyPI Publishing](docs/pypi_publish.md)
-- [Compatibility](docs/compatibility.md)
-- [Known Limitations](docs/known_limitations.md)
-- [Stability Policy](docs/stability_policy.md)
-- [Demo Script](docs/demo_script.md)
-- [v1.0.0 Scope](docs/v1_scope.md)
-- [Changelog](CHANGELOG.md)
-- [Roadmap](roadmap.md)
+## 中文文档
 
-## 安全模型
+- [中文文档入口](docs/zh-CN/README.md)
+- [ROS1 到 ROS2 迁移脚手架教程](docs/zh-CN/tutorial_ros1_to_ros2_migration.md)
+- [VSCode 辅助迁移教程](docs/zh-CN/tutorial_vscode_migration_workflow.md)
+- [常见问题排查](docs/zh-CN/troubleshooting.md)
+- [主要工作流](docs/zh-CN/workflows.md)
+- [已知限制](docs/zh-CN/known_limitations.md)
+- [演示讲稿](docs/zh-CN/demo_walkthrough.md)
 
-- 默认的 plan、validate、diff、inspect、report、detect、deps 和 migration 命令都是静态或只读的。
-- `apply` 默认 dry-run，只有显式传入 `--confirm` 才会写文件。
-- confirmed apply 只写入 validated apply plan 中列出的文件。
-- 更新已有文件前会创建备份。
-- `rollback` 默认 dry-run，只从 RoboPilot backup 目录恢复文件。
-- migration plan / validate / diff / preview 不会修改源项目。
-- 可选 LLM 路径只能输出 `ProjectSpec`，并且必须通过校验。
-
-## 示例输出
-
-静态生成示例项目位于：
-
-```txt
-examples/generated_projects/demo_detector/
-```
-
-```txt
-examples/ros1_migration_demo/
-examples/ros2_scaffold_demo/
-examples/migration_outputs/
-```
-
-临时生成项目应放在 `outputs/` 下，该目录会被 git 忽略。
+英文详细文档仍在 `docs/` 目录中。
 
 ## 项目状态
 
-当前版本线：`v1.15.0`。
+当前版本线：`v1.16.0`。
 
-RoboPilot 的 v1 基线仍然是不依赖 ROS 的静态工程工作流：
+RoboPilot 的 v1 基线是 no-ROS-required 静态工程工作流：
 
 ```txt
 plan -> refine -> diff -> validate -> generate
@@ -170,8 +97,7 @@ plan -> refine -> diff -> validate -> generate
       -> migrate-scaffold-report
 ```
 
-CLI 仍是主要用户界面；Python API、JSON contracts、增强的依赖分析器和 VSCode extension 用于后续集成，并支持 migration scaffold workflow。
-VSCode extension 现在可以本地打包为 VSIX；Marketplace publishing preparation 已有文档，但尚不声明已发布到 Marketplace。参见 [docs/vscode_packaging.md](docs/vscode_packaging.md) 和 [docs/vscode_marketplace.md](docs/vscode_marketplace.md)。
+VSCode extension 是 RoboPilot CLI 的薄包装，支持迁移 scaffold review workflow，并可本地打包为 VSIX。Marketplace 发布准备已有文档，但在明确发布前不声称已上架。
 
 ## 开发
 
@@ -181,18 +107,10 @@ VSCode extension 现在可以本地打包为 VSIX；Marketplace publishing prepa
 python -m pytest
 ```
 
-Windows fallback：
+编码检查：
 
 ```bash
-python -m pytest --basetemp=".pytest_tmp" -p no:cacheprovider
-```
-
-打包检查：
-
-```bash
-python -m pip install -U build twine
-python -m build
-python -m twine check dist/*
+python -m pytest tests/test_docs_encoding.py
 ```
 
 ## License

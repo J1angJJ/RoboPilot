@@ -1149,9 +1149,9 @@ Expected behavior:
 - keep examples small, static, and no-ROS-required
 - avoid promising automatic migration correctness
 
-## Current: v1.15.0 Migration Workflow UX Polish
+## Completed: v1.15.0 Migration Workflow UX Polish
 
-Status: Current priority
+Status: Completed
 
 Goal:
 
@@ -1164,7 +1164,57 @@ Expected behavior:
 - preserve deterministic static behavior
 - do not add migration apply or automatic source conversion
 
-## Future: v1.16.0 Stability / Compatibility / Cleanup
+## Current: v1.16.0 Chinese Documentation Expansion + Encoding Guardrails
+
+Status: Current priority
+
+Goal:
+
+Expand Chinese documentation so Chinese users can learn and use RoboPilot without relying only on English docs, and add guardrails to avoid Chinese Markdown encoding regressions.
+
+Expected behavior:
+
+- add `docs/zh-CN/README.md` as a Chinese documentation index
+- add or expand Chinese versions of key beginner-facing docs:
+  - `docs/zh-CN/tutorial_ros1_to_ros2_migration.md`
+  - `docs/zh-CN/tutorial_vscode_migration_workflow.md`
+  - `docs/zh-CN/troubleshooting.md`
+  - `docs/zh-CN/vscode_extension.md`
+  - `docs/zh-CN/vscode_packaging.md`
+  - `docs/zh-CN/vscode_marketplace.md`
+  - `docs/zh-CN/workflows.md`
+  - `docs/zh-CN/known_limitations.md`
+  - `docs/zh-CN/demo_walkthrough.md`
+- keep `README.zh-CN.md` concise and link to the Chinese documentation index
+- prioritize beginner-facing docs over internal developer docs
+- keep command names in English
+- keep technical terms clear and natural in Chinese
+- keep Chinese Markdown UTF-8 without BOM
+- add encoding checks for Chinese Markdown
+- do not change product behavior
+
+## Future: v1.17.0 VSCode Marketplace Publish
+
+Status: Planned
+
+Goal:
+
+Publish the RoboPilot VSCode extension to Visual Studio Marketplace, or complete a publish-ready release if manual account or token setup blocks actual publishing.
+
+Expected behavior:
+
+- confirm VSCode extension package metadata
+- confirm the Marketplace publisher id matches `vscode-extension/package.json`
+- confirm extension README and CHANGELOG are Marketplace-ready
+- confirm VSIX packaging still works
+- use the existing `vscode-publish` workflow or a manual `vsce publish` flow
+- document required manual steps for publisher setup, Azure DevOps PAT creation, `VSCE_PAT`, workflow trigger, and listing verification
+- update README files only after actual Marketplace publishing succeeds
+- if publishing is not performed, keep docs clear that this is Marketplace publish preparation
+- do not commit secrets or hardcode PAT values
+- do not add VSCode product features unless required for listing quality
+
+## Future: v1.18.0 Stability / Compatibility / Cleanup
 
 Status: Planned
 
@@ -1174,11 +1224,27 @@ Prepare the v2.0 release candidate by cleaning up documentation, compatibility n
 
 Expected behavior:
 
-- audit command help, docs, examples, and JSON contract notes
+- check all documentation links
+- check Chinese and English docs consistency
+- check README and README.zh-CN remain concise
+- check PyPI installation instructions
+- check VSCode Marketplace or VSIX installation instructions
+- check examples and tutorials are still runnable
+- check JSON contracts and API docs remain accurate
+- check known limitations and troubleshooting are up to date
+- check version metadata consistency
+- check CI status
+- check packaging and publishing docs
+- check no ignored build artifacts are tracked
+- run full Python tests
+- run Python build/twine checks
+- run VSCode extension compile/test/package checks
+- verify PyPI install
+- verify VSCode extension install path
 - verify no-ROS-required behavior remains intact
 - clarify stable, experimental, and internal surfaces
 - remove stale roadmap promises
-- avoid new product capabilities unless needed for stabilization
+- do not add major features
 
 ## Future: v2.0.0-rc.1
 
@@ -1186,14 +1252,23 @@ Status: Planned
 
 Goal:
 
-Run a release-candidate stabilization pass for the mature v1.x toolchain.
+Run a release candidate for the v2.0 stage-completion release.
 
 Expected behavior:
 
-- no broad rewrite
-- no risky automatic migration features
-- full tests, packaging checks, CLI help checks, and documentation audit
-- clear notes about compatibility and any intentionally changed behavior
+- freeze product features
+- do not add new commands
+- do not add risky migration apply
+- do not add automatic source-code conversion
+- do not add ROS/ROS2 runtime execution
+- do not add colcon/catkin execution
+- only fix bugs, documentation issues, packaging issues, and release readiness issues
+- validate the complete CLI workflow
+- validate PyPI install
+- validate VSCode extension install
+- validate examples and tutorials
+- validate English and Chinese docs
+- prepare release notes
 
 ## Future: v2.0.0
 
@@ -1203,15 +1278,35 @@ Goal:
 
 Mark RoboPilot's static engineering and migration assistant workflow as a completed stage.
 
-v2.0.0 is a stage-completion milestone, not necessarily a breaking rewrite. If no breaking changes are intended, release documentation should say that clearly.
+v2.0.0 is a stage-completion milestone, not necessarily a breaking rewrite. If no breaking changes are introduced, documentation should say: "v2.0.0 is a stage-completion release, not a breaking rewrite."
 
 Expected behavior:
 
-- stable no-ROS-required CLI baseline
-- documented migration scaffold review loop
-- optional VSCode access to existing CLI/API workflows
-- clear safety boundaries
-- no automatic full ROS1-to-ROS2 migration claim
+- PyPI-distributed CLI
+- Python API layer
+- JSON contracts
+- VSCode extension
+- English and Chinese documentation
+- examples, tutorials, and demo pack
+- static ROS1/ROS2 inspection
+- dependency analysis
+- ROS1-to-ROS2 migration planning
+- migration scaffold preview / generate / validate / report workflow
+- no-ROS-required safety model
+
+Explicit non-goals before v2.0:
+
+- no migration apply
+- no automatic ROS1-to-ROS2 business logic conversion
+- no automatic source patching
+- no ROS runtime execution
+- no ROS2 runtime execution
+- no `catkin_make`
+- no `colcon`
+- no launch execution
+- no generated node execution
+- no new LLM agent behavior
+- no complex Webview UI
 
 ## Long-term: VSCode Extension Expansion
 
@@ -1275,7 +1370,9 @@ v1.10.0 Migration Scaffold Report
   -> v1.13.0 VSCode Marketplace Publish Preparation
   -> v1.14.0 Examples / Tutorials / Demo Pack
   -> v1.15.0 Migration Workflow UX Polish
-  -> v1.16.0 Stability / Compatibility / Cleanup
+  -> v1.16.0 Chinese Documentation Expansion + Encoding Guardrails
+  -> v1.17.0 VSCode Marketplace Publish
+  -> v1.18.0 Stability / Compatibility / Cleanup
   -> v2.0.0-rc.1
   -> v2.0.0
 ```
@@ -1302,6 +1399,6 @@ v1.7.0 Migration Scaffold Preview
 v1.8.0 Migration Scaffold Generate
 ```
 
-Next planned milestone after v1.15.0: v1.16.0 Stability / Compatibility / Cleanup.
+Next planned milestone after v1.16.0: v1.17.0 VSCode Marketplace Publish.
 
 RoboPilot should grow as a practical no-ROS-required ROS engineering toolchain, with CLI as the stable core and beginner-friendly interfaces layered on top.

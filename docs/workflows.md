@@ -130,7 +130,7 @@ robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/
 
 This workflow is read-only for the source ROS1 project. `migrate-preview` reports impact against the existing source project. `migrate-scaffold-preview` previews the ROS2 target package scaffold. `migrate-scaffold` writes conservative placeholder scaffold files only to the explicit output directory, refuses overwrites by default, and does not automatically migrate business logic. `migrate-scaffold-validate` is read-only and checks the generated scaffold against the plan before manual migration work continues. `migrate-scaffold-report` turns validation results into a Markdown report and writes only the explicit report file when `--output` is provided.
 
-This completes the first migration scaffold review loop. Post-v1.10 work should focus on VSCode accessibility, examples, documentation, and UX polish for this existing loop rather than migration apply, automatic source conversion, ROS/ROS2 execution, colcon execution, or launch execution before v2.0.
+This completes the first migration scaffold review loop. Final pre-v2.0 work should focus on Chinese documentation, VSCode Marketplace publishing, and stability / compatibility cleanup for this existing loop rather than migration apply, automatic source conversion, ROS/ROS2 execution, catkin/colcon execution, or launch execution before v2.0.
 
 For a runnable no-ROS-required walkthrough, use the checked-in demo package:
 

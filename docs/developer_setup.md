@@ -70,6 +70,14 @@ Run JSON contract tests:
 python -m pytest tests/test_json_contracts.py
 ```
 
+Run Chinese documentation encoding checks:
+
+```bash
+python -m pytest tests/test_docs_encoding.py
+```
+
+Chinese Markdown files are expected to be UTF-8 without BOM. Avoid GBK, ANSI, and UTF-8 with BOM.
+
 ## Run CLI Help
 
 ```bash
