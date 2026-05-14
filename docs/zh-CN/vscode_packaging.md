@@ -41,7 +41,7 @@ vscode-extension/robopilot-vscode-<version>.vsix
 ## 本地安装
 
 ```bash
-code --install-extension robopilot-vscode-0.4.0.vsix
+code --install-extension robopilot-vscode-0.5.0.vsix
 ```
 
 卸载：

@@ -2,6 +2,13 @@
 
 All notable changes to the RoboPilot VSCode extension are documented here.
 
+## 0.5.0
+
+- Finalized Marketplace-ready metadata for the first public publishing attempt.
+- Reconfirmed the extension id as `j1angjj.robopilot-vscode`.
+- Updated Marketplace-facing README guidance for CLI installation, settings, commands, troubleshooting, and safety boundaries.
+- No automatic migration, ROS/ROS2 runtime execution, colcon/catkin execution, launch execution, or generated node execution was added.
+
 ## 0.4.0
 
 - Prepared Visual Studio Marketplace publishing metadata and documentation.

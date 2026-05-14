@@ -1164,9 +1164,9 @@ Expected behavior:
 - preserve deterministic static behavior
 - do not add migration apply or automatic source conversion
 
-## Current: v1.16.0 Chinese Documentation Expansion + Encoding Guardrails
+## Completed: v1.16.0 Chinese Documentation Expansion + Encoding Guardrails
 
-Status: Current priority
+Status: Completed
 
 Goal:
 
@@ -1193,9 +1193,9 @@ Expected behavior:
 - add encoding checks for Chinese Markdown
 - do not change product behavior
 
-## Future: v1.17.0 VSCode Marketplace Publish
+## Current: v1.17.0 VSCode Marketplace Publish
 
-Status: Planned
+Status: Current priority
 
 Goal:
 
@@ -1209,6 +1209,7 @@ Expected behavior:
 - confirm VSIX packaging still works
 - use the existing `vscode-publish` workflow or a manual `vsce publish` flow
 - document required manual steps for publisher setup, Azure DevOps PAT creation, `VSCE_PAT`, workflow trigger, and listing verification
+- document install, update, and publishing failure recovery steps
 - update README files only after actual Marketplace publishing succeeds
 - if publishing is not performed, keep docs clear that this is Marketplace publish preparation
 - do not commit secrets or hardcode PAT values
@@ -1399,6 +1400,6 @@ v1.7.0 Migration Scaffold Preview
 v1.8.0 Migration Scaffold Generate
 ```
 
-Next planned milestone after v1.16.0: v1.17.0 VSCode Marketplace Publish.
+Next planned milestone after v1.17.0: v1.18.0 Stability / Compatibility / Cleanup.
 
 RoboPilot should grow as a practical no-ROS-required ROS engineering toolchain, with CLI as the stable core and beginner-friendly interfaces layered on top.

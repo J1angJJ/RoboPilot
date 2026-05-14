@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v1.17.0 VSCode Marketplace publish readiness for extension id `j1angjj.robopilot-vscode`.
+- Marketplace documentation for extension install, later updates, listing verification, and publishing failure recovery.
 - v1.16.0 Chinese documentation expansion and encoding guardrails.
 - `docs/zh-CN/` Chinese documentation index, tutorials, troubleshooting, VSCode, workflow, limitation, and demo walkthrough docs.
 - `.editorconfig` UTF-8 defaults for common source and documentation files.
@@ -23,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `docs/tutorial_vscode_migration_workflow.md` VSCode-assisted migration workflow tutorial.
 - `docs/demo_walkthrough.md` concise CLI and VSCode presentation script.
 - v1.13.0 VSCode Marketplace publish preparation.
-- `vscode-extension/CHANGELOG.md` with extension release notes from `0.1.0` through `0.4.0`.
+- `vscode-extension/CHANGELOG.md` with extension release notes from `0.1.0` through `0.5.0`.
 - `docs/vscode_marketplace.md` with publisher-id, PAT, `VSCE_PAT`, manual publishing, GitHub Actions, listing verification, and rollback guidance.
 - Manually triggered `.github/workflows/vscode-publish.yml` preparation workflow for future Marketplace publishing.
 - v1.12.0 VSCode extension local VSIX packaging readiness.
@@ -89,6 +91,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated VSCode extension package metadata to `0.5.0` for the first Marketplace-ready release.
+- Updated extension README and changelog for Marketplace suitability while preserving CLI-backed, no-ROS-required safety boundaries.
+- Updated package and generated demo metadata to `1.17.0`.
 - Rewrote `README.zh-CN.md` as a concise UTF-8 Chinese homepage that links to `docs/zh-CN/README.md`.
 - Updated README, developer setup, testing docs, roadmap, and agent guidance for v1.16.0 Chinese documentation and encoding checks.
 - Updated package and generated demo metadata to `1.16.0`.

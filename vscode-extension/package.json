@@ -1,8 +1,8 @@
 {
   "name": "robopilot-vscode",
   "displayName": "RoboPilot",
-  "description": "VSCode integration for RoboPilot no-ROS-required static tooling",
-  "version": "0.4.0",
+  "description": "VSCode integration for RoboPilot no-ROS-required static ROS project tooling",
+  "version": "0.5.0",
   "publisher": "j1angjj",
   "license": "MIT",
   "engines": {

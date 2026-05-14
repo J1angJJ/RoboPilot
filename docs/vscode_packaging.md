@@ -47,7 +47,7 @@ vscode-extension/robopilot-vscode-<version>.vsix
 Install the local VSIX:
 
 ```bash
-code --install-extension robopilot-vscode-0.4.0.vsix
+code --install-extension robopilot-vscode-0.5.0.vsix
 ```
 
 Uninstall if needed:

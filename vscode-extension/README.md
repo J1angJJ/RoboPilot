@@ -1,8 +1,8 @@
-# RoboPilot VSCode Extension
+# RoboPilot
 
-This is a lightweight VSCode extension for RoboPilot. It wraps the installed `robopilot` CLI and consumes documented JSON outputs.
+RoboPilot is a lightweight VSCode extension for the RoboPilot no-ROS-required static engineering toolchain for ROS-style projects.
 
-The extension does not reimplement RoboPilot logic in TypeScript. The Python CLI remains the source of truth.
+The extension wraps the installed `robopilot` CLI, consumes documented JSON outputs where available, and shows results in VSCode. It does not reimplement RoboPilot logic in TypeScript. The Python CLI remains the source of truth.
 
 ## Requirements
 
@@ -31,6 +31,11 @@ npm test
 ```
 
 Open this folder in VSCode and run the extension in an Extension Development Host.
+
+## Settings
+
+- `robopilot.executablePath`: path to the RoboPilot CLI executable. Default: `robopilot`.
+- `robopilot.outputDirectory`: directory for extension-generated migration plans, scaffold files, and reports. Default: `.robopilot_vscode`.
 
 ## Commands
 
@@ -64,7 +69,7 @@ The package command runs the VSCode prepublish compile step and creates a `.vsix
 Install a local VSIX with:
 
 ```bash
-code --install-extension robopilot-vscode-0.4.0.vsix
+code --install-extension robopilot-vscode-0.5.0.vsix
 ```
 
 Uninstall with:
@@ -75,12 +80,27 @@ code --uninstall-extension j1angjj.robopilot-vscode
 
 ## Marketplace Preparation
 
-Marketplace publishing is prepared but not performed. The `publisher` field is currently `j1angjj`; confirm that it matches the Visual Studio Marketplace publisher id before any public release.
+Marketplace publishing is prepared. The extension id is:
+
+```txt
+j1angjj.robopilot-vscode
+```
+
+The `publisher` field is currently `j1angjj`; confirm that it matches the Visual Studio Marketplace publisher id before publishing.
 
 See `docs/vscode_marketplace.md` in the repository root for the publishing checklist, token safety guidance, and manual workflow notes.
+
+## Troubleshooting
+
+- If `robopilot` is not found, install the CLI with `pip install robopilot` or configure `robopilot.executablePath`.
+- If a conda environment is not visible to VSCode, start VSCode from the activated environment or configure an absolute executable path.
+- If scaffold generation reports existing output conflicts, review `.robopilot_vscode/ros2_scaffold` or choose a different `robopilot.outputDirectory`.
+- If a report is missing, run `RoboPilot: Generate Scaffold Report` before `RoboPilot: Open Scaffold Report`.
 
 ## Safety
 
 The extension calls static RoboPilot commands. It does not run ROS, ROS2, catkin, colcon, launch files, generated nodes, or external APIs.
 
 Migration workflow commands write only to the configured extension output directory. The scaffold report command writes `.robopilot_vscode/scaffold_report.md` by default.
+
+The migration scaffold workflow is not a full automatic ROS1-to-ROS2 migration. Manual review is still required for source code, QoS, parameters, dependencies, interfaces, launch behavior, build system details, and runtime validation.

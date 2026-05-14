@@ -39,7 +39,7 @@ RoboPilot should avoid competing directly with general-purpose coding agents. It
 The current stable baseline is:
 
 ```txt
-v1.15.0
+v1.16.0
 ```
 
 The stable baseline includes:
@@ -58,6 +58,7 @@ The stable baseline includes:
 - migration preview
 - migration scaffold preview / generate / validate / report workflow
 - examples, tutorials, demo pack, and migration workflow UX polish
+- Chinese documentation expansion and encoding guardrails
 - optional LLM planner / refiner boundaries
 
 Do not break the v1.0.0 command surface or documented safety model unless the task explicitly asks for a planned compatibility change.
@@ -67,31 +68,30 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v1.16.0 Chinese Documentation Expansion + Encoding Guardrails
+v1.17.0 VSCode Marketplace Publish
 ```
 
-The goal is to expand beginner-facing Chinese documentation so Chinese users can learn and use RoboPilot without relying only on English docs.
+The goal is to finalize Marketplace readiness for the RoboPilot VSCode extension and publish only through an explicit, manually confirmed path.
 
 This milestone should focus on:
 
-- `docs/zh-CN/README.md` as a Chinese documentation index
-- Chinese versions of key beginner-facing tutorials and workflow docs
-- Chinese troubleshooting, VSCode extension, VSIX packaging, Marketplace, known limitations, and demo walkthrough docs
-- concise `README.zh-CN.md` that links to the Chinese documentation index
-- command names kept in English
-- technical terms translated clearly and naturally
-- UTF-8 without BOM guardrails for Chinese Markdown
-- `tests/test_docs_encoding.py` coverage for Chinese documentation encoding
-- no product behavior changes
+- confirming `vscode-extension/package.json` metadata
+- confirming publisher id `j1angjj`
+- confirming extension id `j1angjj.robopilot-vscode`
+- updating extension README and CHANGELOG for Marketplace readiness
+- keeping `.github/workflows/vscode-publish.yml` manual-only
+- using `VSCE_PAT` only from GitHub Secrets
+- documenting install, update, verification, and failure recovery steps
+- no committed secrets or hardcoded PAT values
+- no product behavior changes unless required for listing quality
 
-This milestone must not add product features, CLI commands, migration apply, automatic source conversion, ROS runtime execution, ROS2 runtime execution, automatic colcon execution, launch execution, new LLM behavior, or broad VSCode UI changes.
+This milestone must not add product features, Python CLI commands, migration apply, automatic source conversion, ROS runtime execution, ROS2 runtime execution, automatic colcon execution, launch execution, new LLM behavior, or broad VSCode UI changes.
 
 ## Near-term Direction
 
 After v1.15.0, the final pre-v2.0 direction is:
 
 ```txt
-v1.16.0 Chinese Documentation Expansion + Encoding Guardrails
 v1.17.0 VSCode Marketplace Publish
 v1.18.0 Stability / Compatibility / Cleanup
 v2.0.0-rc.1
@@ -620,27 +620,22 @@ robopilot deps --help
 Implement:
 
 ```txt
-v1.16.0 Chinese Documentation Expansion + Encoding Guardrails
+v1.17.0 VSCode Marketplace Publish
 ```
 
-This milestone should expand Chinese documentation for the existing no-ROS-required RoboPilot workflow and add encoding guardrails without changing product behavior.
+This milestone should finalize Marketplace readiness for the RoboPilot VSCode extension, while publishing only through an explicitly confirmed manual path.
 
 Suggested implementation items:
 
 ```txt
-docs/zh-CN/README.md
-docs/zh-CN/tutorial_ros1_to_ros2_migration.md
-docs/zh-CN/tutorial_vscode_migration_workflow.md
-docs/zh-CN/troubleshooting.md
-docs/zh-CN/vscode_extension.md
-docs/zh-CN/vscode_packaging.md
+vscode-extension/package.json
+vscode-extension/README.md
+vscode-extension/CHANGELOG.md
+docs/vscode_marketplace.md
 docs/zh-CN/vscode_marketplace.md
-docs/zh-CN/workflows.md
-docs/zh-CN/known_limitations.md
-docs/zh-CN/demo_walkthrough.md
+.github/workflows/vscode-publish.yml
+README.md
 README.zh-CN.md
-.editorconfig
-tests/test_docs_encoding.py
 ```
 
-Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, automatic source conversion, VSCode Marketplace publishing, real tokens, new CLI commands, Python logic changes, VSCode extension code changes, tests, or new LLM behavior during this milestone unless explicitly requested.
+Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, automatic source conversion, real tokens, new Python CLI commands, Python migration logic changes, broad VSCode product features, or new LLM behavior during this milestone. Do not publish to Marketplace unless explicitly confirmed.

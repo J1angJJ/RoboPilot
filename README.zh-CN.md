@@ -83,7 +83,7 @@ robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/
 
 ## 项目状态
 
-当前版本线：`v1.16.0`。
+当前版本线：`v1.17.0`。
 
 RoboPilot 的 v1 基线是 no-ROS-required 静态工程工作流：
 
@@ -97,7 +97,7 @@ plan -> refine -> diff -> validate -> generate
       -> migrate-scaffold-report
 ```
 
-VSCode extension 是 RoboPilot CLI 的薄包装，支持迁移 scaffold review workflow，并可本地打包为 VSIX。Marketplace 发布准备已有文档，但在明确发布前不声称已上架。
+VSCode extension 是 RoboPilot CLI 的薄包装，支持迁移 scaffold review workflow，并可本地打包为 VSIX。Marketplace 发布已准备使用 extension id `j1angjj.robopilot-vscode`，但在 listing 验证成功前不声称已上架。
 
 ## 开发
 
