@@ -72,4 +72,4 @@ conda 用户可能需要填入环境中的绝对路径。
 
 ## Marketplace 边界
 
-本地 VSIX 打包不等于 Marketplace 发布。发布前必须确认 publisher id、README、CHANGELOG、版本号和 token 安全。
+本地 VSIX 打包不等于 Marketplace 发布。当前 Marketplace extension id 是 `j1angjj.robopilot-vscode`。后续发布新版本前必须确认 publisher id、README、CHANGELOG、版本号和 token 安全。

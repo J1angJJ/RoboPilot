@@ -39,7 +39,7 @@ RoboPilot should avoid competing directly with general-purpose coding agents. It
 The current stable baseline is:
 
 ```txt
-v1.16.0
+v1.17.0
 ```
 
 The stable baseline includes:
@@ -59,6 +59,7 @@ The stable baseline includes:
 - migration scaffold preview / generate / validate / report workflow
 - examples, tutorials, demo pack, and migration workflow UX polish
 - Chinese documentation expansion and encoding guardrails
+- VSCode Marketplace availability for extension id `j1angjj.robopilot-vscode`
 - optional LLM planner / refiner boundaries
 
 Do not break the v1.0.0 command surface or documented safety model unless the task explicitly asks for a planned compatibility change.
@@ -68,22 +69,22 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v1.17.0 VSCode Marketplace Publish
+v1.18.0 Stability / Compatibility / Cleanup
 ```
 
-The goal is to finalize Marketplace readiness for the RoboPilot VSCode extension and publish only through an explicit, manually confirmed path.
+The goal is to perform final cleanup before the v2.0.0 release candidate.
 
 This milestone should focus on:
 
-- confirming `vscode-extension/package.json` metadata
-- confirming publisher id `j1angjj`
-- confirming extension id `j1angjj.robopilot-vscode`
-- updating extension README and CHANGELOG for Marketplace readiness
-- keeping `.github/workflows/vscode-publish.yml` manual-only
-- using `VSCE_PAT` only from GitHub Secrets
-- documenting install, update, verification, and failure recovery steps
-- no committed secrets or hardcoded PAT values
-- no product behavior changes unless required for listing quality
+- version and metadata consistency
+- documentation link checks
+- English and Chinese documentation consistency
+- JSON contract and API documentation accuracy
+- examples and tutorial command accuracy
+- troubleshooting and known-limitations cleanup
+- VSCode extension packaging and Marketplace readiness checks
+- full Python tests, package checks, and VSCode extension compile/test/package checks
+- no ignored build artifacts committed
 
 This milestone must not add product features, Python CLI commands, migration apply, automatic source conversion, ROS runtime execution, ROS2 runtime execution, automatic colcon execution, launch execution, new LLM behavior, or broad VSCode UI changes.
 
@@ -92,7 +93,6 @@ This milestone must not add product features, Python CLI commands, migration app
 After v1.15.0, the final pre-v2.0 direction is:
 
 ```txt
-v1.17.0 VSCode Marketplace Publish
 v1.18.0 Stability / Compatibility / Cleanup
 v2.0.0-rc.1
 v2.0.0
@@ -102,7 +102,7 @@ The VSCode extension should be a thin beginner-friendly interface over the CLI /
 
 RoboPilot should treat v2.0.0 as a stage-completion milestone for the mature v1.x toolchain, not as an excuse for risky expansion. Unless explicitly planned otherwise, v2.0.0 is not intended to be a breaking rewrite.
 
-Before v2.0.0, do not pursue full automatic ROS1-to-ROS2 migration, migration apply, automatic source code conversion, automatic source patching, automatic ROS/ROS2 execution, `catkin_make`, `colcon`, launch execution, generated node execution, new LLM agent behavior, or complex Webview UI. Focus on Chinese documentation, Marketplace publishing, final stability cleanup, and release readiness for the existing static migration assistant workflow.
+Before v2.0.0, do not pursue full automatic ROS1-to-ROS2 migration, migration apply, automatic source code conversion, automatic source patching, automatic ROS/ROS2 execution, `catkin_make`, `colcon`, launch execution, generated node execution, new LLM agent behavior, or complex Webview UI. Focus on final stability cleanup and release readiness for the existing static migration assistant workflow.
 
 v2.0.0 should represent:
 
@@ -620,22 +620,22 @@ robopilot deps --help
 Implement:
 
 ```txt
-v1.17.0 VSCode Marketplace Publish
+v1.18.0 Stability / Compatibility / Cleanup
 ```
 
-This milestone should finalize Marketplace readiness for the RoboPilot VSCode extension, while publishing only through an explicitly confirmed manual path.
+This milestone should perform final release-readiness cleanup before the v2.0.0 release candidate.
 
 Suggested implementation items:
 
 ```txt
-vscode-extension/package.json
-vscode-extension/README.md
-vscode-extension/CHANGELOG.md
-docs/vscode_marketplace.md
-docs/zh-CN/vscode_marketplace.md
-.github/workflows/vscode-publish.yml
+pyproject.toml
 README.md
 README.zh-CN.md
+CHANGELOG.md
+roadmap.md
+docs/
+examples/
+vscode-extension/
 ```
 
-Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, automatic source conversion, real tokens, new Python CLI commands, Python migration logic changes, broad VSCode product features, or new LLM behavior during this milestone. Do not publish to Marketplace unless explicitly confirmed.
+Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, automatic source conversion, real tokens, new Python CLI commands, broad VSCode product features, or new LLM behavior during this milestone.

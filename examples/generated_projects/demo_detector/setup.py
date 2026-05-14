@@ -5,7 +5,7 @@ package_name = "demo_detector"
 
 setup(
     name=package_name,
-    version="1.17.0",
+    version="1.18.0",
     packages=find_packages(exclude=["test"]),
     data_files=[
         (f"share/{package_name}", ["package.xml", "robopilot.yaml"]),

@@ -54,7 +54,7 @@ Open this folder in VSCode and run the extension in an Extension Development Hos
 
 ## Local VSIX Packaging
 
-This repository supports local VSIX generation for testing. It does not publish to the VSCode Marketplace.
+This repository supports local VSIX generation for testing. Local packaging does not publish a new VSCode Marketplace version.
 
 ```bash
 cd vscode-extension
@@ -78,17 +78,23 @@ Uninstall with:
 code --uninstall-extension j1angjj.robopilot-vscode
 ```
 
-## Marketplace Preparation
+## Marketplace
 
-Marketplace publishing is prepared. The extension id is:
+The extension is available from Visual Studio Marketplace as:
 
 ```txt
 j1angjj.robopilot-vscode
 ```
 
-The `publisher` field is currently `j1angjj`; confirm that it matches the Visual Studio Marketplace publisher id before publishing.
+Install it with:
 
-See `docs/vscode_marketplace.md` in the repository root for the publishing checklist, token safety guidance, and manual workflow notes.
+```bash
+code --install-extension j1angjj.robopilot-vscode
+```
+
+The `publisher` field is `j1angjj`; future Marketplace updates must keep that publisher id aligned with the Visual Studio Marketplace publisher.
+
+See `docs/vscode_marketplace.md` in the repository root for the listing, token safety guidance, and future update workflow notes.
 
 ## Troubleshooting
 

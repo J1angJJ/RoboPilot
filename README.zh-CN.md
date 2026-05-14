@@ -83,7 +83,7 @@ robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/
 
 ## 项目状态
 
-当前版本线：`v1.17.0`。
+当前版本线：`v1.18.0`。
 
 RoboPilot 的 v1 基线是 no-ROS-required 静态工程工作流：
 

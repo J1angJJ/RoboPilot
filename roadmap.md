@@ -1193,31 +1193,29 @@ Expected behavior:
 - add encoding checks for Chinese Markdown
 - do not change product behavior
 
-## Current: v1.17.0 VSCode Marketplace Publish
+## Completed: v1.17.0 VSCode Marketplace Publish
 
-Status: Current priority
+Status: Completed
 
 Goal:
 
-Publish the RoboPilot VSCode extension to Visual Studio Marketplace, or complete a publish-ready release if manual account or token setup blocks actual publishing.
+Publish the RoboPilot VSCode extension to Visual Studio Marketplace.
 
 Expected behavior:
 
-- confirm VSCode extension package metadata
-- confirm the Marketplace publisher id matches `vscode-extension/package.json`
-- confirm extension README and CHANGELOG are Marketplace-ready
-- confirm VSIX packaging still works
-- use the existing `vscode-publish` workflow or a manual `vsce publish` flow
-- document required manual steps for publisher setup, Azure DevOps PAT creation, `VSCE_PAT`, workflow trigger, and listing verification
-- document install, update, and publishing failure recovery steps
-- update README files only after actual Marketplace publishing succeeds
-- if publishing is not performed, keep docs clear that this is Marketplace publish preparation
-- do not commit secrets or hardcode PAT values
-- do not add VSCode product features unless required for listing quality
+- confirmed VSCode extension package metadata
+- confirmed publisher id `j1angjj`
+- confirmed Marketplace extension id `j1angjj.robopilot-vscode`
+- confirmed extension README and CHANGELOG are Marketplace-ready
+- confirmed VSIX packaging still works
+- kept Marketplace publishing separate from Python package releases
+- documented install, update, listing verification, token safety, and publishing failure recovery
+- avoided committed secrets or hardcoded PAT values
+- avoided new VSCode product features during publishing work
 
-## Future: v1.18.0 Stability / Compatibility / Cleanup
+## Current: v1.18.0 Stability / Compatibility / Cleanup
 
-Status: Planned
+Status: Current priority
 
 Goal:
 
@@ -1400,6 +1398,6 @@ v1.7.0 Migration Scaffold Preview
 v1.8.0 Migration Scaffold Generate
 ```
 
-Next planned milestone after v1.17.0: v1.18.0 Stability / Compatibility / Cleanup.
+Next planned milestone after v1.18.0: v2.0.0-rc.1.
 
 RoboPilot should grow as a practical no-ROS-required ROS engineering toolchain, with CLI as the stable core and beginner-friendly interfaces layered on top.

@@ -16,7 +16,11 @@ For source development:
 python -m pip install -e ".[dev]"
 ```
 
-Install or launch the local RoboPilot extension as described in [VSCode Extension](vscode_extension.md) and [VSCode Packaging](vscode_packaging.md).
+Install the Marketplace extension, or launch a local development build as described in [VSCode Extension](vscode_extension.md) and [VSCode Packaging](vscode_packaging.md).
+
+```bash
+code --install-extension j1angjj.robopilot-vscode
+```
 
 If VSCode cannot find `robopilot`, configure:
 
@@ -110,4 +114,4 @@ Report missing:
 Marketplace status:
 
 - Local VSIX packaging is supported.
-- Marketplace publishing preparation is documented, but RoboPilot does not claim a Marketplace listing until it is explicitly published.
+- The extension is available from Visual Studio Marketplace as `j1angjj.robopilot-vscode`.

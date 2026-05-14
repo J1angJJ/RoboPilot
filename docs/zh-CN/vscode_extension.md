@@ -71,4 +71,22 @@ RoboPilot: Generate Migration Plan
 
 ## Marketplace 状态
 
-本地 VSIX 打包已经支持。Marketplace 发布说明见 [VSCode Marketplace 发布说明](vscode_marketplace.md)。在明确发布前，不要声称扩展已经上架 Marketplace。
+RoboPilot VSCode extension 已在 Visual Studio Marketplace 上架，extension id 为：
+
+```txt
+j1angjj.robopilot-vscode
+```
+
+安装命令：
+
+```bash
+code --install-extension j1angjj.robopilot-vscode
+```
+
+扩展仍然需要先安装 RoboPilot CLI：
+
+```bash
+pip install robopilot
+```
+
+发布和后续更新说明见 [VSCode Marketplace 发布说明](vscode_marketplace.md)。

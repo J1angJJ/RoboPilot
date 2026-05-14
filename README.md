@@ -175,7 +175,7 @@ Transient generated projects should go under `outputs/`, which is intentionally 
 
 ## Project Status
 
-Current release line: `v1.17.0`.
+Current release line: `v1.18.0`.
 
 RoboPilot's no-ROS-required static engineering workflow remains the stable v1 baseline:
 
@@ -200,7 +200,7 @@ code --install-extension j1angjj.robopilot-vscode
 
 See [docs/vscode_extension.md](docs/vscode_extension.md), [docs/vscode_packaging.md](docs/vscode_packaging.md), and [docs/vscode_marketplace.md](docs/vscode_marketplace.md).
 
-Final pre-v2.0 roadmap work is aimed at Chinese documentation expansion, VSCode Marketplace publishing, and stability / compatibility cleanup. v2.0 is intended as a stage-completion release for the current static toolchain, not a breaking rewrite unless a future release plan says so.
+Final pre-v2.0 roadmap work is aimed at stability / compatibility cleanup and release-candidate readiness. v2.0 is intended as a stage-completion release for the current static toolchain, not a breaking rewrite unless a future release plan says so.
 
 ## Development
 

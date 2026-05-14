@@ -88,4 +88,4 @@ Delete that directory manually if stale migration plans, scaffold directories, o
 
 The extension package metadata includes a `publisher` value for local VSIX packaging. Marketplace publishing requires confirming that this value matches the Visual Studio Marketplace publisher id.
 
-See [VSCode Marketplace Publishing](vscode_marketplace.md) for the future publishing checklist. Do not publish to the Marketplace unless a release task explicitly asks for it.
+See [VSCode Marketplace Publishing](vscode_marketplace.md) for the current Marketplace listing, install command, and future update checklist. Do not publish new Marketplace versions unless a release task explicitly asks for it.

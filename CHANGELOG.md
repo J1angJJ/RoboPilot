@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v1.18.0 stability, compatibility, documentation, packaging, and release-readiness cleanup before the v2.0 release candidate.
 - v1.17.0 VSCode Marketplace publish readiness for extension id `j1angjj.robopilot-vscode`.
 - Marketplace documentation for extension install, later updates, listing verification, and publishing failure recovery.
 - v1.16.0 Chinese documentation expansion and encoding guardrails.
@@ -91,6 +92,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated package and generated demo metadata to `1.18.0`.
+- Updated roadmap and guidance documents to mark Marketplace publishing as completed and set v1.18.0 as the current cleanup milestone.
+- Refreshed VSCode Marketplace availability wording across English and Chinese docs.
 - Updated documentation to reflect that the VSCode extension is available from Visual Studio Marketplace as `j1angjj.robopilot-vscode`.
 - Updated VSCode extension package metadata to `0.5.0` for the first Marketplace-ready release.
 - Updated extension README and changelog for Marketplace suitability while preserving CLI-backed, no-ROS-required safety boundaries.

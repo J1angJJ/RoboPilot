@@ -24,6 +24,12 @@ robopilot.executablePath
 
 Windows + conda 用户通常需要把它指向 conda 环境里的 `robopilot.exe`。
 
+安装 Marketplace 扩展：
+
+```bash
+code --install-extension j1angjj.robopilot-vscode
+```
+
 ## 打开工作区
 
 可以打开整个 RoboPilot 仓库，也可以打开示例目录：
