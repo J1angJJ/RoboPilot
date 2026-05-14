@@ -487,12 +487,14 @@ def _risks(
 def _suggested_next_steps(project_type: str) -> tuple[str, ...]:
     steps = [
         "Review this migration plan before editing files.",
+        "Run robopilot migrate-plan-validate --plan <migration_plan.yaml> to check the saved plan.",
+        "Run robopilot migrate-scaffold-preview --plan <migration_plan.yaml> to preview the ROS2 scaffold.",
         "Run robopilot deps on the source package and review dependency hints.",
         "Create a separate branch or copy before manually migrating files.",
     ]
     if project_type != "ros1_catkin_package":
         steps.insert(0, "Confirm the source package is really a ROS1 catkin package before migration.")
-    steps.append("Use a future migration preview/apply workflow before automated file changes.")
+    steps.append("Use robopilot migrate-scaffold only after reviewing the plan and scaffold preview.")
     return tuple(steps)
 
 

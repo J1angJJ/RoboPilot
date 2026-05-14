@@ -127,3 +127,12 @@ def test_json_output_has_stable_keys(tmp_path: Path) -> None:
         "safety_note",
     ]
     assert data["valid"] is True
+
+
+def test_valid_plan_suggests_scaffold_preview(tmp_path: Path) -> None:
+    project = tmp_path / "ros1_migration_demo"
+    _ros1_package(project)
+
+    report = validate_migration_plan_file(_plan(tmp_path, project))
+
+    assert any("migrate-scaffold-preview" in step for step in report.suggested_next_steps)

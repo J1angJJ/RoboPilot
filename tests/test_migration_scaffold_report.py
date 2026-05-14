@@ -119,6 +119,7 @@ def test_markdown_contains_key_sections(tmp_path: Path) -> None:
         "## Dependency Items to Review",
         "## Issues",
         "## Warnings",
+        "## What To Do Next",
         "## Suggested Next Steps",
         "## Safety Note",
     ):
@@ -149,6 +150,16 @@ def test_report_includes_placeholder_checks_issues_and_warnings(tmp_path: Path) 
     assert "ros1_migration_demo/talker_node.py: failed" in report
     assert "placeholder safety wording incomplete" in report
     assert "unexpected file present: local_notes.md" in report
+
+
+def test_report_summary_includes_recommended_next_action(tmp_path: Path) -> None:
+    plan, scaffold = _generated_scaffold(tmp_path, python=True, cpp=False)
+
+    report = generate_migration_scaffold_report(plan, scaffold)
+
+    assert "- Recommended next action:" in report
+    assert "review MIGRATION_NOTES.md" in report
+    assert "## What To Do Next" in report
 
 
 def test_report_includes_safety_note(tmp_path: Path) -> None:

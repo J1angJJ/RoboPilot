@@ -62,15 +62,15 @@ Review declared dependencies, detected imports/includes, and ROS1-to-ROS2 depend
 ## 4. Generate a Migration Plan
 
 ```bash
-robopilot migrate-plan --from examples/ros1_migration_demo --to ros2 --output .pytest_tmp_v114_manual/migration_plan.yaml
+robopilot migrate-plan --from examples/ros1_migration_demo --to ros2 --output .pytest_tmp_v115_manual/migration_plan.yaml
 ```
 
-The output plan is a review artifact. It does not edit the source project.
+The output plan is a review artifact. It does not edit the source project. The command output points to the next review steps: validate the plan, then preview the scaffold.
 
 ## 5. Validate the Plan
 
 ```bash
-robopilot migrate-plan-validate --plan .pytest_tmp_v114_manual/migration_plan.yaml
+robopilot migrate-plan-validate --plan .pytest_tmp_v115_manual/migration_plan.yaml
 ```
 
 Validation checks that the plan has the expected structure before scaffold preview or generation.
@@ -78,15 +78,15 @@ Validation checks that the plan has the expected structure before scaffold previ
 ## 6. Preview the Scaffold
 
 ```bash
-robopilot migrate-scaffold-preview --plan .pytest_tmp_v114_manual/migration_plan.yaml
+robopilot migrate-scaffold-preview --plan .pytest_tmp_v115_manual/migration_plan.yaml
 ```
 
-This reports the target style, files RoboPilot expects to create, placeholder files, risks, conflicts, and next steps. It is read-only.
+This reports the target style, files RoboPilot expects to create, placeholder files, risks, conflicts, and next steps. It is read-only. If it reports conflicts, resolve them before generating the scaffold.
 
 ## 7. Generate the Scaffold
 
 ```bash
-robopilot migrate-scaffold --plan .pytest_tmp_v114_manual/migration_plan.yaml --output .pytest_tmp_v114_manual/ros2_scaffold
+robopilot migrate-scaffold --plan .pytest_tmp_v115_manual/migration_plan.yaml --output .pytest_tmp_v115_manual/ros2_scaffold
 ```
 
 The scaffold is conservative. It creates placeholders and notes only under the explicit output directory and refuses overwrites by default.
@@ -96,26 +96,34 @@ This is not a full automatic migration. Business logic, QoS, parameters, node li
 ## 8. Validate the Scaffold
 
 ```bash
-robopilot migrate-scaffold-validate --plan .pytest_tmp_v114_manual/migration_plan.yaml --scaffold .pytest_tmp_v114_manual/ros2_scaffold
+robopilot migrate-scaffold-validate --plan .pytest_tmp_v115_manual/migration_plan.yaml --scaffold .pytest_tmp_v115_manual/ros2_scaffold
 ```
 
-Validation checks expected scaffold files, migration notes, placeholder safety wording, static ROS2 inspection summary, issues, warnings, and suggested next steps. It does not import or execute scaffold code.
+Validation checks expected scaffold files, migration notes, placeholder safety wording, static ROS2 inspection summary, issues, warnings, and suggested next steps. It does not import or execute scaffold code. A valid result means the scaffold matches RoboPilot's static expectations, not that the package builds or runs.
 
 ## 9. Export a Scaffold Report
 
 ```bash
-robopilot migrate-scaffold-report --plan .pytest_tmp_v114_manual/migration_plan.yaml --scaffold .pytest_tmp_v114_manual/ros2_scaffold --output .pytest_tmp_v114_manual/scaffold_report.md
+robopilot migrate-scaffold-report --plan .pytest_tmp_v115_manual/migration_plan.yaml --scaffold .pytest_tmp_v115_manual/ros2_scaffold --output .pytest_tmp_v115_manual/scaffold_report.md
 ```
 
 The report is a deterministic Markdown summary for review or handoff. If `--output` is omitted, RoboPilot prints the report to stdout.
+
+Read these sections first:
+
+- `Summary`: valid/invalid status and issue/warning count
+- `Validation Result`: whether required scaffold expectations passed
+- `What To Do Next`: practical next actions after validation
+- `Manual Migration Items`: files that still need human ROS2 review
+- `Safety Note`: what RoboPilot did not execute or prove
 
 ## Output Files
 
 Typical tutorial artifacts:
 
-- `.pytest_tmp_v114_manual/migration_plan.yaml`: static migration plan
-- `.pytest_tmp_v114_manual/ros2_scaffold/`: conservative ROS2 scaffold placeholders
-- `.pytest_tmp_v114_manual/scaffold_report.md`: Markdown validation report
+- `.pytest_tmp_v115_manual/migration_plan.yaml`: static migration plan
+- `.pytest_tmp_v115_manual/ros2_scaffold/`: conservative ROS2 scaffold placeholders
+- `.pytest_tmp_v115_manual/scaffold_report.md`: Markdown validation report
 
 Checked-in sample artifacts live under:
 
@@ -136,3 +144,12 @@ Manual review means a developer must inspect and adapt:
 - message, service, and action interfaces
 
 The workflow is designed to make that review visible and repeatable, not to replace it.
+
+## Common Troubleshooting
+
+- If `robopilot` is not found, install RoboPilot in the active Python environment.
+- If scaffold generation reports existing-file conflicts, choose a fresh output directory or review the directory before using `--overwrite`.
+- If validation reports missing `MIGRATION_NOTES.md`, regenerate the scaffold or restore the notes file.
+- If Windows PowerShell displays box drawing characters incorrectly, prefer JSON output for automation or see [Troubleshooting](troubleshooting.md).
+
+More help: [Troubleshooting](troubleshooting.md).

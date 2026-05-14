@@ -244,11 +244,12 @@ def _suggested_next_steps(conflicts: tuple[str, ...]) -> tuple[str, ...]:
     steps = [
         "Review files requiring manual migration before generating any ROS2 files.",
         "Review dependency items and choose ROS2 equivalents explicitly.",
+        "Run robopilot migrate-scaffold-preview --plan <migration_plan.yaml> to preview scaffold placeholders.",
         "Create a separate branch or copy before manual migration work.",
     ]
     if conflicts:
         steps.insert(0, "Resolve preview conflicts before attempting any future migration apply workflow.")
-    steps.append("Use a future migration apply-plan workflow only after reviewing this preview.")
+    steps.append("Use robopilot migrate-scaffold only after reviewing this preview and the scaffold preview.")
     return tuple(steps)
 
 

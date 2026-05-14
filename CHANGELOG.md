@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v1.15.0 migration workflow UX polish for the existing no-ROS-required scaffold review loop.
+- `docs/troubleshooting.md` with CLI, VSCode, conda, Windows encoding, pytest temp, scaffold conflict, missing plan, missing scaffold, and Python version guidance.
 - v1.14.0 examples, tutorials, and demo pack for the no-ROS-required migration scaffold workflow.
 - `examples/ros1_migration_demo/` static ROS1-style catkin package for migration tutorials.
 - `examples/ros2_scaffold_demo/` representative ROS2 scaffold-only demo with manual migration TODO notes.
@@ -83,6 +85,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Improved migration plan, scaffold preview, scaffold generation, scaffold validation, and scaffold report next-step guidance.
+- Improved migration scaffold report readability with a recommended next action and `What To Do Next` section.
+- Updated migration tutorials, demo walkthrough, command reference, README links, roadmap, and agent guidance for v1.15.0 UX polish.
+- Updated package and generated demo metadata to `1.15.0`.
 - Updated README, workflow docs, roadmap, and project guidance for the v1.14.0 tutorial/demo milestone.
 - Updated package and generated demo metadata to `1.14.0`.
 - Updated VSCode extension package metadata to `0.4.0` with homepage, bugs URL, and Marketplace-ready publisher documentation.

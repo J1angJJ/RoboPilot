@@ -296,3 +296,14 @@ def test_generated_files_contain_todo_manual_migration_warnings(tmp_path: Path) 
     assert "TODO: migrate node initialization" in node_text
     assert "TODO: migrate ROS1 XML launch semantics" in launch_text
     assert "No runtime validation was performed" in notes
+    assert "migrate-scaffold-validate" in notes
+
+
+def test_generation_suggests_scaffold_validation(tmp_path: Path) -> None:
+    project = tmp_path / "ros1_py"
+    output = tmp_path / "ros2_scaffold"
+    _ros1_package(project, python=True, cpp=False)
+
+    result = generate_migration_scaffold(_plan(tmp_path, project), output)
+
+    assert any("migrate-scaffold-validate" in step for step in result.suggested_next_steps)

@@ -365,12 +365,13 @@ def _suggested_next_steps(conflicts: tuple[str, ...], target_style: str) -> tupl
         "Review this scaffold preview before requesting future scaffold generation.",
         "Review placeholder files and manual migration files before editing source code.",
         "Review dependency items and choose ROS2 equivalents explicitly.",
+        "Run robopilot migrate-scaffold --plan <migration_plan.yaml> --output <ros2_scaffold> when ready.",
     ]
     if target_style == "mixed_review_required":
         steps.insert(0, "Decide whether the migrated package should use ament_cmake, ament_python, or a split package structure.")
     if conflicts:
         steps.insert(0, "Resolve scaffold preview conflicts before any future generation workflow.")
-    steps.append("Use a future migration scaffold generation command only after reviewing this preview.")
+    steps.append("After generation, run robopilot migrate-scaffold-validate --plan <migration_plan.yaml> --scaffold <ros2_scaffold>.")
     return tuple(dict.fromkeys(steps))
 
 

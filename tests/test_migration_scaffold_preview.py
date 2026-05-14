@@ -233,3 +233,13 @@ def test_preview_does_not_write_scaffold_files(tmp_path: Path) -> None:
     after = sorted(path.relative_to(project).as_posix() for path in project.rglob("*") if path.is_file())
     assert after == before
     assert not (project / "setup.py").exists()
+
+
+def test_preview_suggests_scaffold_generation_and_validation(tmp_path: Path) -> None:
+    project = tmp_path / "ros1_py"
+    _ros1_package(project, python=True, cpp=False)
+
+    preview = preview_migration_scaffold(_plan(tmp_path, project))
+
+    assert any("migrate-scaffold --plan" in step for step in preview.suggested_next_steps)
+    assert any("migrate-scaffold-validate" in step for step in preview.suggested_next_steps)

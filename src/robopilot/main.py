@@ -1405,6 +1405,11 @@ def migrate_scaffold_report(
     console.print(f"[bold]Validation status:[/bold] {result.valid}")
     console.print(f"[bold]Issue count:[/bold] {len(result.issues)}")
     console.print(f"[bold]Warning count:[/bold] {len(result.warnings)}")
+    console.print(Panel.fit("Suggested Next Steps", style="bold cyan"))
+    console.print("- Open and review the generated scaffold report.")
+    console.print("- Review MIGRATION_NOTES.md before manual migration work.")
+    if not result.valid:
+        console.print("- Fix validation issues and rerun migrate-scaffold-validate.")
     console.print(Panel.fit("Safety Note", style="bold cyan"))
     console.print(result.safety_note)
 

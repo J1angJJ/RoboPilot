@@ -56,9 +56,13 @@ def validate_migration_plan_file(plan_path: Path) -> MigrationPlanValidationRepo
             plan_path=str(plan_path),
             valid=False,
             missing_fields=(),
-            invalid_fields=(f"plan could not be loaded: {exc}",),
+            invalid_fields=(f"migration plan could not be loaded from {plan_path}: {exc}",),
             warnings=(),
-            suggested_next_steps=("Fix the migration plan syntax and run validation again.",),
+            suggested_next_steps=(
+                "Confirm the --plan path points to an existing migration plan file.",
+                "Fix the migration plan syntax or regenerate it with robopilot migrate-plan.",
+                "Run robopilot migrate-plan-validate --plan <migration_plan.yaml> again.",
+            ),
             safety_note=SAFETY_NOTE,
         )
     return validate_migration_plan_data(plan, plan_path=plan_path)
@@ -131,7 +135,8 @@ def _suggested_next_steps(
 ) -> tuple[str, ...]:
     if valid:
         return (
-            "Review the migration plan before running migrate-preview.",
+            "Review the migration plan before generating scaffold files.",
+            "Run robopilot migrate-scaffold-preview --plan <migration_plan.yaml> to preview the scaffold.",
             "Run robopilot migrate-plan-diff when comparing plan revisions.",
         )
     steps: list[str] = []
@@ -139,4 +144,5 @@ def _suggested_next_steps(
         steps.append("Regenerate the migration plan or restore the missing required fields.")
     if invalid_fields:
         steps.append("Fix invalid field types or unsupported values and validate again.")
+    steps.append("Regenerate the plan with robopilot migrate-plan if the source project changed.")
     return tuple(steps)

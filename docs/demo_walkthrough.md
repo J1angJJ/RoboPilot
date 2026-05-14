@@ -21,19 +21,19 @@ Talking points:
 Generate and review the migration workflow artifacts:
 
 ```bash
-robopilot migrate-plan --from examples/ros1_migration_demo --to ros2 --output .pytest_tmp_v114_manual/migration_plan.yaml
-robopilot migrate-plan-validate --plan .pytest_tmp_v114_manual/migration_plan.yaml
-robopilot migrate-scaffold-preview --plan .pytest_tmp_v114_manual/migration_plan.yaml
-robopilot migrate-scaffold --plan .pytest_tmp_v114_manual/migration_plan.yaml --output .pytest_tmp_v114_manual/ros2_scaffold
-robopilot migrate-scaffold-validate --plan .pytest_tmp_v114_manual/migration_plan.yaml --scaffold .pytest_tmp_v114_manual/ros2_scaffold
-robopilot migrate-scaffold-report --plan .pytest_tmp_v114_manual/migration_plan.yaml --scaffold .pytest_tmp_v114_manual/ros2_scaffold --output .pytest_tmp_v114_manual/scaffold_report.md
+robopilot migrate-plan --from examples/ros1_migration_demo --to ros2 --output .pytest_tmp_v115_manual/migration_plan.yaml
+robopilot migrate-plan-validate --plan .pytest_tmp_v115_manual/migration_plan.yaml
+robopilot migrate-scaffold-preview --plan .pytest_tmp_v115_manual/migration_plan.yaml
+robopilot migrate-scaffold --plan .pytest_tmp_v115_manual/migration_plan.yaml --output .pytest_tmp_v115_manual/ros2_scaffold
+robopilot migrate-scaffold-validate --plan .pytest_tmp_v115_manual/migration_plan.yaml --scaffold .pytest_tmp_v115_manual/ros2_scaffold
+robopilot migrate-scaffold-report --plan .pytest_tmp_v115_manual/migration_plan.yaml --scaffold .pytest_tmp_v115_manual/ros2_scaffold --output .pytest_tmp_v115_manual/scaffold_report.md
 ```
 
 Expected artifacts:
 
-- `.pytest_tmp_v114_manual/migration_plan.yaml`
-- `.pytest_tmp_v114_manual/ros2_scaffold/`
-- `.pytest_tmp_v114_manual/scaffold_report.md`
+- `.pytest_tmp_v115_manual/migration_plan.yaml`
+- `.pytest_tmp_v115_manual/ros2_scaffold/`
+- `.pytest_tmp_v115_manual/scaffold_report.md`
 
 Safety reminders:
 
@@ -41,6 +41,13 @@ Safety reminders:
 - The scaffold is written only to the explicit output directory.
 - RoboPilot does not run ROS, ROS2, `catkin_make`, `colcon`, launch files, or generated code.
 - Passing scaffold validation is not runtime validation.
+
+Suggested screenshots or artifacts:
+
+- migration plan summary
+- scaffold validation summary
+- `MIGRATION_NOTES.md`
+- `scaffold_report.md` summary and `What To Do Next`
 
 ## 5-Minute VSCode Demo
 

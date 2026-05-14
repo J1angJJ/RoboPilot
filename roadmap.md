@@ -1134,9 +1134,9 @@ Expected behavior:
 - do not actually publish to the Marketplace in this milestone
 - keep Marketplace publishing separate from RoboPilot core releases
 
-## Current: v1.14.0 Examples / Tutorials / Demo Pack
+## Completed: v1.14.0 Examples / Tutorials / Demo Pack
 
-Status: Current priority
+Status: Completed
 
 Goal:
 
@@ -1149,9 +1149,9 @@ Expected behavior:
 - keep examples small, static, and no-ROS-required
 - avoid promising automatic migration correctness
 
-## Future: v1.15.0 Migration Workflow UX Polish
+## Current: v1.15.0 Migration Workflow UX Polish
 
-Status: Planned
+Status: Current priority
 
 Goal:
 
@@ -1302,6 +1302,6 @@ v1.7.0 Migration Scaffold Preview
 v1.8.0 Migration Scaffold Generate
 ```
 
-Next planned milestone after v1.14.0: v1.15.0 Migration Workflow UX Polish.
+Next planned milestone after v1.15.0: v1.16.0 Stability / Compatibility / Cleanup.
 
 RoboPilot should grow as a practical no-ROS-required ROS engineering toolchain, with CLI as the stable core and beginner-friendly interfaces layered on top.

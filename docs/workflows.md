@@ -136,12 +136,12 @@ For a runnable no-ROS-required walkthrough, use the checked-in demo package:
 
 ```bash
 robopilot detect examples/ros1_migration_demo
-robopilot migrate-plan --from examples/ros1_migration_demo --to ros2 --output .pytest_tmp_v114_manual/migration_plan.yaml
-robopilot migrate-scaffold --plan .pytest_tmp_v114_manual/migration_plan.yaml --output .pytest_tmp_v114_manual/ros2_scaffold
-robopilot migrate-scaffold-report --plan .pytest_tmp_v114_manual/migration_plan.yaml --scaffold .pytest_tmp_v114_manual/ros2_scaffold --output .pytest_tmp_v114_manual/scaffold_report.md
+robopilot migrate-plan --from examples/ros1_migration_demo --to ros2 --output .pytest_tmp_v115_manual/migration_plan.yaml
+robopilot migrate-scaffold --plan .pytest_tmp_v115_manual/migration_plan.yaml --output .pytest_tmp_v115_manual/ros2_scaffold
+robopilot migrate-scaffold-report --plan .pytest_tmp_v115_manual/migration_plan.yaml --scaffold .pytest_tmp_v115_manual/ros2_scaffold --output .pytest_tmp_v115_manual/scaffold_report.md
 ```
 
-See [Tutorial: ROS1 to ROS2 Migration Scaffold Workflow](tutorial_ros1_to_ros2_migration.md) for the full CLI tutorial, [Tutorial: VSCode-Assisted Migration Scaffold Workflow](tutorial_vscode_migration_workflow.md) for the extension-guided version, and [Demo Walkthrough](demo_walkthrough.md) for a short presentation script.
+See [Tutorial: ROS1 to ROS2 Migration Scaffold Workflow](tutorial_ros1_to_ros2_migration.md) for the full CLI tutorial, [Tutorial: VSCode-Assisted Migration Scaffold Workflow](tutorial_vscode_migration_workflow.md) for the extension-guided version, [Demo Walkthrough](demo_walkthrough.md) for a short presentation script, and [Troubleshooting](troubleshooting.md) for common setup and migration workflow issues.
 
 ## VSCode-Assisted Migration Scaffold Workflow
 

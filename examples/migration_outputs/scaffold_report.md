@@ -6,6 +6,7 @@
 - Issues: 0
 - Warnings: 3
 - Migration notes present: true
+- Recommended next action: review MIGRATION_NOTES.md and this report before manual ROS2 migration work
 
 ## Source and Target
 
@@ -99,9 +100,17 @@
 - ros2_inspection: no obvious ROS2 node files detected
 - ros2_inspection: unknown or partial ROS2 project structure
 
+## What To Do Next
+
+- Open and review MIGRATION_NOTES.md.
+- Review this scaffold report with the migration plan before editing ROS2 code.
+- Manually migrate source logic, dependencies, launch behavior, interfaces, parameters, and QoS.
+- Run RoboPilot static checks again after manual edits.
+
 ## Suggested Next Steps
 
 - Review MIGRATION_NOTES.md before manual migration work.
+- Run robopilot migrate-scaffold-report --plan <migration_plan.yaml> --scaffold <ros2_scaffold> --output scaffold_report.md.
 - Run robopilot inspect-ros2 on the scaffold after manual edits.
 - Run robopilot deps on the scaffold after adding real ROS2 dependencies.
 - Review unexpected files and ROS2 inspection warnings before treating the scaffold as ready.

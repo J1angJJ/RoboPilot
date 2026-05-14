@@ -39,7 +39,7 @@ RoboPilot should avoid competing directly with general-purpose coding agents. It
 The current stable baseline is:
 
 ```txt
-v1.13.0
+v1.14.0
 ```
 
 The stable baseline includes:
@@ -65,22 +65,22 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v1.14.0 Examples / Tutorials / Demo Pack
+v1.15.0 Migration Workflow UX Polish
 ```
 
-The goal is to make the no-ROS-required ROS engineering and ROS1-to-ROS2 migration scaffold workflows easier to learn and demonstrate.
+The goal is to polish the existing migration scaffold workflow user experience before the v2.0 stabilization phase.
 
 This milestone should focus on:
 
-- static ROS1 migration demo package
-- representative ROS2 scaffold demo
-- sample migration plan and scaffold report artifacts
-- concise CLI and VSCode tutorials
-- presentation-friendly demo walkthrough
-- README and workflow links into the examples
+- clearer migration command output and next-step guidance
+- clearer common error messages
+- more readable migration scaffold reports
+- beginner-friendly troubleshooting documentation
+- polished CLI and VSCode migration tutorials
+- preserving existing CLI and JSON contracts
 - no ROS, ROS2, catkin, colcon, launch execution, generated code execution, or generated module imports
 
-This milestone must not add new product commands, change Python migration logic, publish to the VSCode Marketplace, add migration apply, automatic source conversion, automatic colcon execution, ROS runtime execution, or launch execution.
+This milestone must not add migration apply, automatic source conversion, ROS runtime execution, ROS2 runtime execution, automatic colcon execution, launch execution, new LLM behavior, or broad new product features.
 
 ## Near-term Direction
 
@@ -596,20 +596,20 @@ robopilot deps --help
 Implement:
 
 ```txt
-v1.14.0 Examples / Tutorials / Demo Pack
+v1.15.0 Migration Workflow UX Polish
 ```
 
-This milestone should add static examples and tutorials for the existing no-ROS-required migration scaffold review loop.
+This milestone should improve consistency, readability, errors, reports, and troubleshooting for the existing no-ROS-required migration scaffold review loop.
 
 Suggested implementation items:
 
 ```txt
-examples/ros1_migration_demo/
-examples/ros2_scaffold_demo/
-examples/migration_outputs/
+src/robopilot/migration/
+src/robopilot/main.py
 docs/tutorial_ros1_to_ros2_migration.md
 docs/tutorial_vscode_migration_workflow.md
 docs/demo_walkthrough.md
+docs/troubleshooting.md
 ```
 
 Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, automatic source conversion, actual VSCode Marketplace publishing, real tokens, or new LLM behavior during this milestone unless explicitly requested.

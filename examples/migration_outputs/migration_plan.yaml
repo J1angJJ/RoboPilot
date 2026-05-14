@@ -108,7 +108,9 @@ risks:
   - "ROS1 action migration can require manual ROS2 action API review"
 suggested_next_steps:
   - "Review this migration plan before editing files."
+  - "Run robopilot migrate-plan-validate --plan <migration_plan.yaml> to check the saved plan."
+  - "Run robopilot migrate-scaffold-preview --plan <migration_plan.yaml> to preview the ROS2 scaffold."
   - "Run robopilot deps on the source package and review dependency hints."
   - "Create a separate branch or copy before manually migrating files."
-  - "Use a future migration preview/apply workflow before automated file changes."
+  - "Use robopilot migrate-scaffold only after reviewing the plan and scaffold preview."
 safety_note: "This migration plan is generated from static inspection only. RoboPilot did not modify source files, generate migrated files, validate runtime behavior, require ROS, run catkin_make, run colcon, execute launch files, execute code, or import user project modules."

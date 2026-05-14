@@ -236,3 +236,13 @@ def test_cli_rejects_unsupported_target(tmp_path: Path) -> None:
 
     assert result.exit_code == 1
     assert "Unsupported migration target" in result.output
+
+
+def test_migration_plan_suggests_validation_and_scaffold_preview(tmp_path: Path) -> None:
+    project = tmp_path / "ros1_migration_demo"
+    _ros1_package(project)
+
+    plan = generate_migration_plan(project)
+
+    assert any("migrate-plan-validate" in step for step in plan.suggested_next_steps)
+    assert any("migrate-scaffold-preview" in step for step in plan.suggested_next_steps)

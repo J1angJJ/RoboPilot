@@ -293,6 +293,7 @@ def _suggested_next_steps(
     if valid:
         steps = [
             "Review MIGRATION_NOTES.md before manual migration work.",
+            "Run robopilot migrate-scaffold-report --plan <migration_plan.yaml> --scaffold <ros2_scaffold> --output scaffold_report.md.",
             "Run robopilot inspect-ros2 on the scaffold after manual edits.",
             "Run robopilot deps on the scaffold after adding real ROS2 dependencies.",
         ]
@@ -300,6 +301,7 @@ def _suggested_next_steps(
         steps = [
             "Regenerate the scaffold from the migration plan or restore missing scaffold files.",
             "Review placeholder files and restore RoboPilot safety wording before manual migration work.",
+            "Run robopilot migrate-scaffold-validate --plan <migration_plan.yaml> --scaffold <ros2_scaffold> again after fixes.",
         ]
     if warnings:
         steps.append("Review unexpected files and ROS2 inspection warnings before treating the scaffold as ready.")

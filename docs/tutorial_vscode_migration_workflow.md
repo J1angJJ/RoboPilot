@@ -66,6 +66,14 @@ The expected artifact loop is:
 
 The OutputChannel remains the main UI. It reports target style, files to create, generated files, validation status, issues, warnings, and report path.
 
+After `RoboPilot: Generate Scaffold Report`, open the report and review:
+
+- validation status
+- missing files or placeholder wording issues
+- manual migration items
+- `MIGRATION_NOTES.md`
+- safety note and what RoboPilot did not run
+
 ## Safety Model
 
 The extension does not reimplement migration logic in TypeScript. It calls the RoboPilot CLI with safe argument arrays and consumes CLI JSON or Markdown outputs.
@@ -78,6 +86,7 @@ The workflow does not run ROS, ROS2, `catkin_make`, `colcon`, launch files, or g
 
 - Install RoboPilot in the Python environment visible to VSCode.
 - Set `robopilot.executablePath` to the full CLI path.
+- See [Troubleshooting](troubleshooting.md) for PATH and conda notes.
 
 Conda environment PATH is not visible to VSCode:
 
@@ -97,3 +106,8 @@ Existing scaffold conflicts:
 Report missing:
 
 - Run `RoboPilot: Generate Scaffold Report` before `RoboPilot: Open Scaffold Report`.
+
+Marketplace status:
+
+- Local VSIX packaging is supported.
+- Marketplace publishing preparation is documented, but RoboPilot does not claim a Marketplace listing until it is explicitly published.

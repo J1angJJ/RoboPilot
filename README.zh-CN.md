@@ -115,6 +115,7 @@ robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/
 - [ROS1 to ROS2 Migration Tutorial](docs/tutorial_ros1_to_ros2_migration.md)
 - [VSCode Migration Tutorial](docs/tutorial_vscode_migration_workflow.md)
 - [Demo Walkthrough](docs/demo_walkthrough.md)
+- [Troubleshooting](docs/troubleshooting.md)
 - [Developer Setup](docs/developer_setup.md)
 - [Testing](docs/testing.md)
 - [Release Process](docs/release_process.md)
@@ -155,7 +156,7 @@ examples/migration_outputs/
 
 ## 项目状态
 
-当前版本线：`v1.14.0`。
+当前版本线：`v1.15.0`。
 
 RoboPilot 的 v1 基线仍然是不依赖 ROS 的静态工程工作流：
 

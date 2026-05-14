@@ -36,6 +36,7 @@ def generate_migration_scaffold_report(plan_path: Path, scaffold_path: Path) -> 
         f"- Issues: {len(validation.issues)}",
         f"- Warnings: {len(validation.warnings)}",
         f"- Migration notes present: {_bool(validation.migration_notes_present)}",
+        f"- Recommended next action: {_recommended_action(validation)}",
         "",
         "## Source and Target",
         "",
@@ -81,6 +82,8 @@ def generate_migration_scaffold_report(plan_path: Path, scaffold_path: Path) -> 
     lines.extend(_bullet_list(validation.issues, "No validation issues."))
     lines.extend(["", "## Warnings", ""])
     lines.extend(_bullet_list(validation.warnings, "No validation warnings."))
+    lines.extend(["", "## What To Do Next", ""])
+    lines.extend(_report_next_steps(validation))
     lines.extend(["", "## Suggested Next Steps", ""])
     lines.extend(_bullet_list(validation.suggested_next_steps, "No next steps suggested."))
     lines.extend(
@@ -112,6 +115,28 @@ def write_migration_scaffold_report(
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(markdown, encoding="utf-8")
     return markdown
+
+
+def _recommended_action(validation: MigrationScaffoldValidationResult) -> str:
+    if validation.valid:
+        return "review MIGRATION_NOTES.md and this report before manual ROS2 migration work"
+    return "fix validation issues, then rerun migrate-scaffold-validate"
+
+
+def _report_next_steps(validation: MigrationScaffoldValidationResult) -> list[str]:
+    if validation.valid:
+        return [
+            "- Open and review MIGRATION_NOTES.md.",
+            "- Review this scaffold report with the migration plan before editing ROS2 code.",
+            "- Manually migrate source logic, dependencies, launch behavior, interfaces, parameters, and QoS.",
+            "- Run RoboPilot static checks again after manual edits.",
+        ]
+    return [
+        "- Fix the validation issues listed below.",
+        "- Restore missing scaffold files or regenerate the scaffold from the migration plan.",
+        "- Restore RoboPilot placeholder safety wording where checks failed.",
+        "- Rerun migrate-scaffold-validate before using this scaffold for manual migration work.",
+    ]
 
 
 def _placeholder_checks(validation: MigrationScaffoldValidationResult) -> list[str]:

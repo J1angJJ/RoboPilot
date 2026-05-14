@@ -242,6 +242,8 @@ Mode: file-writing to the explicit `--output` plan file.
 
 Safety notes: does not modify the source project or generate migrated files.
 
+Next step: run `robopilot migrate-plan-validate --plan migration_plan.yaml`, then `robopilot migrate-scaffold-preview --plan migration_plan.yaml`.
+
 ## `migrate-plan-validate`
 
 Purpose: validate a migration plan.
@@ -255,6 +257,8 @@ robopilot migrate-plan-validate --plan migration_plan.yaml
 Mode: read-only.
 
 Safety notes: validates plan structure and supported target values without requiring the source path to exist.
+
+Next step: if valid, run `robopilot migrate-scaffold-preview --plan migration_plan.yaml`.
 
 ## `migrate-plan-diff`
 
@@ -298,6 +302,8 @@ Mode: read-only.
 
 Safety notes: does not generate scaffold files, modify the source project, modify the migration plan, require ROS/ROS2, run build tools, or execute project code.
 
+Next step: after reviewing risks and conflicts, run `robopilot migrate-scaffold --plan migration_plan.yaml --output path/to/ros2_scaffold`.
+
 ## `migrate-scaffold`
 
 Purpose: generate a conservative ROS2 scaffold from a migration plan.
@@ -311,6 +317,8 @@ robopilot migrate-scaffold --plan migration_plan.yaml --output path/to/ros2_scaf
 Mode: file-writing to the explicit `--output` directory.
 
 Safety notes: does not modify the original ROS1 source project or migration plan. Existing scaffold files are not overwritten unless `--overwrite` is provided, and RoboPilot checks all intended paths before writing.
+
+Next step: run `robopilot migrate-scaffold-validate --plan migration_plan.yaml --scaffold path/to/ros2_scaffold`.
 
 ## `migrate-scaffold-validate`
 
@@ -326,6 +334,8 @@ Mode: read-only.
 
 Safety notes: does not modify the scaffold, source project, or migration plan. It statically checks expected files, placeholder safety wording, ROS2 scaffold structure, and unexpected files without importing generated modules or running ROS2 tooling.
 
+Next step: run `robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/ros2_scaffold --output scaffold_report.md`.
+
 ## `migrate-scaffold-report`
 
 Purpose: export a deterministic Markdown report for a generated ROS2 migration scaffold.
@@ -339,6 +349,8 @@ robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/
 Mode: read-only when printed to stdout; file-writing only to the explicit `--output` report path.
 
 Safety notes: reuses scaffold validation, does not modify the scaffold, source project, or migration plan, and does not run ROS, ROS2, `catkin_make`, `colcon`, launch files, generated code, or generated scaffold imports. Existing report files are not overwritten unless `--overwrite` is provided.
+
+Next step: review `MIGRATION_NOTES.md`, `scaffold_report.md`, manual migration items, dependency items, and safety notes before editing ROS2 code.
 
 ## `repair-suggest`
 

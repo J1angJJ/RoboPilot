@@ -136,10 +136,11 @@ def _result(
     suggested_next_steps = [
         "Review generated placeholders before manually migrating source logic.",
         "Review MIGRATION_NOTES.md before running any ROS2 build or runtime checks.",
+        "Run robopilot migrate-scaffold-validate --plan <migration_plan.yaml> --scaffold <ros2_scaffold>.",
         "Run static inspection and dependency analysis on the scaffold after manual edits.",
     ]
     if conflicts:
-        suggested_next_steps.insert(0, "Resolve scaffold generation conflicts before trying again.")
+        suggested_next_steps.insert(0, "Resolve scaffold generation conflicts before trying again. Existing files are not overwritten unless --overwrite is explicit.")
     return MigrationScaffoldGenerationResult(
         plan_path=preview.plan_path,
         output_path=str(output_path),
@@ -418,6 +419,11 @@ def _render_migration_notes(
         SAFETY_NOTE,
         "",
         "No runtime validation was performed. RoboPilot did not run ROS, ROS2, catkin_make, colcon, launch files, or generated code.",
+        "",
+        "## Suggested Next Steps",
+        "- Run robopilot migrate-scaffold-validate --plan <migration_plan.yaml> --scaffold <ros2_scaffold>.",
+        "- Export a report with robopilot migrate-scaffold-report --plan <migration_plan.yaml> --scaffold <ros2_scaffold> --output scaffold_report.md.",
+        "- Manually review this file and every TODO before using ROS2 build or runtime tools.",
         "",
     ]
     return "\n".join(sections)

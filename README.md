@@ -124,6 +124,7 @@ robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/
 - [ROS1 to ROS2 Migration Tutorial](docs/tutorial_ros1_to_ros2_migration.md)
 - [VSCode Migration Tutorial](docs/tutorial_vscode_migration_workflow.md)
 - [Demo Walkthrough](docs/demo_walkthrough.md)
+- [Troubleshooting](docs/troubleshooting.md)
 - [Developer Setup](docs/developer_setup.md)
 - [Testing](docs/testing.md)
 - [Release Process](docs/release_process.md)
@@ -173,7 +174,7 @@ Transient generated projects should go under `outputs/`, which is intentionally 
 
 ## Project Status
 
-Current release line: `v1.14.0`.
+Current release line: `v1.15.0`.
 
 RoboPilot's no-ROS-required static engineering workflow remains the stable v1 baseline:
 

@@ -199,6 +199,7 @@ def test_rejects_missing_scaffold_directory(tmp_path: Path) -> None:
 
     assert result.valid is False
     assert "scaffold path does not exist" in result.issues
+    assert any("migrate-scaffold-validate" in step for step in result.suggested_next_steps)
 
 
 def test_rejects_invalid_migration_plan(tmp_path: Path) -> None:
@@ -286,3 +287,11 @@ def test_validation_does_not_execute_generated_code(tmp_path: Path) -> None:
 
     assert result.valid is True
     assert not marker.exists()
+
+
+def test_valid_scaffold_suggests_report_generation(tmp_path: Path) -> None:
+    plan, scaffold, _project = _generated_scaffold(tmp_path, python=True, cpp=False)
+
+    result = validate_migration_scaffold(plan, scaffold)
+
+    assert any("migrate-scaffold-report" in step for step in result.suggested_next_steps)
