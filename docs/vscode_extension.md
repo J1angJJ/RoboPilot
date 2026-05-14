@@ -125,6 +125,22 @@ See [VSCode Extension Packaging](vscode_packaging.md) for troubleshooting and un
 
 ## Marketplace Status
 
-Local VSIX packaging is available for installation testing. Marketplace publishing is prepared for extension id `j1angjj.robopilot-vscode` and documented in [VSCode Marketplace Publishing](vscode_marketplace.md).
+The RoboPilot VSCode extension is available from Visual Studio Marketplace as:
 
-The extension is not guaranteed to be listed on the Visual Studio Marketplace until it is explicitly published. The current `publisher` value is `j1angjj`; confirm that it matches the Marketplace publisher id before publishing.
+```txt
+j1angjj.robopilot-vscode
+```
+
+Install it with:
+
+```bash
+code --install-extension j1angjj.robopilot-vscode
+```
+
+Users still need the RoboPilot CLI installed:
+
+```bash
+pip install robopilot
+```
+
+Marketplace publishing notes are documented in [VSCode Marketplace Publishing](vscode_marketplace.md).

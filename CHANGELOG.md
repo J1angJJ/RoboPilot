@@ -91,6 +91,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated documentation to reflect that the VSCode extension is available from Visual Studio Marketplace as `j1angjj.robopilot-vscode`.
 - Updated VSCode extension package metadata to `0.5.0` for the first Marketplace-ready release.
 - Updated extension README and changelog for Marketplace suitability while preserving CLI-backed, no-ROS-required safety boundaries.
 - Updated package and generated demo metadata to `1.17.0`.

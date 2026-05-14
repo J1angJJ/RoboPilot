@@ -97,7 +97,14 @@ plan -> refine -> diff -> validate -> generate
       -> migrate-scaffold-report
 ```
 
-VSCode extension 是 RoboPilot CLI 的薄包装，支持迁移 scaffold review workflow，并可本地打包为 VSIX。Marketplace 发布已准备使用 extension id `j1angjj.robopilot-vscode`，但在 listing 验证成功前不声称已上架。
+VSCode extension 是 RoboPilot CLI 的薄包装，支持迁移 scaffold review workflow，并已在 Visual Studio Marketplace 上架，extension id 为 `j1angjj.robopilot-vscode`。
+
+```bash
+pip install robopilot
+code --install-extension j1angjj.robopilot-vscode
+```
+
+扩展不会运行 ROS、ROS2、`catkin_make`、`colcon`、launch 文件或生成节点，也不会自动完成完整迁移。
 
 ## 开发
 

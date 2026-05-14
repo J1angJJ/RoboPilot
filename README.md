@@ -191,7 +191,14 @@ plan -> refine -> diff -> validate -> generate
 
 The Python API layer, documented CLI JSON contracts, ROS2 static inspector, enhanced dependency analyzer, and VSCode extension source are available for integration work while the CLI remains the primary user interface.
 
-The VSCode extension lives under `vscode-extension/`, requires the RoboPilot CLI to be installed, supports the migration scaffold workflow, and can be packaged locally as a VSIX. Marketplace publishing is prepared for extension id `j1angjj.robopilot-vscode`, but no Marketplace availability is claimed until listing verification succeeds. See [docs/vscode_extension.md](docs/vscode_extension.md), [docs/vscode_packaging.md](docs/vscode_packaging.md), and [docs/vscode_marketplace.md](docs/vscode_marketplace.md).
+The VSCode extension is available from Visual Studio Marketplace as `j1angjj.robopilot-vscode`, and the source lives under `vscode-extension/`. The extension requires the RoboPilot CLI to be installed, supports the migration scaffold workflow, and remains a thin wrapper over CLI/API/JSON contracts.
+
+```bash
+pip install robopilot
+code --install-extension j1angjj.robopilot-vscode
+```
+
+See [docs/vscode_extension.md](docs/vscode_extension.md), [docs/vscode_packaging.md](docs/vscode_packaging.md), and [docs/vscode_marketplace.md](docs/vscode_marketplace.md).
 
 Final pre-v2.0 roadmap work is aimed at Chinese documentation expansion, VSCode Marketplace publishing, and stability / compatibility cleanup. v2.0 is intended as a stage-completion release for the current static toolchain, not a breaking rewrite unless a future release plan says so.
 

@@ -1,12 +1,26 @@
 # VSCode Marketplace Publishing
 
-This document describes the safety checklist for publishing RoboPilot's VSCode extension to Visual Studio Marketplace. Publishing must be explicit and manual. Do not publish the extension unless a release task explicitly asks for it.
+RoboPilot's VSCode extension is available from Visual Studio Marketplace as `j1angjj.robopilot-vscode`.
+
+This document records the publishing status, install steps, and safety checklist for future updates. Publishing must remain explicit and manual. Do not publish updates unless a release task explicitly asks for it.
 
 ## Publishing Boundary
 
 Marketplace publishing is separate from local VSIX packaging and from the Python package release process.
 
-RoboPilot's VSCode extension remains a thin wrapper over the installed RoboPilot CLI. Publishing the extension must not add ROS, ROS2, catkin, colcon, launch execution, generated node execution, or new LLM behavior.
+RoboPilot's VSCode extension remains a thin wrapper over the installed RoboPilot CLI. Publishing the extension does not add ROS, ROS2, catkin, colcon, launch execution, generated node execution, or new LLM behavior.
+
+Users still need the RoboPilot CLI installed:
+
+```bash
+pip install robopilot
+```
+
+Install the Marketplace extension:
+
+```bash
+code --install-extension j1angjj.robopilot-vscode
+```
 
 ## Publisher Id
 
@@ -78,9 +92,9 @@ code --install-extension robopilot-vscode-0.5.0.vsix
 
 Verify the extension loads, the command palette entries appear, and `RoboPilot: Show Output` works before considering Marketplace publishing.
 
-## Future Manual Publish
+## Future Manual Publish Updates
 
-After the checklist is complete and the release owner explicitly decides to publish:
+After the checklist is complete and the release owner explicitly decides to publish an update:
 
 ```bash
 cd vscode-extension
@@ -89,7 +103,7 @@ npx vsce publish
 
 If prompted, provide the Marketplace PAT through the secure `vsce` flow. Do not paste tokens into committed files or issue comments.
 
-## Future GitHub Actions Publish
+## Future GitHub Actions Publish Updates
 
 The repository may include a manually triggered workflow at:
 
@@ -116,7 +130,7 @@ The workflow must not echo the token and must not run on push or pull request ev
 
 ## Listing Verification
 
-After a future publish:
+After each publish:
 
 - Confirm the Marketplace listing title, description, README, license, repository link, and version.
 - Install the extension from the Marketplace in a clean VSCode profile.
@@ -130,7 +144,7 @@ Install after publishing:
 code --install-extension j1angjj.robopilot-vscode
 ```
 
-If a Marketplace page URL is available after publishing, add it to README files only after verifying the listing.
+The current verified extension id is `j1angjj.robopilot-vscode`.
 
 ## Updating Later
 
@@ -151,7 +165,7 @@ Do not change Python package version solely for an extension-only patch unless t
 - Read the failing workflow step and confirm whether the issue is publisher id, PAT scope, version already published, package validation, or network/service failure.
 - Rotate the PAT if exposure is suspected.
 - If the version was partially published, verify the Marketplace listing before deciding whether to publish a patch version.
-- Keep README files in "Marketplace publishing is prepared" wording until listing verification succeeds.
+- If an update fails before listing verification, keep user-facing install docs pointed at the last verified Marketplace release.
 
 ## Rollback And Deprecation
 
