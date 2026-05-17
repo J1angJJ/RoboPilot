@@ -40,6 +40,8 @@ The expected extension id is:
 j1angjj.robopilot-vscode
 ```
 
+The Marketplace / VSIX icon is packaged from `vscode-extension/assets/robopilot-cover.png`, copied from the RoboPilot branding cover image under `docs/assets/branding/`.
+
 Before publishing, confirm that the Marketplace publisher id exactly matches the `publisher` field in `vscode-extension/package.json`. If the real Marketplace publisher id differs, update `vscode-extension/package.json`, docs, and install/uninstall examples before publishing.
 
 ## Token Safety

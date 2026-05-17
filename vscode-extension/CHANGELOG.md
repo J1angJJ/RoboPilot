@@ -2,6 +2,10 @@
 
 All notable changes to the RoboPilot VSCode extension are documented here.
 
+## 0.5.1
+
+- Updated the Marketplace / VSIX icon using the RoboPilot branding cover.
+
 ## 0.5.0
 
 - Finalized Marketplace-ready metadata for the first public publishing attempt.

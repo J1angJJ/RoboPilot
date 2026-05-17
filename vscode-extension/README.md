@@ -94,6 +94,8 @@ code --install-extension j1angjj.robopilot-vscode
 
 The `publisher` field is `j1angjj`; future Marketplace updates must keep that publisher id aligned with the Visual Studio Marketplace publisher.
 
+The Marketplace / VSIX icon uses the RoboPilot branding cover from `assets/robopilot-cover.png`.
+
 See `docs/vscode_marketplace.md` in the repository root for the listing, token safety guidance, and future update workflow notes.
 
 ## Troubleshooting

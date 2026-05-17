@@ -50,6 +50,8 @@ j1angjj
 j1angjj.robopilot-vscode
 ```
 
+Marketplace / VSIX 图标来自 `vscode-extension/assets/robopilot-cover.png`，该文件复制自 `docs/assets/branding/` 下的 RoboPilot branding cover。
+
 后续发布更新前，必须确认 Visual Studio Marketplace 的 publisher id 与 `vscode-extension/package.json` 中的 `publisher` 字段一致。
 
 ## Token 安全
