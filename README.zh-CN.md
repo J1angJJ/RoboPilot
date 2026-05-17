@@ -136,6 +136,11 @@ python -m pytest
 python -m pytest tests/test_docs_encoding.py
 ```
 
+## 路线图与研究
+
+- [Roadmap](roadmap.md)
+- [2.x Research Planning](docs/research/README.md)
+
 ## License
 
 MIT

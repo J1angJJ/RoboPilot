@@ -117,6 +117,19 @@ v2.0.0 should represent:
 
 If no breaking changes are introduced, v2.0.0 should be described as a stage-completion release, not a breaking rewrite.
 
+## 2.x Research-backed Planning Rules
+
+Future 2.x work should be conservative, review-first, and based on documented research rather than broad invention during implementation.
+
+- Do not browse the web for broad product requirements during implementation tasks unless the user explicitly asks for research.
+- Capture product research first under `docs/research/`.
+- Use accepted research briefs as the source for scoped implementation tasks.
+- Do not expand beyond an accepted research brief without explicit user approval.
+- Treat `docs/research/feature_backlog_2x.md` and `docs/research/decision_log.md` as planning inputs, not product specifications, unless an item is marked accepted.
+- Preserve RoboPilot's no-ROS-required safety model.
+- Avoid broad rewrites and speculative feature expansion.
+- Prefer small, testable, documented improvements.
+
 ## Important Constraints
 
 - Do not require a real ROS installation.
@@ -617,21 +630,21 @@ robopilot deps --help
 Implement:
 
 ```txt
-v2.0.0
+research-backed 2.x maintenance and scoped improvements
 ```
 
-This milestone prepares the final v2.0.0 stable stage-completion release after successful v2.0.0-rc.1 validation.
+RoboPilot has reached the stable v2.0.0 stage-completion release. Future implementation work should preserve the existing no-ROS-required safety model and follow accepted research briefs or explicitly scoped user requests.
 
 Suggested implementation items:
 
 ```txt
-pyproject.toml
+docs/research/
+roadmap.md
+AGENTS.md
 README.md
 README.zh-CN.md
 CHANGELOG.md
-roadmap.md
-docs/
-examples/
+targeted source/docs/tests for accepted scoped work
 ```
 
-Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, automatic source conversion, real tokens, new Python CLI commands, broad VSCode product features, or new LLM behavior during this milestone. Do not publish PyPI or VSCode Marketplace releases unless explicitly asked.
+Do not add ROS runtime behavior, ROS2 runtime behavior, catkin/colcon execution, migration apply, automatic source conversion, real tokens, new Python CLI commands, broad VSCode product features, or new LLM behavior unless explicitly accepted through a scoped task. Do not publish PyPI or VSCode Marketplace releases unless explicitly asked.

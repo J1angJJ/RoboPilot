@@ -1312,17 +1312,38 @@ Explicit non-goals preserved in v2.0:
 - no new LLM agent behavior
 - no complex Webview UI
 
-## Future Direction After v2.0.0
+## 2.x Long-term Direction
 
-Status: Conservative maintenance direction
+Status: Proposed conservative 2.x direction
 
-Future work should avoid speculative rewrites and focus on:
+v2.0.0 is the stable stage-completion release for RoboPilot's no-ROS-required static engineering workflow.
 
-- maintenance and bug fixes
-- compatibility improvements
-- documentation and tutorial polish
-- optional VSCode UI polish while keeping the extension a thin CLI/API wrapper
-- carefully scoped ROS ecosystem support that preserves no-ROS-required behavior
+Future 2.x work should be research-backed, review-first, and scoped to one focused theme per minor release. These milestones are proposed directions, not hard promises:
+
+- `v2.1.0` Research-backed Migration Hints: improve migration reports and dependency hints for common ROS1-to-ROS2 review pain points such as launch XML, parameters, QoS review, `tf`/`tf2`, `dynamic_reconfigure`, `actionlib`, `nodelet`, and interface generation.
+- `v2.2.0` ROS Distro / Profile Hints: add conservative static hints for common ROS ecosystems such as Noetic, Humble, Jazzy, or other relevant profiles without installing or running ROS tooling.
+- `v2.3.0` Workspace-level Static Analysis: explore read-only multi-package workspace inspection, `catkin_ws/src` or `colcon_ws/src` detection, and static package graph summaries.
+- `v2.4.0` VSCode Extension UX Upgrade: improve TreeView grouping, command discoverability, report opening, documentation links, and clearer warnings while keeping the extension a thin CLI wrapper.
+- `v2.5.0` Scaffold Quality Upgrade: improve generated scaffold TODOs, package metadata placeholders, launch placeholders, params files, and `MIGRATION_NOTES.md` while remaining scaffold-only.
+- `v2.6.0` Optional LLM Explanation Layer: candidate experimental layer for explaining reports, risks, dependency hints, and review checklists without directly writing files or bypassing validation.
+
+Longer-term or 3.x candidates should remain outside normal 2.x scope unless explicitly revisited:
+
+- migration apply for ROS1-to-ROS2 projects
+- automatic source conversion
+- runtime validation
+- colcon integration
+- complex VSCode Webview experiences
+
+2.x planning should use research briefs under [docs/research/](docs/research/README.md) before committing to broad features. Feature ideas should be tracked in [docs/research/feature_backlog_2x.md](docs/research/feature_backlog_2x.md), and major product direction decisions should be tracked in [docs/research/decision_log.md](docs/research/decision_log.md).
+
+Release policy:
+
+- Patch releases should focus on bug fixes, documentation, compatibility, packaging, and small UX fixes.
+- Minor releases should focus on one clear feature theme with tests and documentation.
+- Major releases should be reserved for breaking CLI/API/JSON changes or major safety-boundary changes.
+
+The roadmap should be reviewed periodically, such as once per quarter or before each new minor release, so RoboPilot keeps learning from real user needs without drifting into risky automation.
 
 ## Long-term: VSCode Extension Expansion
 
@@ -1358,9 +1379,9 @@ RoboPilot will not focus on the following unless the project direction explicitl
 - complex multi-agent orchestration
 - replacing general-purpose coding agents
 - automatic full project migration without manual review
-- migration apply before v2.0
-- automatic source code conversion before v2.0
-- automatic ROS, ROS2, colcon, or launch execution before v2.0
+- migration apply during normal 2.x work
+- automatic source code conversion during normal 2.x work
+- automatic ROS, ROS2, colcon, or launch execution during normal 2.x work
 
 ## Development Priorities After v1.0.0
 

@@ -148,6 +148,7 @@ robopilot migrate-scaffold-report --plan migration_plan.yaml --scaffold path/to/
 - [Demo Script](docs/demo_script.md)
 - [Changelog](CHANGELOG.md)
 - [Roadmap](roadmap.md)
+- [2.x Research Planning](docs/research/README.md)
 
 ## Safety Model
 

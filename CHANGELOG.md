@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-No changes yet.
+### Added
+
+- Added `docs/research/` planning docs for long-term 2.x development, including research brief, LLM research prompt, Codex implementation prompt, feature backlog, and decision log templates.
+
+### Changed
+
+- Updated roadmap and agent guidance for conservative, research-backed 2.x planning after the v2.0.0 stage-completion release.
 
 ## [2.0.0] - 2026-05-14
 
