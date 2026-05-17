@@ -1276,7 +1276,7 @@ Expected behavior:
 
 ## Completed: v2.0.0
 
-Status: Current stable release
+Status: Stable baseline release
 
 Goal:
 
@@ -1311,6 +1311,24 @@ Explicit non-goals preserved in v2.0:
 - no generated node execution
 - no new LLM agent behavior
 - no complex Webview UI
+
+## Current: v2.0.1 Post-2.0 Public Polish
+
+Status: Current patch polish release
+
+Goal:
+
+Perform a small public-facing polish pass after the stable v2.0.0 release.
+
+Expected behavior:
+
+- keep CLI behavior unchanged
+- keep migration logic unchanged
+- keep JSON contracts unchanged
+- update Python package and generated demo metadata to `2.0.1`
+- clarify README and Chinese README install, Marketplace, branding, status, and troubleshooting links
+- preserve the no-ROS-required safety model
+- avoid starting research-backed 2.x feature work in this patch
 
 ## 2.x Long-term Direction
 
@@ -1412,6 +1430,7 @@ v1.10.0 Migration Scaffold Report
   -> v1.18.0 Stability / Compatibility / Cleanup
   -> v2.0.0-rc.1
   -> v2.0.0
+  -> v2.0.1 Post-2.0 Public Polish
 ```
 
 v2.0.0 should mark stage completion for the v1.x static engineering toolchain. It is not intended to be a breaking rewrite unless a future release plan explicitly says so.

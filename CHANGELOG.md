@@ -15,6 +15,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated roadmap and agent guidance for conservative, research-backed 2.x planning after the v2.0.0 stage-completion release.
 
+## [2.0.1] - 2026-05-17
+
+### Changed
+
+- Updated Python package metadata and generated demo metadata to `2.0.1`.
+- Polished public README status wording for the v2.0.x stable release line.
+- Clarified PyPI install, VSCode Marketplace install, package/extension version separation, and branding/documentation links.
+- Updated roadmap and agent guidance for the v2.0.1 post-v2.0 public polish patch.
+- Confirmed this patch does not add product features, CLI commands, migration logic changes, JSON contract behavior changes, ROS/ROS2 runtime execution, catkin/colcon execution, launch execution, generated node execution, or VSCode extension logic changes.
+
 ## [2.0.0] - 2026-05-14
 
 ### Changed

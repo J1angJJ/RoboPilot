@@ -4,7 +4,7 @@
 
 RoboPilot 默认不会运行 ROS、ROS2、`catkin_make`、`colcon`、launch 文件或生成的节点代码。
 
-当前 Python package 稳定版本是 `2.0.0`，面向用户的 release / tag 名称是 `v2.0.0`。v2.0.0 是阶段完成版本，不是 breaking rewrite。
+当前 Python package 稳定版本是 `2.0.1`，面向用户的 release / tag 名称是 `v2.0.1`。v2.0.x 是阶段完成版本线，不是 breaking rewrite。
 
 ## 快速入口
 

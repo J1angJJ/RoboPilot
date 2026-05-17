@@ -39,7 +39,7 @@ RoboPilot should avoid competing directly with general-purpose coding agents. It
 The current stable baseline is:
 
 ```txt
-v2.0.0
+v2.0.1
 ```
 
 The stable baseline includes:
@@ -69,10 +69,10 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v2.0.0
+v2.0.1 Post-2.0 Public Polish
 ```
 
-The goal is to maintain the stable v2.0.0 stage-completion release.
+The goal is to polish the public-facing v2.0.x presentation while preserving the stable v2.0.0 stage-completion release behavior.
 
 This release represents:
 
@@ -630,20 +630,21 @@ robopilot deps --help
 Implement:
 
 ```txt
-research-backed 2.x maintenance and scoped improvements
+v2.0.1 Post-2.0 Public Polish
 ```
 
-RoboPilot has reached the stable v2.0.0 stage-completion release. Future implementation work should preserve the existing no-ROS-required safety model and follow accepted research briefs or explicitly scoped user requests.
+RoboPilot has reached the stable v2.0.0 stage-completion release. This patch polishes public-facing presentation while preserving the existing no-ROS-required safety model and avoiding product feature work.
 
 Suggested implementation items:
 
 ```txt
-docs/research/
-roadmap.md
-AGENTS.md
 README.md
 README.zh-CN.md
 CHANGELOG.md
+pyproject.toml
+roadmap.md
+AGENTS.md
+small public documentation metadata fixes
 targeted source/docs/tests for accepted scoped work
 ```
 
