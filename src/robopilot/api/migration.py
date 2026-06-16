@@ -30,6 +30,10 @@ from robopilot.migration.scaffold_validator import (
     MigrationScaffoldValidationResult,
     validate_migration_scaffold as core_validate_migration_scaffold,
 )
+from robopilot.migrate_score import (
+    MigrationScoreResult,
+    score_migration_readiness,
+)
 
 
 def create_ros1_to_ros2_migration_plan(
@@ -144,3 +148,13 @@ def generate_migration_scaffold_report(
         normalize_path(output_path),
         overwrite=overwrite,
     )
+
+
+def score_migration_readiness_api(
+    source_path: PathLike,
+    *,
+    as_dict: bool = True,
+) -> StructuredResult | MigrationScoreResult:
+    """Score a ROS1 package on ROS2 migration readiness (0-100) without modifying files."""
+    result = score_migration_readiness(normalize_path(source_path))
+    return to_structured_result(result) if as_dict else result

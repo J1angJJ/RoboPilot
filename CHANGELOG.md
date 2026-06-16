@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - v2.1.0 Milestone 1 — Template Expansion I: expanded from 5 to 12 generation templates. New templates: `slam`, `navigation`, `sensor_fusion`, `image_processing`, `robot_arm`, `rosbag_tools`, and `state_machine`.
 - Template-specific parameter YAML for all 12 templates with domain-appropriate ROS2 parameters.
 - Topic names and message types in generated node code now read from `ProjectSpec.topics`, allowing user-edited `robopilot.yaml` topic overrides to flow into generated files.
-- v2.1.0 Milestone 2 — ROS Package Lint: added `robopilot lint` command for static package quality checks. Checks package.xml (format version, required fields, dependency consistency), CMakeLists.txt (cmake_minimum_required, find_package, catkin_package/ament_package), setup.py (package_name, entry_points, data_files), and setup.cfg (script_dir, install_scripts). Supports `--json` output with deterministic structure.
+- v2.1.0 Milestone 2 — ROS Package Lint: added `robopilot lint` command for static package quality checks.
+- v2.1.0 Milestone 3 — Migration Readiness Scoring: added `robopilot migrate-score` command. Scores ROS1 packages on ROS2 migration readiness (0-100) across 5 weighted categories: API Surface (25%), Build System (20%), Dependency Availability (25%), Launch Complexity (15%), Interface Surface (15%). Category-level findings detail specific pain points. Supports `--json` output.
 - Added `docs/research/` planning docs for long-term 2.x development.
 - Added `.claude/` to `.gitignore`.
 

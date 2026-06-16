@@ -17,6 +17,7 @@ from robopilot.api.migration import (
     create_ros1_to_ros2_migration_plan,
     diff_migration_plan_files,
     preview_migration_plan,
+    score_migration_readiness_api,
     validate_migration_plan_file,
 )
 from robopilot.api.project import (
@@ -54,6 +55,7 @@ __all__ = [
     "read_project_history",
     "refine_project_spec",
     "rollback_project_backup",
+    "score_migration_readiness_api",
     "validate_apply_plan_file",
     "validate_migration_plan_file",
     "validate_project_spec",

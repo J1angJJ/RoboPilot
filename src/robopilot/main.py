@@ -19,6 +19,7 @@ from robopilot.api.migration import (
     generate_migration_scaffold as api_generate_migration_scaffold,
     preview_migration_plan as api_preview_migration_plan,
     preview_migration_scaffold as api_preview_migration_scaffold,
+    score_migration_readiness_api as api_score_migration_readiness,
     validate_migration_scaffold as api_validate_migration_scaffold,
     validate_migration_plan_file as api_validate_migration_plan_file,
 )
@@ -1141,6 +1142,69 @@ def _print_mapping_values(values: dict[str, list[str]]) -> None:
     for key, items in values.items():
         console.print(f"[bold]{key}:[/bold]")
         _print_scalar_values(tuple(items))
+
+
+@app.command("migrate-score")
+def migrate_score(
+    source_path: Annotated[
+        Path,
+        typer.Argument(help="Source ROS1 package directory to score."),
+    ],
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Score a ROS1 package on ROS2 migration readiness (0-100) without modifying files."""
+    try:
+        result = api_score_migration_readiness(source_path, as_dict=False)
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    if json_output:
+        print(json.dumps(result.to_dict(), indent=2))
+        return
+
+    _print_migrate_score(result)
+
+
+def _print_migrate_score(result: "MigrationScoreResult") -> None:
+    score_color = (
+        "green" if result.overall_score >= 80
+        else "yellow" if result.overall_score >= 60
+        else "red" if result.overall_score >= 40
+        else "bright_red"
+    )
+    console.print(Panel.fit("Migration Readiness Score", style="bold cyan"))
+    console.print(f"[bold]Source path:[/bold] {result.source_path}")
+    console.print(f"[bold]Package name:[/bold] {result.package_name or 'unknown'}")
+    console.print(f"[bold]Project type:[/bold] {result.source_project_type}")
+    console.print(
+        f"[bold]Overall score:[/bold] [{score_color}]{result.overall_score}/100[/{score_color}]"
+    )
+    console.print(f"[bold]Summary:[/bold] {result.summary}")
+
+    cat_table = Table(title="Category Breakdown")
+    cat_table.add_column("Category")
+    cat_table.add_column("Score", justify="right")
+    cat_table.add_column("Weight", justify="right")
+    cat_table.add_column("Weighted", justify="right")
+    cat_table.add_column("Findings")
+    for cat in result.categories:
+        weighted = round(cat.score / cat.max_score * cat.weight * 100) if cat.max_score > 0 else 0
+        sc = f"[{'green' if cat.score >= 80 else 'yellow' if cat.score >= 50 else 'red'}]{cat.score}[/]"
+        cat_table.add_row(cat.label, sc, f"{cat.weight:.0%}", str(weighted),
+                          cat.findings[0] if cat.findings else "")
+    console.print(cat_table)
+
+    console.print(Panel.fit("Suggested Next Steps", style="bold cyan"))
+    for step in result.suggested_next_steps:
+        console.print(f"- {step}")
+
+    from robopilot.migrate_score import SAFETY_NOTE
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    console.print(SAFETY_NOTE)
 
 
 @app.command("migrate-preview")
