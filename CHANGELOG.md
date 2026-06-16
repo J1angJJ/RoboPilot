@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - v2.1.0 Milestone 6 — Error Diagnosis Expansion: expanded `robopilot debug` from 8 to 27 error patterns.
 - v2.1.0 Milestone 7 — Workspace-level Static Analysis: added `robopilot workspace` command.
 - v2.1.0 Milestone 8 — User-configurable Templates: added `robopilot template-init`, `robopilot template-validate`, `robopilot plan --template`.
-- v2.1.0 Milestone 9 — VSCode Education & Quality Workflow: added lint-on-save diagnostics (automatic robopilot lint on package.xml/CMakeLists.txt/setup.py/setup.cfg save, results shown as VSCode Problem annotations), status bar indicator (lint status and error/warning counts), RoboPilot: Lint Workspace command, RoboPilot: Show Templates & Tutorials command.
+- v2.1.0 Milestone 9 — VSCode Education & Quality Workflow: added lint-on-save diagnostics, status bar indicator, new commands.
+- v2.1.0 Milestone 10 — Quality Report Export & CI Integration: added `robopilot ci-check` command. Aggregates lint + deps + launch results into a unified check with stable exit codes (0=clean, 1=warnings, 2=errors). Supports SARIF (GitHub Code Scanning) and Markdown report export. Supports `--json` output.
 - Added `docs/research/` planning docs for long-term 2.x development.
 - Added `.claude/` to `.gitignore`.
 

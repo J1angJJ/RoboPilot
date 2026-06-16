@@ -1516,7 +1516,7 @@ Expected behavior:
 - Keep the extension as a thin CLI/API wrapper — no logic duplication
 - All new views use existing JSON contracts
 
-### Milestone 10 — Quality Report Export & CI Integration (Track B)
+### Milestone 10 — Quality Report Export & CI Integration (Track B) [DONE]
 
 Goal: Make static quality results consumable by CI systems and external tools.
 

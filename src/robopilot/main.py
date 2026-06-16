@@ -78,6 +78,7 @@ from robopilot.user_templates import (
     list_custom_templates,
     validate_custom_template,
 )
+from robopilot.ci_check import CICheckResult, ci_check
 from robopilot.workspace import WorkspaceResult, analyze_workspace
 from robopilot.refiner.llm_refiner import LLMRefiner
 from robopilot.refiner.spec_refiner import refine_spec
@@ -1091,6 +1092,63 @@ def _print_workspace_result(result: WorkspaceResult) -> None:
             console.print(f"[yellow]- {issue}[/yellow]")
 
     from robopilot.workspace import SAFETY_NOTE
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    console.print(SAFETY_NOTE)
+
+
+@app.command("ci-check")
+def ci_check_cmd(
+    project_path: Annotated[Path, typer.Argument(help="Project directory to check.")],
+    fmt: Annotated[
+        str,
+        typer.Option("--format", "-f", help="Output format: summary, sarif, or markdown."),
+    ] = "summary",
+    output: Annotated[
+        Path | None,
+        typer.Option("--output", "-o", help="Write report to a file instead of stdout."),
+    ] = None,
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Run aggregated CI checks (lint + deps + launch) and export a report."""
+    try:
+        result = ci_check(project_path, fmt=fmt, output=output)
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    if json_output:
+        print(json.dumps(result.to_dict(), indent=2))
+    elif fmt == "summary":
+        _print_ci_result(result)
+    elif output and fmt in ("sarif", "markdown"):
+        console.print(f"[green]Wrote {fmt} report to[/green] {output}")
+
+    raise typer.Exit(code=result.exit_code)
+
+
+def _print_ci_result(result: CICheckResult) -> None:
+    sc = "green" if result.overall_status == "clean" else "yellow" if result.overall_status == "warnings" else "red"
+    console.print(Panel.fit("CI Check Result", style="bold cyan"))
+    console.print(f"[bold]Project:[/bold] {result.package_name or 'unknown'}  "
+                  f"[bold]Type:[/bold] {result.project_type}  "
+                  f"[bold]Status:[/bold] [{sc}]{result.overall_status.upper()}[/{sc}]")
+    tbl = Table()
+    for h in ("Check", "Result"):
+        tbl.add_column(h, justify="right" if h == "Result" else "left")
+    for label, val, color in [
+        ("Lint errors", result.lint_errors, "red"),
+        ("Lint warnings", result.lint_warnings, "yellow"),
+        ("Lint info", result.lint_infos, ""),
+        ("Dep warnings", result.dep_warnings, ""),
+        ("Launch issues", result.launch_issues, ""),
+    ]:
+        styled = f"[{color}]{val}[/{color}]" if color and val else str(val)
+        tbl.add_row(label, styled)
+    console.print(tbl)
+    from robopilot.ci_check import SAFETY_NOTE
     console.print(Panel.fit("Safety Note", style="bold cyan"))
     console.print(SAFETY_NOTE)
 

@@ -139,7 +139,7 @@ Milestone 9  VSCode Education & Quality Workflow (Track A+B) [DONE]
              robopilot lint --json, migration score in status bar, guided
              tutorial panel, inline issue annotations.
 
-Milestone 10 Quality Report Export & CI Integration (Track B)
+Milestone 10 Quality Report Export & CI Integration (Track B) [DONE]
              Exportable quality reports in Markdown and SARIF format.
              CI-friendly structured output. Add robopilot ci-check as
              a unified command for CI pipelines. Stable exit codes for gating.
