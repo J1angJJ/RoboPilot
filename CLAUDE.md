@@ -25,20 +25,38 @@ The 10-version plan (v2.1.0–v2.10.0) alternates between tracks. Full details i
 - **Commits**: Add and commit locally as needed. Do NOT push — the user handles push (requires credentials).
 - **Releases**: No PyPI or VSCode Marketplace publish permissions. When release-ready, suggest the manual steps (build, twine check, tag, publish) for the user to execute.
 
+## Dev Environment
+
+This project has a dedicated conda environment. **Never install packages in the base conda environment.**
+
+```bash
+# Activate the dev conda environment
+conda activate robopilot     # Python 3.10, located at C:\Users\JJ406\.conda\envs\robopilot
+
+# Reinstall in editable mode after pulling changes
+pip install -e "R:/RoboPilot[dev]"
+
+# Run Python directly (avoids conda GBK encoding issues on Windows)
+C:/Users/JJ406/.conda/envs/robopilot/python.exe -m pytest R:/RoboPilot/tests --basetemp="R:/RoboPilot/.pytest_tmp" -p no:cacheprovider
+
+# Or use conda run (may have Unicode output issues with Rich tables)
+conda run -n robopilot python -m pytest R:/RoboPilot/tests --basetemp="R:/RoboPilot/.pytest_tmp" -p no:cacheprovider
+```
+
+### Other conda environments
+- `robopilot-pypi-test` — for testing PyPI installs (Python 3.10)
+
 ## Commands
 
 ```bash
-# Install dev environment
-python -m venv .venv
-.venv\Scripts\activate
-python -m pip install -U pip
-pip install -e ".[dev]"
+# Activate dev environment
+conda activate robopilot
 
-# Run all tests
-python -m pytest
+# Reinstall after pulling changes
+pip install -e "R:/RoboPilot[dev]"
 
-# Windows fallback (when temp dir permissions cause issues)
-python -m pytest --basetemp=".pytest_tmp" -p no:cacheprovider
+# Run all tests (from project root)
+python -m pytest R:/RoboPilot/tests --basetemp="R:/RoboPilot/.pytest_tmp" -p no:cacheprovider
 
 # Run a single test file
 python -m pytest tests/test_project_generator.py
@@ -52,7 +70,11 @@ python -m build
 python -m twine check dist/*
 
 # Run the CLI
-robopilot --help
+python -m robopilot.main --help
+
+# Quick smoke test a template
+python -m robopilot.main plan --name test_proj --task "Create a SLAM mapping node for lidar data"
+python -m robopilot.main generate --name test_proj --task "..." -o outputs/
 
 # Verify Chinese doc encoding
 python -m pytest tests/test_docs_encoding.py

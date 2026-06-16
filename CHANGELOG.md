@@ -9,11 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- v2.1.0 Template Expansion I: expanded from 5 to 12 generation templates. New templates: `slam` (SLAM mapping with LiDAR), `navigation` (autonomous Nav2-style path planning), `sensor_fusion` (EKF/UKF multi-sensor fusion), `image_processing` (OpenCV-style pipeline), `robot_arm` (joint trajectory control), `rosbag_tools` (recording/playback utility), and `state_machine` (FSM/behavior tree orchestration).
+- Template-specific parameter YAML for all 12 templates with domain-appropriate ROS2 parameters.
+- Topic names and message types in generated node code now read from `ProjectSpec.topics`, allowing user-edited `robopilot.yaml` topic overrides to flow into generated files.
+- Configurable topic override: users can edit topic names and message types in `robopilot.yaml` and the changes appear in generated Python node pseudocode.
+- Comprehensive tests for all 7 new templates: task classification, spec build/validation, project file generation, Python syntax compilation, and YAML round-trip.
 - Added `docs/research/` planning docs for long-term 2.x development, including research brief, LLM research prompt, implementation prompt, feature backlog, and decision log templates.
 
 ### Changed
 
-- Updated roadmap and agent guidance for conservative, research-backed 2.x planning after the v2.0.0 stage-completion release.
+- Updated task classifier keyword rules with priority ordering: `state_machine` → `rosbag_tools` → `slam` → `robot_arm` → `sensor_fusion` → `image_processing` → `navigation` → (existing templates) → `generic_node`. Added edge-case tests for classification boundary correctness.
+- Updated roadmap and agent guidance with the 10-version Track A (Education) / Track B (Static Quality) plan for v2.1.0–v2.10.0.
+- Refreshed demo detector project under `examples/generated_projects/demo_detector/`.
+- Fixed minor indentation in `package_xml` and `setup_py` template renderers.
 
 ## [2.0.1] - 2026-05-17
 

@@ -69,6 +69,7 @@ class DetectorNode(Node):
         )
 
 
+
 def main() -> None:
     """Entry point for the ROS2-style node."""
     if rclpy is None:
