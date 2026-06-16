@@ -1537,6 +1537,89 @@ Expected behavior:
 - All checks are read-only; never modifies project files
 - Reuses existing lint, deps, and detect modules
 
+## v2.2.0: Deepening & Ecosystem
+
+Status: Planned
+
+v2.2.0 is a single release containing 7 development milestones that deepen the
+areas established in v2.1.0. All milestones are committed to main as completed
+and published together as one MINOR bump from v2.1.0.
+
+### Milestone 11 — Template & Generation Quality (Track A)
+
+Goal: Polish all 12 templates to production-quality pseudocode and add 4 new templates.
+
+- Add 4 new templates: `depth_camera` (RGB-D with point cloud), `ackermann_drive` (Ackermann steering), `teleop` (joystick/keyboard teleop), `diagnostic_aggregator` (ROS diagnostic aggregation)
+- Polish existing templates: add realistic sensor data shapes, error-handling patterns, lifecycle node patterns where appropriate
+- Add `--lang zh` flag for Chinese comments in generated node files
+- Improve parameter YAML with nested namespace support (e.g., `camera.driver.width`)
+- Generation-time Python `compile()` syntax check on all generated node files
+- Regenerate all demo projects and add per-template demo in `examples/generated_projects/`
+
+### Milestone 12 — Deep Lint & Cross-file Analysis (Track B)
+
+Goal: Expand lint from 14 to 30+ rules with cross-file consistency checks.
+
+- Cross-file checks: CMakeLists.txt dependencies must match package.xml declarations; setup.py entry_points must reference real node files; launch file node references must resolve to package nodes
+- ROS2-specific rules: rclpy `init`/`spin` convention checks, QoS profile consistency (publisher vs subscriber), lifecycle node interface compliance
+- Python import→package.xml cross-reference: detect `import X` in node code that has no corresponding `<depend>X</depend>` or `<exec_depend>X</exec_depend>`
+- Rule severity configuration via `.robopilot/lintrc.yaml` (promote/demote rules to error/warning/info, disable unwanted rules)
+- Reuse existing `detect`, `deps`, and `launch_lint` modules for cross-checks
+
+### Milestone 13 — Dependency & Ecosystem Intelligence (Track B)
+
+Goal: Deepen dependency analysis with workspace-level resolution and rosdep integration.
+
+- Workspace-level dependency resolution: cross-package dependency version hints
+- rosdep key mapping: suggest `apt install ros-<distro>-<package>` or `pip install <package>` for detected deps
+- Version compatibility detection: flag packages that require ROS distro features not available in the detected version
+- `robopilot deps --workspace` mode: analyze all packages in a workspace together, flag cross-package dependency issues
+- Dependency migration roadmap: topological order of which ROS1 packages to migrate first, based on dependency graph from `robopilot workspace`
+
+### Milestone 14 — Tutorial & Education Platform (Track A)
+
+Goal: Expand the tutorial library and add Chinese-language support.
+
+- 4 new lessons: `slam_basics` (SLAM node walkthrough, ~8 min), `navigation_stack` (Nav2 concepts explained, ~10 min), `custom_authoring` (how to create custom templates, ~8 min), `lint_workflow` (using lint/ci-check in real projects, ~7 min)
+- Chinese tutorial text for all 6 lessons (简体中文)
+- Lesson progress tracking via `.robopilot_tutorial_state` (JSON)
+- `robopilot tutorial --all` mode: run all lessons in sequence, show progress summary
+- Embedded ROS concepts glossary in tutorial steps (short inline definitions of terms like "publisher", "QoS", "transform")
+- Target: 6 lessons covering ~60 minutes of learning
+
+### Milestone 15 — VSCode Integration v2 (Track A+B)
+
+Goal: Deeper VSCode integration for education and quality workflows.
+
+- Dependency graph visualization: Mermaid diagram rendered in VSCode sidebar Webview from `robopilot workspace --json` output
+- Template browser: list built-in + custom templates in VSCode explorer TreeView with descriptions
+- Inline YAML validation: validate `robopilot.yaml` and custom templates via VSCode DiagnosticCollection on save
+- Migration score in status bar: show `robopilot migrate-score` result for ROS1 workspaces
+- One-click `template-init` from VSCode command palette
+- Output channel hyperlinks: clickable links to docs, tutorials, and report files
+- All new views use existing CLI `--json` contracts; no logic duplication
+
+### Milestone 16 — Quality Reports & Trend History (Track B)
+
+Goal: Rich report export with historical comparison.
+
+- `robopilot report --format html`: syntax-highlighted code blocks, severity badges, interactive category filter (CSS-only)
+- `robopilot report --format pdf`: via weasyprint or similar markdown→PDF pipeline
+- `robopilot report --history`: compare current quality metrics against previous runs stored in `.robopilot_history/`; show trend table and diff
+- Workspace-level quality dashboard: `robopilot report --workspace` shows per-package scores in a summary table
+- `robopilot report --diff before.yaml after.yaml`: compare two report snapshots for migration progress tracking
+
+### Milestone 17 — Ecosystem Readiness & Doctor (Track A+B)
+
+Goal: Self-diagnostic tooling and community template ecosystem.
+
+- `robopilot doctor`: check Python version, dependency installation, ROS detection status, config file integrity, optional LLM connectivity, disk space, and known platform issues. Exit 0 if all checks pass.
+- `robopilot template-install <url>`: install community templates from GitHub gists, raw URLs, or local zip files into `.robopilot/templates/`
+- `robopilot template-search <keyword>`: search installed and community template listings
+- Template metadata standard: `template.yaml` gains `author`, `version`, `tags`, `ros_distro` fields
+- Python 3.12 compatibility: expand CI matrix to include Python 3.12, fix any compatibility issues
+- `robopilot schema`: export JSON Schema for `robopilot.yaml` and migration plan formats
+
 ### 3.x and Out-of-Scope Items
 
 The following remain outside 2.x scope unless explicitly revisited:
@@ -1553,9 +1636,9 @@ The following remain outside 2.x scope unless explicitly revisited:
 
 Release policy:
 
-- v2.1.0 ships as one MINOR bump after all 10 milestones are complete and tested.
-- Within the milestone phase, work is committed to main incrementally.
-- PATCH releases (v2.1.1, v2.1.2) are reserved for bug fixes discovered after release.
+- v2.1.0: shipped as one MINOR bump (10 milestones complete).
+- v2.2.0: planned as one MINOR bump after all 7 milestones are complete and tested.
+- PATCH releases (v2.1.1, v2.2.1) are reserved for bug fixes discovered after release.
 - Major releases are reserved for breaking CLI/API/JSON changes or safety-boundary changes.
 
 The roadmap should be reviewed before each new minor release. RoboPilot should grow as a practical no-ROS-required ROS engineering toolchain — education and static quality are the two pillars of that growth.

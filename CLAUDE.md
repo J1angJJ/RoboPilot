@@ -17,7 +17,7 @@ After v2.1.0, development follows two complementary tracks:
 - **Track A — Education & Onboarding**: Expand templates (5→12), add interactive tutorial mode, error diagnosis for 30+ ROS patterns, user-configurable templates. Goal: best tool for learning ROS structure without installing ROS.
 - **Track B — Static Quality Tooling**: Add `robopilot lint` (package health checks), `robopilot migrate-score` (migration readiness 0-100), launch file validation, workspace-level analysis, CI-friendly report export. Goal: linting and quality analysis for real ROS projects.
 
-v2.1.0 is a single release containing 10 development milestones, tracked in `roadmap.md`.
+v2.1.0 is shipped (10 milestones). v2.2.0 is planned with 7 deepening milestones, tracked in `roadmap.md`.
 
 ## Git & Release Conventions
 
@@ -163,17 +163,17 @@ detect → inspect-ros1 / inspect-ros2 → deps
 - Do not add new product commands during packaging/release work.
 - Prefer pure Python, pathlib, type hints. Keep functions small. Separate CLI from business logic.
 
-### Planned Module Additions (v2.1.0 milestones)
+### Planned Module Additions (v2.2.0 milestones)
 
 ```
 src/robopilot/
-├── lint/            # M2: package.xml, CMakeLists, setup.py checks
-├── migrate_score/   # M3: ROS1→ROS2 migration readiness scoring
-├── tutorial/        # M4: interactive step-by-step guided workflow
-├── launch_lint/     # M5: ROS1 XML + ROS2 Python launch file validation
-├── workspace/       # M7: multi-package workspace analysis and graph
-├── user_templates/  # M8: custom template loading and validation
-└── ci_check/        # M10: unified CI check with SARIF output
+├── doctor/          # M17: environment self-diagnostic
+├── deps/            # M13: workspace-level dep resolution, rosdep hints
+├── lint/            # M12: cross-file rules, ROS2-specific checks
+├── report/          # M16: HTML/PDF export, trend history, diff mode
+├── templates/       # M11: quality polish, Chinese comments
+├── tutorial/        # M14: 4 new lessons, Chinese text, progress tracking
+└── user_templates/  # M17: template-install, template-search, community
 ```
 
 New commands must follow the existing pattern: core module → API wrapper → CLI command, with `--json` support and read-only safety.

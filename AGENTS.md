@@ -69,18 +69,14 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v2.x Education & Static Quality Toolchain
+v2.2.0 Deepening & Ecosystem
 ```
 
-v2.0.1 is the stable baseline. Future 2.x work follows two complementary tracks:
+v2.1.0 established the foundation (12 templates, lint, scoring, tutorial, workspace, CI). v2.2.0 deepens each area: better templates, deeper lint rules, dependency intelligence, more tutorials, VSCode integration v2, quality reports, and ecosystem readiness.
 
-**Track A — Education & Onboarding (学用 ROS，无需安装 ROS):**
-Expand RoboPilot as the best tool for learning ROS project structure without installing ROS. More templates, interactive tutorials, better error diagnosis, and beginner-friendly workflows.
+**Track A — Education & Onboarding:** Polish templates with production-quality pseudocode, expand tutorial library, add Chinese tutorial text, build VSCode template browser.
 
-**Track B — Static Quality Tooling (ROS 项目静态体检):**
-Make RoboPilot a linting and quality-analysis tool for real ROS projects. Package health checks, migration readiness scoring, dependency consistency validation, and CI-friendly report exports.
-
-These two tracks share the same no-ROS-required safety model. Track A grows the top of the funnel (new users), Track B grows the bottom (retained users with real projects).
+**Track B — Static Quality Tooling:** Cross-file lint rules, workspace-level dependency resolution, quality trend reports with history, `robopilot doctor` self-diagnostic.
 
 ## v2.1.0 Milestone Plan
 
@@ -147,10 +143,82 @@ Milestone 10 Quality Report Export & CI Integration (Track B) [DONE]
 
 ### Design Principles
 
-- v2.1.0 releases as a single MINOR bump when all 10 milestones are complete.
-- Each milestone is self-contained: one theme, complete tests, updated docs.
-- Track A and Track B alternate to keep both user groups engaged.
-- No command from v1.0.0–v2.0.1 is removed or silently changed.
+## v2.2.0 Milestone Plan
+
+v2.2.0 continues the Track A / Track B alternating pattern with 7 deeper milestones.
+Each builds on the v2.1.0 foundation rather than creating new capability areas from scratch.
+
+```txt
+Milestone 11 Template & Generation Quality (Track A)
+           Polish all 12 templates with production-quality ROS2 pseudocode.
+           Add realistic sensor data handling, error checking patterns, and
+           lifecycle node patterns. Add 4 new templates: depth_camera (RGB-D),
+           ackermann_drive (Ackermann steering vehicle), teleop (joystick/
+           keyboard teleoperation), and diagnostic_aggregator. Add Chinese
+           comments toggle for generated nodes (--lang zh). Improve parameter
+           YAML with nested namespace support. Add generation-time validation
+           that generated Python compiles without syntax errors.
+
+Milestone 12 Deep Lint & Cross-file Analysis (Track B)
+           Expand lint from 14 to 30+ rules. Cross-file checks: CMakeLists.txt
+           dependencies must match package.xml, setup.py entry_points must
+           reference real node files, launch file node references must resolve
+           to package nodes. ROS2-specific rules: rclpy node init conventions,
+           QoS profile consistency, lifecycle node compliance. Python import
+           to package.xml cross-reference (detect undeclared deps). Add rule
+           severity configuration via .robopilot/lintrc.yaml.
+
+Milestone 13 Dependency & Ecosystem Intelligence (Track B)
+           Workspace-level dependency resolution with version hints. rosdep
+           key mapping for apt/pip package suggestions. Version compatibility
+           detection (ROS distro vs package requirements). ROS1-to-ROS2
+           dependency migration roadmap generator: topological order of which
+           packages to migrate first based on dependency graph. Add
+           robopilot deps --workspace mode for cross-package analysis.
+
+Milestone 14 Tutorial & Education Platform (Track A)
+           Add 4 new tutorial lessons: slam_basics (SLAM node walkthrough),
+           navigation_stack (Nav2 concepts explained), custom_authoring (how
+           to create custom templates), and lint_workflow (using lint/ci-check
+           in real projects). Chinese tutorial text for all lessons. Lesson
+           progress tracking (.robopilot_tutorial_state). robopilot tutorial
+           --all mode: run all lessons sequentially. Embedded ROS concepts
+           glossary in tutorial steps. Target: 6 lessons, ~60 min total.
+
+Milestone 15 VSCode Integration v2 (Track A+B)
+           Dependency graph visualization (Mermaid diagram in VSCode sidebar
+           Webview). Template browser with preview: list built-in and custom
+           templates from VSCode explorer. Inline YAML validation for
+           robopilot.yaml and custom templates via DiagnosticCollection.
+           Migration score display in VSCode status bar for ROS1 workspaces.
+           One-click template-init from command palette. Output channel
+           hyperlinks to docs and tutorial lessons.
+
+Milestone 16 Quality Reports & Trend History (Track B)
+           robopilot report --format html with syntax-highlighted code blocks,
+           severity badges, and interactive category filters. robopilot report
+           --format pdf (via weasyprint/markdown-pdf). robopilot report
+           --history for trend analysis: compare current quality metrics
+           against previous runs. Workspace-level quality dashboard showing
+           per-package scores. robopilot report --diff for before/after
+           migration quality comparison.
+
+Milestone 17 Ecosystem Readiness & Doctor (Track A+B)
+           robopilot doctor: self-diagnose RoboPilot environment (Python
+           version, dependencies, ROS detection, config file integrity,
+           optional LLM connectivity). Template sharing: robopilot
+           template-install <url> to install community templates from GitHub
+           gists or URLs. robopilot template-search for discovering community
+           templates. Python 3.12 compatibility verification and CI expansion.
+           robopilot schema: export JSON Schema for robopilot.yaml and
+           migration plan formats.
+```
+
+### Design Principles
+
+- v2.2.0 releases as a single MINOR bump when all 7 milestones are complete.
+- Each milestone deepens an area established in v2.1.0 rather than inventing new categories.
+- No command from v1.0.0–v2.1.0 is removed or silently changed.
 - The no-ROS-required safety model applies to every new feature.
 - Static analysis never imports or executes user project code.
 - New CLI commands use --json for integration readiness from day one.
