@@ -190,9 +190,9 @@ Also suggest a likely milestone:
 - later 2.x
 - future / 3.x
 
-## 13. Suggested next Codex task
+## 13. Suggested next implementation task
 
-If this research should become implementation work, propose one small, scoped Codex task.
+If this research should become implementation work, propose one small, scoped implementation task.
 The task should:
 - preserve no-ROS-required behavior
 - avoid broad rewrites

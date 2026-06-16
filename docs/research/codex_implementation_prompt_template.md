@@ -1,4 +1,4 @@
-# Codex Implementation Prompt Template
+# Implementation Prompt Template
 
 Use this after a research brief has been accepted and a small implementation scope is selected.
 

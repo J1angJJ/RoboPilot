@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added `docs/research/` planning docs for long-term 2.x development, including research brief, LLM research prompt, Codex implementation prompt, feature backlog, and decision log templates.
+- Added `docs/research/` planning docs for long-term 2.x development, including research brief, LLM research prompt, implementation prompt, feature backlog, and decision log templates.
 
 ### Changed
 
