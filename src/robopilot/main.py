@@ -71,6 +71,13 @@ from robopilot.tutorial import (
     get_lesson,
     list_lessons,
 )
+from robopilot.user_templates import (
+    TemplateValidationResult,
+    build_project_spec_from_custom,
+    init_templates_dir,
+    list_custom_templates,
+    validate_custom_template,
+)
 from robopilot.workspace import WorkspaceResult, analyze_workspace
 from robopilot.refiner.llm_refiner import LLMRefiner
 from robopilot.refiner.spec_refiner import refine_spec
@@ -185,11 +192,25 @@ def plan(
         Path | None,
         typer.Option("--output", "-o", help="Optional path to write the ProjectSpec."),
     ] = None,
+    template: Annotated[
+        str | None,
+        typer.Option("--template", help="Use a custom template by name."),
+    ] = None,
 ) -> None:
     """Create and print a robopilot.yaml ProjectSpec without generating files."""
     try:
-        selected_planner = _build_planner(planner, model=model)
-        project_spec = selected_planner.plan(package_name=name, task=task)
+        if template:
+            project_spec = build_project_spec_from_custom(template, task, root=Path.cwd(), package_name=name)
+            if project_spec is None:
+                available = ", ".join(list_custom_templates().keys()) or "none"
+                console.print(f"[red]Custom template not found:[/red] {template}")
+                console.print(f"[dim]Available custom templates: {available}[/dim]")
+                console.print("Run [bold]robopilot template-init[/bold] to scaffold the templates directory.")
+                raise typer.Exit(code=1)
+            project_spec = project_spec  # already a ProjectSpec
+        else:
+            selected_planner = _build_planner(planner, model=model)
+            project_spec = selected_planner.plan(package_name=name, task=task)
     except (PlannerError, ValueError) as exc:
         console.print(f"[red]Error:[/red] {exc}")
         raise typer.Exit(code=1) from exc
@@ -1072,6 +1093,50 @@ def _print_workspace_result(result: WorkspaceResult) -> None:
     from robopilot.workspace import SAFETY_NOTE
     console.print(Panel.fit("Safety Note", style="bold cyan"))
     console.print(SAFETY_NOTE)
+
+
+@app.command("template-init")
+def template_init(
+    root: Annotated[
+        Path | None,
+        typer.Option("--root", "-r", help="Project root to scaffold templates into."),
+    ] = None,
+) -> None:
+    """Scaffold a .robopilot/templates/ directory with an example custom template."""
+    templates_dir = init_templates_dir(root)
+    console.print(f"[green]Created templates directory:[/green] {templates_dir}")
+    console.print("[bold]Next steps:[/bold]")
+    console.print(f"  1. Edit {templates_dir}/my_custom_node/template.yaml")
+    console.print("  2. Validate: robopilot template-validate --path .robopilot/templates/my_custom_node")
+    console.print("  3. Use: robopilot plan --template my_custom_node --name my_proj --task \"...\"")
+
+
+@app.command("template-validate")
+def template_validate(
+    path: Annotated[
+        Path,
+        typer.Option("--path", "-p", help="Path to a custom template directory."),
+    ],
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Validate a custom template definition without generating files."""
+    result = validate_custom_template(path)
+    if json_output:
+        print(json.dumps(result.to_dict(), indent=2))
+        if not result.is_valid:
+            raise typer.Exit(code=1)
+        return
+
+    if result.is_valid:
+        console.print(f"[green]Valid template:[/green] {result.template_name}")
+    else:
+        console.print(f"[red]Invalid template:[/red] {result.template_name}")
+        for err in result.errors:
+            console.print(f"[red]- {err}[/red]")
+        raise typer.Exit(code=1)
 
 
 @app.command("migrate-plan")

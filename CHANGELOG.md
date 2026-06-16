@@ -17,7 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - v2.1.0 Milestone 4 — Interactive Tutorial Mode: added `robopilot tutorial` command.
 - v2.1.0 Milestone 5 — Launch File Static Validation: added `robopilot launch-lint` command.
 - v2.1.0 Milestone 6 — Error Diagnosis Expansion: expanded `robopilot debug` from 8 to 27 error patterns.
-- v2.1.0 Milestone 7 — Workspace-level Static Analysis: added `robopilot workspace` command. Discovers all ROS packages in catkin_ws/src or colcon_ws layouts, classifies workspace type, builds cross-package dependency graph, detects circular dependencies, computes suggested migration order (topological sort, leaves first). Supports `--json` output.
+- v2.1.0 Milestone 7 — Workspace-level Static Analysis: added `robopilot workspace` command.
+- v2.1.0 Milestone 8 — User-configurable Templates: added `robopilot template-init` (scaffolds `.robopilot/templates/` with example), `robopilot template-validate` (validates custom template YAML), and `robopilot plan --template <name>` (uses custom template). Templates are YAML-defined, can extend built-in templates via `extends`, and require no Python coding.
 - Added `docs/research/` planning docs for long-term 2.x development.
 - Added `.claude/` to `.gitignore`.
 

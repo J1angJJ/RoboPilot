@@ -1480,7 +1480,7 @@ Expected behavior:
 - Workspace-level summary report export
 - Reuse existing detect, deps, and inspection modules
 
-### Milestone 8 — User-configurable Templates (Track A)
+### Milestone 8 — User-configurable Templates (Track A) [DONE]
 
 Goal: Allow users to define custom templates without editing RoboPilot source.
 

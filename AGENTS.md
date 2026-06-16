@@ -129,7 +129,7 @@ Milestone 7  Workspace-level Static Analysis (Track B)    [DONE]
              cross-package dependency graph, circular dependency detection,
              suggested migration ordering, inter-package version conflict hints.
 
-Milestone 8  User-configurable Templates (Track A)
+Milestone 8  User-configurable Templates (Track A)        [DONE]
              Support user template overrides via .robopilot/templates/.
              Template inheritance. Add robopilot template-init and
              robopilot template-validate.
