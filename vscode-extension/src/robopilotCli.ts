@@ -71,6 +71,14 @@ export function validateProjectSpecArgs(specPath: string): string[] {
   return ["validate", "--spec", specPath];
 }
 
+export function lintWorkspaceArgs(workspacePath: string): string[] {
+  return ["lint", workspacePath, "--json"];
+}
+
+export function tutorialListArgs(): string[] {
+  return ["tutorial", "--list", "--json"];
+}
+
 export function resolveOutputDirectory(workspacePath: string, configuredDirectory: string): string {
   if (path.isAbsolute(configuredDirectory)) {
     return path.normalize(configuredDirectory);

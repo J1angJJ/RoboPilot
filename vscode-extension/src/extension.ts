@@ -9,6 +9,7 @@ import {
   generateMigrationScaffoldArgs,
   generateScaffoldReportArgs,
   inspectRos1Args,
+  lintWorkspaceArgs,
   migrationPlanPath,
   parseJsonOutput,
   previewMigrationArgs,
@@ -25,21 +26,37 @@ import { RoboPilotProjectTreeProvider } from "./projectTree";
 import {
   DependencyAnalysisResult,
   DetectResult,
+  LintIssue,
+  LintResult,
   MigrationPlanResult,
   MigrationPreviewResult,
   MigrationScaffoldGenerationResult,
   MigrationScaffoldPreviewResult,
   MigrationScaffoldValidationResult,
-  ScaffoldFileItem,
-  Ros1InspectionResult
+  Ros1InspectionResult,
+  ScaffoldFileItem
 } from "./types";
 
 let output: RoboPilotOutput;
 let tree: RoboPilotProjectTreeProvider;
+let diagnostics: vscode.DiagnosticCollection;
+let statusBar: vscode.StatusBarItem;
+
+const LINT_WATCH_PATTERNS = ["**/package.xml", "**/CMakeLists.txt", "**/setup.py", "**/setup.cfg"];
 
 export function activate(context: vscode.ExtensionContext): void {
   output = new RoboPilotOutput();
   tree = new RoboPilotProjectTreeProvider();
+  diagnostics = vscode.languages.createDiagnosticCollection("robopilot");
+  context.subscriptions.push(diagnostics);
+
+  // Status bar
+  statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
+  statusBar.command = "robopilot.showOutput";
+  statusBar.text = "$(checklist) RoboPilot";
+  statusBar.tooltip = "RoboPilot — run Detect Workspace to start";
+  statusBar.show();
+  context.subscriptions.push(statusBar);
 
   context.subscriptions.push(output);
   context.subscriptions.push(vscode.window.registerTreeDataProvider("robopilot.projectView", tree));
@@ -55,11 +72,158 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(vscode.commands.registerCommand("robopilot.openScaffoldReport", openScaffoldReport));
   context.subscriptions.push(vscode.commands.registerCommand("robopilot.validateProjectSpec", validateProjectSpec));
   context.subscriptions.push(vscode.commands.registerCommand("robopilot.showOutput", () => output.show()));
+
+  // v2.1.0 M9: new commands
+  context.subscriptions.push(vscode.commands.registerCommand("robopilot.lintWorkspace", lintWorkspace));
+  context.subscriptions.push(vscode.commands.registerCommand("robopilot.showTemplates", showTemplates));
+
+  // v2.1.0 M9: lint on save for package files
+  context.subscriptions.push(
+    vscode.workspace.onDidSaveTextDocument((doc) => {
+      if (isLintableFile(doc.fileName)) {
+        lintWorkspaceSilent(doc.fileName);
+      }
+    })
+  );
 }
 
 export function deactivate(): void {
   // VSCode disposes registered subscriptions.
 }
+
+// ---------------------------------------------------------------------------
+// M9: Lint workspace command
+// ---------------------------------------------------------------------------
+
+async function lintWorkspace(): Promise<void> {
+  const workspacePath = getWorkspacePath();
+  if (!workspacePath) { return; }
+  await runJsonCommand<LintResult>(
+    "Lint Workspace",
+    (wp) => lintWorkspaceArgs(wp),
+    (result) => {
+      output.appendSection("Lint", [
+        `Package: ${result.package_name ?? "unknown"}`,
+        `Errors: ${result.error_count}, Warnings: ${result.warning_count}, Info: ${result.info_count}`
+      ]);
+      if (result.issues.length === 0) {
+        output.appendSection("Result", ["No issues found."]);
+      }
+      for (const issue of result.issues) {
+        output.appendSection(`${issue.severity}: ${issue.file}`, [`[${issue.rule}] ${issue.message}`]);
+      }
+      tree.update({
+        workspacePath,
+        packageName: result.package_name ?? undefined,
+        lintStatus: result.error_count > 0 ? `${result.error_count} errors` : result.warning_count > 0 ? `${result.warning_count} warnings` : "clean",
+        issuesCount: result.error_count,
+        warningsCount: result.warning_count
+      });
+      updateStatusBar(result);
+      // Populate diagnostics
+      diagnostics.clear();
+      const diagMap = new Map<string, vscode.Diagnostic[]>();
+      for (const issue of result.issues) {
+        const filePath = path.join(workspacePath, issue.file);
+        const diag = lintIssueToDiagnostic(issue);
+        if (!diagMap.has(filePath)) { diagMap.set(filePath, []); }
+        diagMap.get(filePath)!.push(diag);
+      }
+      for (const [filePath, diags] of diagMap) {
+        diagnostics.set(vscode.Uri.file(filePath), diags);
+      }
+    }
+  );
+}
+
+async function lintWorkspaceSilent(filePath: string): Promise<void> {
+  const workspacePath = getWorkspacePath();
+  if (!workspacePath) { return; }
+  const args = lintWorkspaceArgs(workspacePath);
+  try {
+    const result = await runRobopilot(getExecutablePath(), args, { cwd: workspacePath });
+    const parsed = parseJsonOutput<LintResult>(result.stdout);
+    tree.update({
+      lintStatus: parsed.error_count > 0 ? `${parsed.error_count} errors` : parsed.warning_count > 0 ? `${parsed.warning_count} warnings` : "clean",
+      issuesCount: parsed.error_count,
+      warningsCount: parsed.warning_count
+    });
+    updateStatusBar(parsed);
+    diagnostics.clear();
+    const diagMap = new Map<string, vscode.Diagnostic[]>();
+    for (const issue of parsed.issues) {
+      const targetFile = path.join(workspacePath, issue.file);
+      if (!diagMap.has(targetFile)) { diagMap.set(targetFile, []); }
+      diagMap.get(targetFile)!.push(lintIssueToDiagnostic(issue));
+    }
+    for (const [f, diags] of diagMap) {
+      diagnostics.set(vscode.Uri.file(f), diags);
+    }
+  } catch {
+    // Silent fail on lint — don't bother the user on save
+  }
+}
+
+function isLintableFile(filePath: string): boolean {
+  const name = path.basename(filePath);
+  return name === "package.xml" || name === "CMakeLists.txt" || name === "setup.py" || name === "setup.cfg";
+}
+
+function lintIssueToDiagnostic(issue: LintIssue): vscode.Diagnostic {
+  const severity = issue.severity === "error" ? vscode.DiagnosticSeverity.Error
+    : issue.severity === "warning" ? vscode.DiagnosticSeverity.Warning
+    : vscode.DiagnosticSeverity.Information;
+  return new vscode.Diagnostic(
+    new vscode.Range(0, 0, 0, 0),
+    `[${issue.rule}] ${issue.message}`,
+    severity
+  );
+}
+
+function updateStatusBar(result: LintResult): void {
+  if (result.error_count > 0) {
+    statusBar.text = `$(error) RoboPilot: ${result.error_count} errors`;
+    statusBar.backgroundColor = undefined;
+  } else if (result.warning_count > 0) {
+    statusBar.text = `$(warning) RoboPilot: ${result.warning_count} warnings`;
+    statusBar.backgroundColor = undefined;
+  } else {
+    statusBar.text = `$(check) RoboPilot: clean`;
+    statusBar.backgroundColor = undefined;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// M9: Templates
+// ---------------------------------------------------------------------------
+
+async function showTemplates(): Promise<void> {
+  const workspacePath = getWorkspacePath();
+  if (!workspacePath) { return; }
+  const args = ["tutorial", "--list", "--json"];
+  output.appendCommand(renderCommand(args), workspacePath);
+  try {
+    const result = await runRobopilot(getExecutablePath(), args, { cwd: workspacePath });
+    const lessons = JSON.parse(result.stdout) as { id: string; title: string }[];
+    output.appendSection("Available Templates & Tutorials", [
+      `Found ${lessons.length} items:`,
+      ...lessons.map((l: { id: string; title: string }) => `  ${l.id}: ${l.title}`)
+    ]);
+    output.appendSection("Quick Start", [
+      "Run tutorial: robopilot tutorial --lesson demo_detector",
+      "Plan with template: robopilot plan --template <name> --name <project> --task \"...\"",
+      "Init templates: robopilot template-init"
+    ]);
+    tree.update({ templateCount: lessons.length });
+    output.show();
+  } catch (error) {
+    showFailure(error);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Existing commands (unchanged below)
+// ---------------------------------------------------------------------------
 
 async function detectWorkspace(): Promise<void> {
   await runJsonCommand<DetectResult>(
@@ -111,9 +275,7 @@ async function analyzeDependencies(): Promise<void> {
 
 async function generateMigrationPlan(): Promise<void> {
   const workspacePath = getWorkspacePath();
-  if (!workspacePath) {
-    return;
-  }
+  if (!workspacePath) { return; }
   const outputDir = getOutputDirectory(workspacePath);
   const planPath = migrationPlanPath(outputDir);
   await fs.mkdir(outputDir, { recursive: true });
@@ -123,29 +285,21 @@ async function generateMigrationPlan(): Promise<void> {
     await runRobopilot(getExecutablePath(), args, { cwd: workspacePath });
     const data = JSON.parse(await fs.readFile(planPath, "utf8")) as MigrationPlanResult;
     output.appendSection("Migration Plan", [
-      `Output: ${planPath}`,
-      `Package: ${data.package_name || "unknown"}`,
-      `Target: ${data.target}`,
-      `Confidence: ${data.confidence}`
+      `Output: ${planPath}`, `Package: ${data.package_name || "unknown"}`,
+      `Target: ${data.target}`, `Confidence: ${data.confidence}`
     ]);
     output.appendSection("Risks", data.risks ?? []);
     output.appendSection("Next Steps", data.suggested_next_steps ?? []);
     tree.update({ workspacePath, packageName: data.package_name, migrationPlanStatus: "generated" });
     output.show();
-  } catch (error) {
-    showFailure(error);
-  }
+  } catch (error) { showFailure(error); }
 }
 
 async function previewMigration(): Promise<void> {
   const workspacePath = getWorkspacePath();
-  if (!workspacePath) {
-    return;
-  }
+  if (!workspacePath) { return; }
   const planPath = migrationPlanPath(getOutputDirectory(workspacePath));
-  try {
-    await fs.access(planPath);
-  } catch {
+  try { await fs.access(planPath); } catch {
     vscode.window.showWarningMessage("No migration_plan.json found. Run RoboPilot: Generate Migration Plan first.");
     return;
   }
@@ -165,12 +319,10 @@ async function previewMigration(): Promise<void> {
 
 async function previewMigrationScaffold(): Promise<void> {
   const workspacePath = getWorkspacePath();
-  if (!workspacePath) {
-    return;
-  }
+  if (!workspacePath) { return; }
   const planPath = migrationPlanPath(getOutputDirectory(workspacePath));
   if (!(await pathExists(planPath))) {
-    vscode.window.showWarningMessage("No migration_plan.json found. Run RoboPilot: Generate Migration Plan first.");
+    vscode.window.showWarningMessage("No migration_plan.json found. Generate Migration Plan first.");
     return;
   }
   await runJsonCommand<MigrationScaffoldPreviewResult>(
@@ -180,7 +332,7 @@ async function previewMigrationScaffold(): Promise<void> {
       output.appendSection("Scaffold Preview", [
         `Package: ${result.package_name || "unknown"}`,
         `Target style: ${result.target_style || "unknown"}`,
-        `Planned scaffold files: ${result.scaffold_files_to_create.length}`,
+        `Scaffold files: ${result.scaffold_files_to_create.length}`,
         `Placeholder files: ${result.placeholder_files.length}`
       ]);
       output.appendSection("Scaffold Files to Create", formatScaffoldFiles(result.scaffold_files_to_create));
@@ -190,8 +342,7 @@ async function previewMigrationScaffold(): Promise<void> {
       output.appendSection("Conflicts", result.conflicts);
       output.appendSection("Next Steps", result.suggested_next_steps);
       tree.update({
-        workspacePath,
-        packageName: result.package_name,
+        workspacePath, packageName: result.package_name,
         scaffoldPreviewStatus: result.conflicts.length ? "conflicts" : "previewed",
         warningsCount: result.risks.length + result.conflicts.length
       });
@@ -201,14 +352,12 @@ async function previewMigrationScaffold(): Promise<void> {
 
 async function generateMigrationScaffold(): Promise<void> {
   const workspacePath = getWorkspacePath();
-  if (!workspacePath) {
-    return;
-  }
+  if (!workspacePath) { return; }
   const outputDir = getOutputDirectory(workspacePath);
   const planPath = migrationPlanPath(outputDir);
   const scaffoldDir = scaffoldDirectoryPath(outputDir);
   if (!(await pathExists(planPath))) {
-    vscode.window.showWarningMessage("No migration_plan.json found. Run RoboPilot: Generate Migration Plan first.");
+    vscode.window.showWarningMessage("No migration_plan.json found. Generate Migration Plan first.");
     return;
   }
   await fs.mkdir(outputDir, { recursive: true });
@@ -224,25 +373,23 @@ async function generateMigrationScaffold(): Promise<void> {
     output.show();
   } catch (error) {
     showFailure(error, [
-      "RoboPilot does not pass --overwrite from the extension. If the scaffold output already exists, review or choose a clean robopilot.outputDirectory before generating again."
+      "RoboPilot does not pass --overwrite from the extension. Choose a clean output directory."
     ]);
   }
 }
 
 async function validateMigrationScaffold(): Promise<void> {
   const workspacePath = getWorkspacePath();
-  if (!workspacePath) {
-    return;
-  }
+  if (!workspacePath) { return; }
   const outputDir = getOutputDirectory(workspacePath);
   const planPath = migrationPlanPath(outputDir);
   const scaffoldDir = scaffoldDirectoryPath(outputDir);
   if (!(await pathExists(planPath))) {
-    vscode.window.showWarningMessage("No migration_plan.json found. Run RoboPilot: Generate Migration Plan first.");
+    vscode.window.showWarningMessage("No migration_plan.json found. Generate Migration Plan first.");
     return;
   }
   if (!(await pathExists(scaffoldDir))) {
-    vscode.window.showWarningMessage("No ros2_scaffold directory found. Run RoboPilot: Generate Migration Scaffold first.");
+    vscode.window.showWarningMessage("No ros2_scaffold directory found. Generate Migration Scaffold first.");
     return;
   }
   await runJsonCommand<MigrationScaffoldValidationResult>(
@@ -250,8 +397,7 @@ async function validateMigrationScaffold(): Promise<void> {
     () => validateMigrationScaffoldArgs(planPath, scaffoldDir),
     (result) => {
       output.appendSection("Scaffold Validation", [
-        `Valid: ${result.valid}`,
-        `Package: ${result.package_name || "unknown"}`,
+        `Valid: ${result.valid}`, `Package: ${result.package_name || "unknown"}`,
         `Target style: ${result.target_style || "unknown"}`
       ]);
       output.appendSection("Missing Files", result.missing_files);
@@ -262,8 +408,7 @@ async function validateMigrationScaffold(): Promise<void> {
       output.appendSection("Next Steps", result.suggested_next_steps);
       output.appendSection("Safety Note", [result.safety_note]);
       tree.update({
-        workspacePath,
-        packageName: result.package_name,
+        workspacePath, packageName: result.package_name,
         scaffoldValidationStatus: result.valid ? "valid" : "invalid",
         issuesCount: result.issues.length + result.missing_files.length,
         warningsCount: result.warnings.length + result.unexpected_files.length
@@ -274,19 +419,17 @@ async function validateMigrationScaffold(): Promise<void> {
 
 async function generateScaffoldReport(): Promise<void> {
   const workspacePath = getWorkspacePath();
-  if (!workspacePath) {
-    return;
-  }
+  if (!workspacePath) { return; }
   const outputDir = getOutputDirectory(workspacePath);
   const planPath = migrationPlanPath(outputDir);
   const scaffoldDir = scaffoldDirectoryPath(outputDir);
   const reportPath = scaffoldReportPath(outputDir);
   if (!(await pathExists(planPath))) {
-    vscode.window.showWarningMessage("No migration_plan.json found. Run RoboPilot: Generate Migration Plan first.");
+    vscode.window.showWarningMessage("No migration_plan.json found. Generate Migration Plan first.");
     return;
   }
   if (!(await pathExists(scaffoldDir))) {
-    vscode.window.showWarningMessage("No ros2_scaffold directory found. Run RoboPilot: Generate Migration Scaffold first.");
+    vscode.window.showWarningMessage("No ros2_scaffold directory found. Generate Migration Scaffold first.");
     return;
   }
   await fs.mkdir(outputDir, { recursive: true });
@@ -298,25 +441,19 @@ async function generateScaffoldReport(): Promise<void> {
     if (result.stdout.trim()) {
       output.appendSection("RoboPilot Output", result.stdout.trim().split(/\r?\n/));
     }
-    if (result.stderr.trim()) {
-      output.appendSection("stderr", [result.stderr.trim()]);
-    }
+    if (result.stderr.trim()) { output.appendSection("stderr", [result.stderr.trim()]); }
     tree.update({ workspacePath, scaffoldReportStatus: "generated" });
     output.show();
     vscode.window.showInformationMessage(`RoboPilot scaffold report written to ${reportPath}`);
-  } catch (error) {
-    showFailure(error);
-  }
+  } catch (error) { showFailure(error); }
 }
 
 async function openScaffoldReport(): Promise<void> {
   const workspacePath = getWorkspacePath();
-  if (!workspacePath) {
-    return;
-  }
+  if (!workspacePath) { return; }
   const reportPath = scaffoldReportPath(getOutputDirectory(workspacePath));
   if (!(await pathExists(reportPath))) {
-    vscode.window.showWarningMessage("No scaffold_report.md found. Run RoboPilot: Generate Scaffold Report first.");
+    vscode.window.showWarningMessage("No scaffold_report.md found. Generate Scaffold Report first.");
     return;
   }
   const document = await vscode.workspace.openTextDocument(vscode.Uri.file(reportPath));
@@ -326,13 +463,9 @@ async function openScaffoldReport(): Promise<void> {
 
 async function validateProjectSpec(): Promise<void> {
   const workspacePath = getWorkspacePath();
-  if (!workspacePath) {
-    return;
-  }
+  if (!workspacePath) { return; }
   const specPath = path.join(workspacePath, "robopilot.yaml");
-  try {
-    await fs.access(specPath);
-  } catch {
+  try { await fs.access(specPath); } catch {
     vscode.window.showWarningMessage("No robopilot.yaml found in the workspace root.");
     return;
   }
@@ -341,13 +474,9 @@ async function validateProjectSpec(): Promise<void> {
   try {
     const result = await runRobopilot(getExecutablePath(), args, { cwd: workspacePath });
     output.appendSection("ProjectSpec Validation", [result.stdout.trim() || "Validation completed."]);
-    if (result.stderr.trim()) {
-      output.appendSection("stderr", [result.stderr.trim()]);
-    }
+    if (result.stderr.trim()) { output.appendSection("stderr", [result.stderr.trim()]); }
     output.show();
-  } catch (error) {
-    showFailure(error);
-  }
+  } catch (error) { showFailure(error); }
 }
 
 async function runJsonCommand<T>(
@@ -356,22 +485,16 @@ async function runJsonCommand<T>(
   render: (result: T) => void
 ): Promise<void> {
   const workspacePath = getWorkspacePath();
-  if (!workspacePath) {
-    return;
-  }
+  if (!workspacePath) { return; }
   const args = buildArgs(workspacePath);
   output.appendCommand(renderCommand(args), workspacePath);
   try {
     const result = await runRobopilot(getExecutablePath(), args, { cwd: workspacePath });
     const parsed = parseJsonOutput<T>(result.stdout);
     render(parsed);
-    if (result.stderr.trim()) {
-      output.appendSection("stderr", [result.stderr.trim()]);
-    }
+    if (result.stderr.trim()) { output.appendSection("stderr", [result.stderr.trim()]); }
     output.show();
-  } catch (error) {
-    showFailure(error);
-  }
+  } catch (error) { showFailure(error); }
 }
 
 function getWorkspacePath(): string | undefined {
@@ -406,8 +529,7 @@ function renderMigrationScaffoldGeneration(
   result: MigrationScaffoldGenerationResult
 ): void {
   output.appendSection("Migration Scaffold", [
-    `Output: ${scaffoldDir}`,
-    `Package: ${result.package_name || "unknown"}`,
+    `Output: ${scaffoldDir}`, `Package: ${result.package_name || "unknown"}`,
     `Target style: ${result.target_style || "unknown"}`
   ]);
   output.appendSection("Files Created", result.files_created);
@@ -419,12 +541,11 @@ function renderMigrationScaffoldGeneration(
   output.appendSection("Safety Note", [result.safety_note]);
   if (result.conflicts.length > 0) {
     output.appendSection("Conflict Help", [
-      "RoboPilot does not pass --overwrite from the extension. Choose a clean output directory or remove stale generated scaffold files after review."
+      "RoboPilot does not pass --overwrite from the extension. Choose a clean output directory."
     ]);
   }
   tree.update({
-    workspacePath,
-    packageName: result.package_name,
+    workspacePath, packageName: result.package_name,
     scaffoldDirectoryStatus: result.conflicts.length ? "conflicts" : "generated",
     warningsCount: result.risks.length + result.conflicts.length + result.skipped_files.length
   });
@@ -434,9 +555,7 @@ function showFailure(error: unknown, extraLines: readonly string[] = []): void {
   const maybeDetails = error as { stderr?: string };
   const message = formatCliError(error);
   output.appendError(message, maybeDetails.stderr);
-  if (extraLines.length > 0) {
-    output.appendSection("Help", extraLines);
-  }
+  if (extraLines.length > 0) { output.appendSection("Help", extraLines); }
   output.show();
   vscode.window.showErrorMessage(message);
 }
@@ -460,10 +579,5 @@ function formatPlaceholderChecks(checks: readonly { path: string; passed: boolea
 }
 
 async function pathExists(targetPath: string): Promise<boolean> {
-  try {
-    await fs.access(targetPath);
-    return true;
-  } catch {
-    return false;
-  }
+  try { await fs.access(targetPath); return true; } catch { return false; }
 }

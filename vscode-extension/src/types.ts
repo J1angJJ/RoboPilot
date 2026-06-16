@@ -137,4 +137,24 @@ export interface ProjectTreeState {
   scaffoldDirectoryStatus?: string;
   scaffoldValidationStatus?: string;
   scaffoldReportStatus?: string;
+  lintStatus?: string;
+  templateCount?: number;
+}
+
+export interface LintResult {
+  project_path: string;
+  package_name: string | null;
+  project_type: string;
+  issues: LintIssue[];
+  error_count: number;
+  warning_count: number;
+  info_count: number;
+}
+
+export interface LintIssue {
+  severity: "error" | "warning" | "info";
+  file: string;
+  rule: string;
+  message: string;
+  line: number | null;
 }

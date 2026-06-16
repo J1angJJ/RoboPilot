@@ -1502,7 +1502,7 @@ Expected behavior:
 - No execution of user template code; pure data definition
 - Templates are YAML-defined, no Python required from the user
 
-### Milestone 9 — VSCode Education & Quality Workflow (Track A+B)
+### Milestone 9 — VSCode Education & Quality Workflow (Track A+B) [DONE]
 
 Goal: Polish the VSCode extension for education and quality workflows.
 

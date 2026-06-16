@@ -41,6 +41,8 @@
     "onCommand:robopilot.openScaffoldReport",
     "onCommand:robopilot.validateProjectSpec",
     "onCommand:robopilot.showOutput",
+    "onCommand:robopilot.lintWorkspace",
+    "onCommand:robopilot.showTemplates",
     "workspaceContains:robopilot.yaml",
     "workspaceContains:package.xml"
   ],
@@ -94,6 +96,14 @@
       {
         "command": "robopilot.showOutput",
         "title": "RoboPilot: Show Output"
+      },
+      {
+        "command": "robopilot.lintWorkspace",
+        "title": "RoboPilot: Lint Workspace"
+      },
+      {
+        "command": "robopilot.showTemplates",
+        "title": "RoboPilot: Show Templates &amp; Tutorials"
       }
     ],
     "configuration": {

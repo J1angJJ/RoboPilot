@@ -134,7 +134,7 @@ Milestone 8  User-configurable Templates (Track A)        [DONE]
              Template inheritance. Add robopilot template-init and
              robopilot template-validate.
 
-Milestone 9  VSCode Education & Quality Workflow (Track A+B)
+Milestone 9  VSCode Education & Quality Workflow (Track A+B) [DONE]
              Polish VSCode extension: template browser, lint-on-save via
              robopilot lint --json, migration score in status bar, guided
              tutorial panel, inline issue annotations.
