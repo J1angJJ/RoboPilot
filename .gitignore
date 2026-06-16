@@ -48,6 +48,7 @@ outputs/
 
 # IDE and editor files
 .vscode/
+.claude/
 .idea/
 
 # OS files
