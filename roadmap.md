@@ -1330,19 +1330,23 @@ Expected behavior:
 - preserve the no-ROS-required safety model
 - avoid starting research-backed 2.x feature work in this patch
 
-## 2.x: Education & Static Quality Toolchain (v2.1.0 – v2.10.0)
+## v2.1.0: Education & Static Quality Toolchain
 
-Status: Planned direction
+Status: In development
 
-After v2.0.1, RoboPilot's 2.x development follows two complementary tracks that share the same no-ROS-required safety model:
+v2.1.0 is a single release containing 10 development milestones. All milestones are
+committed to main as completed and published together as one MINOR bump from v2.0.1.
+
+After v2.0.1, RoboPilot's development follows two complementary tracks that share
+the same no-ROS-required safety model:
 
 **Track A — Education & Onboarding:** Expand RoboPilot as the best tool for learning ROS project structure without installing ROS. More templates, interactive tutorials, error diagnosis, and beginner workflows.
 
 **Track B — Static Quality Tooling:** Make RoboPilot a linting and quality-analysis tool for real ROS projects. Package health checks, migration readiness scoring, dependency consistency validation, and CI-friendly reports.
 
-Each minor version focuses on one clear theme. Track A and Track B alternate to keep both user groups engaged:
+Each milestone focuses on one clear theme. Track A and Track B alternate:
 
-### v2.1.0 — Template Expansion I (Track A)
+### Milestone 1 — Template Expansion I (Track A) [DONE]
 
 Goal: Expand from 5 to 12 generation templates and make ProjectSpec fields configurable.
 
@@ -1357,7 +1361,7 @@ Expected work:
 - Tests for each new template and configurable override paths
 - Update docs and tutorials
 
-### v2.2.0 — ROS Package Lint (Track B)
+### Milestone 2 — ROS Package Lint (Track B)
 
 Goal: Add `robopilot lint` for static package quality checks.
 
@@ -1378,7 +1382,7 @@ Expected checks:
 - Human-readable terminal output and deterministic `--json` output
 - No file modification
 
-### v2.3.0 — Migration Readiness Scoring (Track B)
+### Milestone 3 — Migration Readiness Scoring (Track B)
 
 Goal: Add `robopilot migrate-score` to quantify ROS1-to-ROS2 migration difficulty.
 
@@ -1401,7 +1405,7 @@ Expected behavior:
 - Reuse existing ROS1 inspection, dependency analysis, and migration plan modules
 - Conservative wording: "This score is a static estimate, not a guarantee."
 
-### v2.4.0 — Interactive Tutorial Mode (Track A)
+### Milestone 4 — Interactive Tutorial Mode (Track A)
 
 Goal: Add `robopilot tutorial` to guide a complete beginner through the spec-first workflow.
 
@@ -1423,7 +1427,7 @@ Expected behavior:
 - All tutorial logic is read-only until explicit `generate` steps
 - Chinese and English tutorial text
 
-### v2.5.0 — Launch File Static Validation (Track B)
+### Milestone 5 — Launch File Static Validation (Track B)
 
 Goal: Deepen launch file analysis for ROS1 XML and ROS2 Python launch files.
 
@@ -1441,7 +1445,7 @@ Expected behavior:
 - Deterministic `--json` output for integration
 - Static only: no launch execution
 
-### v2.6.0 — Error Diagnosis Expansion (Track A)
+### Milestone 6 — Error Diagnosis Expansion (Track A)
 
 Goal: Expand the offline error debugger from basic patterns to 30+ common ROS errors.
 
@@ -1454,7 +1458,7 @@ Expected behavior:
 - Tests for each error category with real error log snippets from `examples/error_logs/`
 - Add Chinese error explanations
 
-### v2.7.0 — Workspace-level Static Analysis (Track B)
+### Milestone 7 — Workspace-level Static Analysis (Track B)
 
 Goal: Add `robopilot workspace` for multi-package analysis.
 
@@ -1476,7 +1480,7 @@ Expected behavior:
 - Workspace-level summary report export
 - Reuse existing detect, deps, and inspection modules
 
-### v2.8.0 — User-configurable Templates (Track A)
+### Milestone 8 — User-configurable Templates (Track A)
 
 Goal: Allow users to define custom templates without editing RoboPilot source.
 
@@ -1498,7 +1502,7 @@ Expected behavior:
 - No execution of user template code; pure data definition
 - Templates are YAML-defined, no Python required from the user
 
-### v2.9.0 — VSCode Education & Quality Workflow (Track A+B)
+### Milestone 9 — VSCode Education & Quality Workflow (Track A+B)
 
 Goal: Polish the VSCode extension for education and quality workflows.
 
@@ -1512,7 +1516,7 @@ Expected behavior:
 - Keep the extension as a thin CLI/API wrapper — no logic duplication
 - All new views use existing JSON contracts
 
-### v2.10.0 — Quality Report Export & CI Integration (Track B)
+### Milestone 10 — Quality Report Export & CI Integration (Track B)
 
 Goal: Make static quality results consumable by CI systems and external tools.
 
@@ -1549,9 +1553,10 @@ The following remain outside 2.x scope unless explicitly revisited:
 
 Release policy:
 
-- Patch releases: bug fixes, documentation, compatibility, packaging, small UX fixes.
-- Minor releases: one clear feature theme with full tests and documentation.
-- Major releases: reserved for breaking CLI/API/JSON changes or major safety-boundary changes.
+- v2.1.0 ships as one MINOR bump after all 10 milestones are complete and tested.
+- Within the milestone phase, work is committed to main incrementally.
+- PATCH releases (v2.1.1, v2.1.2) are reserved for bug fixes discovered after release.
+- Major releases are reserved for breaking CLI/API/JSON changes or safety-boundary changes.
 
 The roadmap should be reviewed before each new minor release. RoboPilot should grow as a practical no-ROS-required ROS engineering toolchain — education and static quality are the two pillars of that growth.
 

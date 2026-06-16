@@ -17,7 +17,7 @@ After v2.0.1, development follows two complementary tracks:
 - **Track A — Education & Onboarding**: Expand templates (5→12), add interactive tutorial mode, error diagnosis for 30+ ROS patterns, user-configurable templates. Goal: best tool for learning ROS structure without installing ROS.
 - **Track B — Static Quality Tooling**: Add `robopilot lint` (package health checks), `robopilot migrate-score` (migration readiness 0-100), launch file validation, workspace-level analysis, CI-friendly report export. Goal: linting and quality analysis for real ROS projects.
 
-The 10-version plan (v2.1.0–v2.10.0) alternates between tracks. Full details in `roadmap.md`.
+v2.1.0 is a single release containing 10 development milestones, tracked in `roadmap.md`.
 
 ## Git & Release Conventions
 
@@ -163,17 +163,17 @@ detect → inspect-ros1 / inspect-ros2 → deps
 - Do not add new product commands during packaging/release work.
 - Prefer pure Python, pathlib, type hints. Keep functions small. Separate CLI from business logic.
 
-### Planned Module Additions (2.x)
+### Planned Module Additions (v2.1.0 milestones)
 
 ```
 src/robopilot/
-├── lint/            # v2.2.0: package.xml, CMakeLists, setup.py checks
-├── migrate_score/   # v2.3.0: ROS1→ROS2 migration readiness scoring
-├── tutorial/        # v2.4.0: interactive step-by-step guided workflow
-├── launch_lint/     # v2.5.0: ROS1 XML + ROS2 Python launch file validation
-├── workspace/       # v2.7.0: multi-package workspace analysis and graph
-├── user_templates/  # v2.8.0: custom template loading and validation
-└── ci_check/        # v2.10.0: unified CI check with SARIF output
+├── lint/            # M2: package.xml, CMakeLists, setup.py checks
+├── migrate_score/   # M3: ROS1→ROS2 migration readiness scoring
+├── tutorial/        # M4: interactive step-by-step guided workflow
+├── launch_lint/     # M5: ROS1 XML + ROS2 Python launch file validation
+├── workspace/       # M7: multi-package workspace analysis and graph
+├── user_templates/  # M8: custom template loading and validation
+└── ci_check/        # M10: unified CI check with SARIF output
 ```
 
 New commands must follow the existing pattern: core module → API wrapper → CLI command, with `--json` support and read-only safety.
@@ -181,7 +181,7 @@ New commands must follow the existing pattern: core module → API wrapper → C
 ## Key Files for Context
 
 - `AGENTS.md` — comprehensive developer guide with full CLI command reference and rules
-- `roadmap.md` — full version history and 2.x version plan (v2.1.0–v2.10.0)
+- `roadmap.md` — full version history and v2.1.0 milestone plan
 - `docs/architecture.md` — architectural overview
 - `docs/api.md` — Python API documentation
 - `docs/json_contracts.md` — stable JSON output schemas

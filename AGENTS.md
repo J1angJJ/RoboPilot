@@ -82,72 +82,73 @@ Make RoboPilot a linting and quality-analysis tool for real ROS projects. Packag
 
 These two tracks share the same no-ROS-required safety model. Track A grows the top of the funnel (new users), Track B grows the bottom (retained users with real projects).
 
-## 2.x Version Plan (v2.1.0 – v2.10.0)
+## v2.1.0 Milestone Plan
 
-Each minor release focuses on one clear theme from Track A or Track B, with full tests and docs. Patch releases are reserved for bug fixes, compatibility, and small UX polish.
+v2.1.0 is a single release containing 10 development milestones. Each milestone
+is an internal checkpoint, not a separate PyPI release. Milestones are completed
+sequentially and committed to main.
 
 ```txt
-v2.1.0  Template Expansion I (Track A)
-        Expand from 5 to 12 generation templates: add slam, navigation, sensor_fusion,
-        image_processing, robot_arm, rosbag_tools, and state_machine.
-        Make topic names and message types configurable in robopilot.yaml per-node
-        instead of fully hardcoded in templates.
+Milestone 1  Template Expansion I (Track A)              [DONE]
+             Expand from 5 to 12 generation templates: add slam, navigation,
+             sensor_fusion, image_processing, robot_arm, rosbag_tools, and
+             state_machine. Make topic names and message types configurable
+             in robopilot.yaml per-node instead of fully hardcoded.
 
-v2.2.0  ROS Package Lint (Track B)
-        Add robopilot lint command. Static checks for package.xml format version,
-        required fields, dependency declaration consistency, missing buildtool_depend,
-        common CMakeLists.txt issues (missing find_package, missing catkin_package/
-        ament_package), and setup.py/setup.cfg ament_python convention checks.
+Milestone 2  ROS Package Lint (Track B)                  [IN PROGRESS]
+             Add robopilot lint command. Static checks for package.xml format
+             version, required fields, dependency declaration consistency,
+             missing buildtool_depend, common CMakeLists.txt issues (missing
+             find_package, missing catkin_package/ament_package), and
+             setup.py/setup.cfg ament_python convention checks.
 
-v2.3.0  Migration Readiness Scoring (Track B)
-        Add robopilot migrate-score command. Score a ROS1 package on migration
-        readiness (0-100). Break down by: API surface patterns (rospy→rclpy, roscpp→
-        rclcpp), build system complexity, dependency availability in ROS2, launch file
-        conversion complexity, custom message/service/action surface.
+Milestone 3  Migration Readiness Scoring (Track B)
+             Add robopilot migrate-score command. Score a ROS1 package on
+             migration readiness (0-100). Break down by: API surface patterns,
+             build system complexity, dependency availability in ROS2, launch
+             file conversion complexity, custom message/service/action surface.
 
-v2.4.0  Interactive Tutorial Mode (Track A)
-        Add robopilot tutorial command. Step-by-step guided workflow through plan→
-        validate→generate→inspect→report. Each step explains what it does, shows
-        expected output, and verifies the user's result. Target: a complete beginner
-        can finish a tutorial in under 15 minutes without prior ROS knowledge.
+Milestone 4  Interactive Tutorial Mode (Track A)
+             Add robopilot tutorial command. Step-by-step guided workflow
+             through plan→validate→generate→inspect→report. Target: a complete
+             beginner can finish in under 15 minutes without ROS knowledge.
 
-v2.5.0  Launch File Static Validation (Track B)
-        Extend launch file analysis for ROS1 XML and ROS2 Python launch files.
-        Detect: missing node declarations, unreferenced parameters, undefined
-        arguments, deprecated ROS1-only patterns, missing remap targets.
-        Integrate findings into lint and migrate-score.
+Milestone 5  Launch File Static Validation (Track B)
+             Extend launch file analysis for ROS1 XML and ROS2 Python launch
+             files. Detect: missing node declarations, unreferenced parameters,
+             undefined arguments, deprecated ROS1-only patterns, missing remap
+             targets. Integrate into lint and migrate-score.
 
-v2.6.0  Error Diagnosis Expansion (Track A)
-        Expand debugger from basic cv_bridge patterns to 30+ common ROS errors.
-        Cover: tf/tf2 issues, parameter server, actionlib, nodelet migration,
-        QoS mismatches, build failures, CMake errors, Python import errors in
-        ROS context. Each error type maps to a readable diagnosis and fix suggestion.
+Milestone 6  Error Diagnosis Expansion (Track A)
+             Expand debugger from basic cv_bridge patterns to 30+ common ROS
+             errors. Cover: tf/tf2, parameter server, actionlib, nodelet,
+             QoS mismatches, build failures, CMake/Python import errors.
 
-v2.7.0  Workspace-level Static Analysis (Track B)
-        Add robopilot workspace command. Multi-package catkin_ws/src or colcon_ws/src
-        detection. Cross-package dependency graph, circular dependency detection,
-        suggested migration ordering, inter-package version conflict hints.
+Milestone 7  Workspace-level Static Analysis (Track B)
+             Add robopilot workspace command. Multi-package workspace detection,
+             cross-package dependency graph, circular dependency detection,
+             suggested migration ordering, inter-package version conflict hints.
 
-v2.8.0  User-configurable Templates (Track A)
-        Support user template overrides via .robopilot/templates/ directory.
-        Template inheritance (base template + user overrides). Allow users to
-        define custom nodes, topics, and config files without editing RoboPilot
-        source. Add robopilot template-init and robopilot template-validate.
+Milestone 8  User-configurable Templates (Track A)
+             Support user template overrides via .robopilot/templates/.
+             Template inheritance. Add robopilot template-init and
+             robopilot template-validate.
 
-v2.9.0  VSCode Education & Quality Workflow (Track A+B)
-        Polish VSCode extension: template browser in sidebar, lint-on-save via
-        robopilot lint --json, migration score in status bar, guided tutorial
-        panel, inline issue annotations for lint results.
+Milestone 9  VSCode Education & Quality Workflow (Track A+B)
+             Polish VSCode extension: template browser, lint-on-save via
+             robopilot lint --json, migration score in status bar, guided
+             tutorial panel, inline issue annotations.
 
-v2.10.0 Quality Report Export & CI Integration (Track B)
-        Exportable quality reports in Markdown and SARIF format. CI-friendly
-        structured output (GitHub Actions, GitLab CI). Add robopilot ci-check
-        as a unified command for CI pipelines. Stable exit codes for gating.
+Milestone 10 Quality Report Export & CI Integration (Track B)
+             Exportable quality reports in Markdown and SARIF format.
+             CI-friendly structured output. Add robopilot ci-check as
+             a unified command for CI pipelines. Stable exit codes for gating.
 ```
 
-### Design Principles for 2.x
+### Design Principles
 
-- Each version is self-contained: one theme, complete tests, updated docs.
+- v2.1.0 releases as a single MINOR bump when all 10 milestones are complete.
+- Each milestone is self-contained: one theme, complete tests, updated docs.
 - Track A and Track B alternate to keep both user groups engaged.
 - No command from v1.0.0–v2.0.1 is removed or silently changed.
 - The no-ROS-required safety model applies to every new feature.
@@ -156,12 +157,12 @@ v2.10.0 Quality Report Export & CI Integration (Track B)
 
 ## 2.x Planning Rules
 
-2.x work follows the Track A (Education) / Track B (Quality) plan defined above. Implementation is version-scoped and review-first:
+2.x work follows the Track A (Education) / Track B (Quality) plan. Implementation is milestone-scoped and review-first:
 
-- Each minor version implements one accepted theme. Do not mix Track A and Track B work in the same minor release.
-- Capture product research under `docs/research/` before starting implementation of a new version.
+- Each milestone implements one accepted theme. Do not mix Track A and Track B work in the same milestone.
+- Capture product research under `docs/research/` before starting a milestone.
 - Use accepted research briefs as the source for scoped implementation tasks.
-- Do not expand beyond the planned version scope without explicit user approval.
+- Do not expand beyond the planned milestone scope without explicit user approval.
 - Treat `docs/research/feature_backlog_2x.md` and `docs/research/decision_log.md` as planning inputs, not product specifications, unless an item is marked accepted.
 - Preserve RoboPilot's no-ROS-required safety model in every new feature.
 - Avoid broad rewrites and speculative feature expansion.
