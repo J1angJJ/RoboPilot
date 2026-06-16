@@ -74,7 +74,6 @@ class LintResult:
 def lint_project(project_path: Path) -> LintResult:
     """Run all static lint checks on a project directory."""
     path = Path(project_path).resolve()
-    detection = detect_project(path)
     package_name = None
     issues: list[LintIssue] = []
 
@@ -94,6 +93,8 @@ def lint_project(project_path: Path) -> LintResult:
             issues=(LintIssue("error", "", "project.not_directory", "Project path is not a directory"),),
             error_count=1, warning_count=0, info_count=0,
         )
+
+    detection = detect_project(path)
 
     pkg_xml = path / "package.xml"
     if pkg_xml.exists():

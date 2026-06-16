@@ -32,26 +32,6 @@ def analyze_log(log_text: str) -> LogAnalysis:
 
 
 # ---------------------------------------------------------------------------
-# Pattern registry
-# ---------------------------------------------------------------------------
-
-def _match(rule) -> callable:
-    """Decorator: returns the pattern function added to the registry."""
-    return rule
-
-
-def _h(diagnosis: str, causes: list[str], fixes: list[str], confidence: str = "high") -> LogAnalysis:
-    return LogAnalysis("_placeholder", diagnosis, tuple(causes), tuple(fixes), confidence)
-
-
-def _pat(normalized: str) -> bool:
-    """Check if any of the given terms appear in normalized text."""
-    def check(*terms: str) -> bool:
-        return any(t in normalized for t in terms)
-    return lambda *terms: check(*terms)
-
-
-# ---------------------------------------------------------------------------
 # v2.0.0 existing patterns (8)
 # ---------------------------------------------------------------------------
 

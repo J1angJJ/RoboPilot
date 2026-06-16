@@ -168,7 +168,6 @@ def _score_build_system(inspection: ROS1Inspection) -> CategoryScore:
 
 
 def _score_dependency_availability(deps) -> CategoryScore:
-    from robopilot.deps.analyzer import DependencyAnalysis
     key = "dependency_avail"
     label, weight = CATEGORIES[key]
     score = 100

@@ -122,12 +122,12 @@ def _discover_packages(root: Path, issues: list[str]) -> list[WorkspacePackage]:
         for item in sorted(search_root.iterdir()):
             if not item.is_dir() or item.name.startswith("."):
                 continue
-            pkgs = _PACKAGE_INDICATORS & {p.name for p in item.iterdir()}
+            pkgs = PACKAGE_INDICATORS & {p.name for p in item.iterdir()}
             if not pkgs:
                 # Check one level deeper (some workspaces have nested structure)
                 for sub in sorted(item.iterdir()):
                     if sub.is_dir() and not sub.name.startswith("."):
-                        sub_pkgs = _PACKAGE_INDICATORS & {p.name for p in sub.iterdir()}
+                        sub_pkgs = PACKAGE_INDICATORS & {p.name for p in sub.iterdir()}
                         if sub_pkgs:
                             pkg = _build_package(sub, root, issues)
                             if pkg and pkg.name not in seen_names:
@@ -189,9 +189,6 @@ def _extract_deps(path: Path) -> tuple[str, ...]:
         return tuple(sorted(set(deps)))
     except Exception:
         return ()
-
-
-_PACKAGE_INDICATORS = PACKAGE_INDICATORS
 
 
 # ---------------------------------------------------------------------------
@@ -312,7 +309,7 @@ def _classify_workspace(root: Path, packages: list[WorkspacePackage]) -> str:
         return "catkin_workspace"
     if has_ros2:
         return "colcon_workspace"
-    if root.name == "src" and (root.parent / "src").is_dir():
+    if root.name == "src":
         return "catkin_or_colcon_workspace"
     # Heuristic: check for common workspace structure
     for indicator in ("src", "build", "install", "devel", "log"):

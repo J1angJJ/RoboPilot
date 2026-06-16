@@ -208,7 +208,7 @@ def plan(
                 console.print(f"[dim]Available custom templates: {available}[/dim]")
                 console.print("Run [bold]robopilot template-init[/bold] to scaffold the templates directory.")
                 raise typer.Exit(code=1)
-            project_spec = project_spec  # already a ProjectSpec
+            # use project_spec from custom template
         else:
             selected_planner = _build_planner(planner, model=model)
             project_spec = selected_planner.plan(package_name=name, task=task)

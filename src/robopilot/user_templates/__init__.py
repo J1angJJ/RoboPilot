@@ -295,16 +295,6 @@ def _parse_template_yaml(content: str) -> dict[str, object]:
     return result
 
 
-def _parse_inline_dict(lines: list[tuple[int, str]], start: int, base_indent: int) -> dict[str, str]:
-    """Parse a dict list entry that may span multiple lines.
-
-    Returns the dict. The caller should skip lines consumed by incrementing ``i``;
-    we don't have access to ``i`` here, so this is called inline in the main loop.
-    """
-    # Not used externally — the main loop handles this inline.
-    return {}
-
-
 # ---------------------------------------------------------------------------
 # Template validation
 # ---------------------------------------------------------------------------
@@ -342,7 +332,7 @@ def validate_custom_template(path: Path) -> TemplateValidationResult:
         extends_name = str(data["extends"])
         if extends_name not in TEMPLATE_REGISTRY:
             # Check if it's a custom template name
-            tpls = list_custom_templates(tpl_path.parent.parent)
+            tpls = list_custom_templates(tpl_path.parent.parent.parent)
             if extends_name not in tpls:
                 errors.append(f"Unknown base template: '{extends_name}'")
 

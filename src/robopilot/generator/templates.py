@@ -567,8 +567,9 @@ def _slam_node(spec: ProjectSpec) -> str:
                 for i, rng in enumerate(scan_ranges):
                     if rng < self.max_laser_range:
                         angle = i * 3.14159 / 180.0
-                        mx = int(self.pose[0] + rng * (angle) / self.map_resolution)
-                        my = int(self.pose[1] + rng * (1.0 - angle) / self.map_resolution)
+                        from math import cos as _cos, sin as _sin
+                        mx = int(self.pose[0] + rng * _cos(angle) / self.map_resolution)
+                        my = int(self.pose[1] + rng * _sin(angle) / self.map_resolution)
                         self.map_cells.append(MapCell(mx, my, True, 0.90))
                 self.get_logger().info(
                     f"Updated map: {{len(self.map_cells)}} cells, "

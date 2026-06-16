@@ -63,10 +63,7 @@ def lint_launch_files(project_path: Path) -> LaunchLintResult:
     if not path.is_dir():
         return LaunchLintResult((), (), 0, 0, 0)
 
-    launch_dirs = [
-        p for p in path.rglob("*")
-        if p.is_dir() and p.name == "launch"
-    ]
+    launch_dirs = [p for p in path.rglob("launch") if p.is_dir()]
     if not launch_dirs:
         # Also check root-level .launch or .launch.py files
         root_launch = list(path.glob("*.launch")) + list(path.glob("*.launch.py"))
