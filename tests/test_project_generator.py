@@ -9,6 +9,9 @@ from robopilot.generator.project_generator import (
 )
 from robopilot.generator.project_spec import ProjectSpec, TopicSpec
 from robopilot.generator.task_classifier import (
+    ACKERMANN_DRIVE,
+    DEPTH_CAMERA,
+    DIAGNOSTIC_AGGREGATOR,
     IMAGE_PROCESSING,
     NAVIGATION,
     OBJECT_DETECTION,
@@ -17,6 +20,7 @@ from robopilot.generator.task_classifier import (
     SENSOR_FUSION,
     SLAM,
     STATE_MACHINE,
+    TELEOP,
 )
 from robopilot.generator.template_registry import build_project_spec
 from robopilot.spec.io import load_spec, spec_to_yaml, write_spec
@@ -100,6 +104,11 @@ NEW_TEMPLATE_TASKS = [
     (ROBOT_ARM, "my_arm", "Control a 6-DOF robot arm with joint trajectory commands"),
     (ROSBAG_TOOLS, "my_bag", "Record and replay rosbag data for offline analysis"),
     (STATE_MACHINE, "my_fsm", "Build a finite state machine for mission control"),
+    # v2.2.0 M11 new
+    (DEPTH_CAMERA, "my_depth", "Create a depth camera driver with RGB-D point cloud"),
+    (ACKERMANN_DRIVE, "my_ackermann", "Control an Ackermann steering vehicle"),
+    (TELEOP, "my_teleop", "Add joystick teleoperation for robot control"),
+    (DIAGNOSTIC_AGGREGATOR, "my_diag", "Aggregate system diagnostics and health status"),
 ]
 
 

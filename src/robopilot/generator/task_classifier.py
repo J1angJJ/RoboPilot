@@ -18,6 +18,12 @@ ROBOT_ARM = "robot_arm"
 ROSBAG_TOOLS = "rosbag_tools"
 STATE_MACHINE = "state_machine"
 
+# v2.2.0 M11 new templates
+DEPTH_CAMERA = "depth_camera"
+ACKERMANN_DRIVE = "ackermann_drive"
+TELEOP = "teleop"
+DIAGNOSTIC_AGGREGATOR = "diagnostic_aggregator"
+
 
 def classify_task(task: str) -> str:
     """Classify a natural language task into a generator template type."""
@@ -98,6 +104,43 @@ def classify_task(task: str) -> str:
         ),
     ):
         return NAVIGATION
+
+    if _contains_any(
+        normalized,
+        (
+            "diagnostic", "diagnostics", "health monitoring",
+            "system status", "hardware status", "diagnostic aggregator",
+            "aggregator",
+        ),
+    ):
+        return DIAGNOSTIC_AGGREGATOR
+
+    if _contains_any(
+        normalized,
+        (
+            "depth camera", "rgbd", "realsense", "kinect",
+            "depth image", "point cloud", "depth sensor", "rgb d",
+        ),
+    ):
+        return DEPTH_CAMERA
+
+    if _contains_any(
+        normalized,
+        (
+            "ackermann", "steering", "car like", "vehicle drive",
+            "ackerman", "steering controller", "car controller",
+        ),
+    ):
+        return ACKERMANN_DRIVE
+
+    if _contains_any(
+        normalized,
+        (
+            "teleop", "teleoperation", "joystick", "keyboard control",
+            "remote control", "gamepad", "tele operate",
+        ),
+    ):
+        return TELEOP
 
     if _contains_any(
         normalized,

@@ -6,7 +6,10 @@ from dataclasses import dataclass
 
 from robopilot.generator.project_spec import NodeSpec, ProjectSpec, TopicSpec
 from robopilot.generator.task_classifier import (
+    ACKERMANN_DRIVE,
     CAMERA_SUBSCRIBER,
+    DEPTH_CAMERA,
+    DIAGNOSTIC_AGGREGATOR,
     GENERIC_NODE,
     IMAGE_PROCESSING,
     NAVIGATION,
@@ -17,6 +20,7 @@ from robopilot.generator.task_classifier import (
     SENSOR_FUSION,
     SLAM,
     STATE_MACHINE,
+    TELEOP,
     VELOCITY_CONTROLLER,
 )
 
@@ -365,6 +369,123 @@ TEMPLATE_REGISTRY: dict[str, TemplateDefinition] = {
         notes=(
             "Mirrors BehaviorTree.CPP / SMACH / YASMIN orchestration patterns in pseudocode.",
             "Designed for state machine, behavior tree, mission control, and workflow tasks.",
+        ),
+    ),
+    # --- v2.2.0 M11 new templates ---
+    DEPTH_CAMERA: TemplateDefinition(
+        template_type=DEPTH_CAMERA,
+        node_file_name="depth_camera_node.py",
+        executable_name="depth_camera_node",
+        node_name="depth_camera_node",
+        class_name="DepthCameraNode",
+        description="ROS-style RGB-D depth camera driver node skeleton.",
+        topics=(
+            TopicSpec(
+                name="/camera/depth/image_rect_raw",
+                direction="publish",
+                message_type="sensor_msgs/Image",
+                description="Rectified depth image (16-bit, mm values).",
+            ),
+            TopicSpec(
+                name="/camera/depth/points",
+                direction="publish",
+                message_type="sensor_msgs/PointCloud2",
+                description="Registered 3D point cloud from depth frame.",
+            ),
+            TopicSpec(
+                name="/camera/depth/camera_info",
+                direction="publish",
+                message_type="sensor_msgs/CameraInfo",
+                description="Camera calibration and intrinsic parameters.",
+            ),
+        ),
+        notes=(
+            "Mirrors RealSense / Kinect / RGB-D sensor driver patterns in pseudocode.",
+            "Designed for depth camera, RGB-D, point cloud, and 3D perception tasks.",
+        ),
+    ),
+    ACKERMANN_DRIVE: TemplateDefinition(
+        template_type=ACKERMANN_DRIVE,
+        node_file_name="ackermann_drive_node.py",
+        executable_name="ackermann_drive_node",
+        node_name="ackermann_drive_node",
+        class_name="AckermannDriveNode",
+        description="ROS-style Ackermann steering vehicle controller node skeleton.",
+        topics=(
+            TopicSpec(
+                name="/cmd_vel",
+                direction="subscribe",
+                message_type="geometry_msgs/Twist",
+                description="Twist velocity command input (converted to steering + speed).",
+            ),
+            TopicSpec(
+                name="/drive/steering_angle",
+                direction="publish",
+                message_type="std_msgs/Float32",
+                description="Computed steering angle in radians.",
+            ),
+            TopicSpec(
+                name="/drive/wheel_speed",
+                direction="publish",
+                message_type="std_msgs/Float32",
+                description="Computed drive wheel speed in m/s.",
+            ),
+        ),
+        notes=(
+            "Mirrors Ackermann steering kinematics for car-like robots in pseudocode.",
+            "Designed for Ackermann, steering, vehicle drive, and autonomous car tasks.",
+        ),
+    ),
+    TELEOP: TemplateDefinition(
+        template_type=TELEOP,
+        node_file_name="teleop_node.py",
+        executable_name="teleop_node",
+        node_name="teleop_node",
+        class_name="TeleopNode",
+        description="ROS-style teleoperation (keyboard/joystick) node skeleton.",
+        topics=(
+            TopicSpec(
+                name="/joy",
+                direction="subscribe",
+                message_type="sensor_msgs/Joy",
+                description="Joystick/gamepad input for teleoperation.",
+            ),
+            TopicSpec(
+                name="/cmd_vel",
+                direction="publish",
+                message_type="geometry_msgs/Twist",
+                description="Velocity commands for robot motion.",
+            ),
+        ),
+        notes=(
+            "Mirrors teleop_twist_joy / teleop_twist_keyboard patterns in pseudocode.",
+            "Designed for teleop, joystick control, keyboard control, and remote operation tasks.",
+        ),
+    ),
+    DIAGNOSTIC_AGGREGATOR: TemplateDefinition(
+        template_type=DIAGNOSTIC_AGGREGATOR,
+        node_file_name="diagnostic_aggregator_node.py",
+        executable_name="diagnostic_aggregator_node",
+        node_name="diagnostic_aggregator_node",
+        class_name="DiagnosticAggregatorNode",
+        description="ROS-style diagnostic aggregation and health monitoring node skeleton.",
+        topics=(
+            TopicSpec(
+                name="/diagnostics",
+                direction="subscribe",
+                message_type="diagnostic_msgs/DiagnosticArray",
+                description="Raw diagnostic messages from hardware drivers and nodes.",
+            ),
+            TopicSpec(
+                name="/diagnostics_agg",
+                direction="publish",
+                message_type="diagnostic_msgs/DiagnosticArray",
+                description="Aggregated and filtered diagnostic summary.",
+            ),
+        ),
+        notes=(
+            "Mirrors diagnostic_aggregator / hardware status monitoring patterns in pseudocode.",
+            "Designed for diagnostics, health monitoring, system status, and hardware watchdog tasks.",
         ),
     ),
 }

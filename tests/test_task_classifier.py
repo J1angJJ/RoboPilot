@@ -1,5 +1,8 @@
 from robopilot.generator.task_classifier import (
+    ACKERMANN_DRIVE,
     CAMERA_SUBSCRIBER,
+    DEPTH_CAMERA,
+    DIAGNOSTIC_AGGREGATOR,
     GENERIC_NODE,
     IMAGE_PROCESSING,
     NAVIGATION,
@@ -10,6 +13,7 @@ from robopilot.generator.task_classifier import (
     SENSOR_FUSION,
     SLAM,
     STATE_MACHINE,
+    TELEOP,
     VELOCITY_CONTROLLER,
     classify_task,
 )
@@ -94,4 +98,25 @@ def test_state_machine_before_navigation() -> None:
 def test_slam_before_navigation() -> None:
     """SLAM with 'mapping' keyword should not be misclassified as navigation."""
     assert classify_task("Create a SLAM node for mapping") == SLAM
+
+
+# v2.2.0 M11 new
+def test_classifies_depth_camera() -> None:
+    assert classify_task("Create a RealSense depth camera driver node") == DEPTH_CAMERA
+    assert classify_task("Publish RGB-D point cloud from Kinect sensor") == DEPTH_CAMERA
+
+
+def test_classifies_ackermann_drive() -> None:
+    assert classify_task("Control an Ackermann steering vehicle") == ACKERMANN_DRIVE
+    assert classify_task("Implement a car-like drive controller") == ACKERMANN_DRIVE
+
+
+def test_classifies_teleop() -> None:
+    assert classify_task("Add joystick teleoperation for the robot") == TELEOP
+    assert classify_task("Remote control with gamepad input") == TELEOP
+
+
+def test_classifies_diagnostic_aggregator() -> None:
+    assert classify_task("Monitor system health with diagnostics aggregation") == DIAGNOSTIC_AGGREGATOR
+    assert classify_task("Check hardware status and publish diagnostic summary") == DIAGNOSTIC_AGGREGATOR
 

@@ -40,6 +40,7 @@ class ProjectSpec:
     launch_files: tuple[str, ...]
     generated_by: str
     notes: tuple[str, ...]
+    lang: str = "en"
 
     @property
     def primary_node(self) -> NodeSpec:
