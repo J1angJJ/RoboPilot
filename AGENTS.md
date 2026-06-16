@@ -69,66 +69,105 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v2.0.1 Post-2.0 Public Polish
+v2.x Education & Static Quality Toolchain
 ```
 
-The goal is to polish the public-facing v2.0.x presentation while preserving the stable v2.0.0 stage-completion release behavior.
+v2.0.1 is the stable baseline. Future 2.x work follows two complementary tracks:
 
-This release represents:
+**Track A — Education & Onboarding (学用 ROS，无需安装 ROS):**
+Expand RoboPilot as the best tool for learning ROS project structure without installing ROS. More templates, interactive tutorials, better error diagnosis, and beginner-friendly workflows.
 
-- preserving existing CLI behavior
-- the complete no-ROS-required static ROS engineering workflow
-- PyPI package metadata and build readiness
-- VSCode Marketplace extension availability
-- examples, tutorials, JSON contracts, API docs, and English/Chinese docs
-- stable CLI and documented JSON contract expectations
-- no ignored build artifacts committed
+**Track B — Static Quality Tooling (ROS 项目静态体检):**
+Make RoboPilot a linting and quality-analysis tool for real ROS projects. Package health checks, migration readiness scoring, dependency consistency validation, and CI-friendly report exports.
 
-v2.0.0 is a stage-completion release, not a breaking rewrite. Future changes should remain conservative and preserve documented CLI behavior, JSON contracts, and the no-ROS-required safety model unless a compatibility change is explicitly planned and documented.
+These two tracks share the same no-ROS-required safety model. Track A grows the top of the funnel (new users), Track B grows the bottom (retained users with real projects).
 
-## Near-term Direction
+## 2.x Version Plan (v2.1.0 – v2.10.0)
 
-After v1.15.0, the final pre-v2.0 direction is:
+Each minor release focuses on one clear theme from Track A or Track B, with full tests and docs. Patch releases are reserved for bug fixes, compatibility, and small UX polish.
 
 ```txt
-v2.0.0-rc.1 completed
-v2.0.0 completed
+v2.1.0  Template Expansion I (Track A)
+        Expand from 5 to 12 generation templates: add slam, navigation, sensor_fusion,
+        image_processing, robot_arm, rosbag_tools, and state_machine.
+        Make topic names and message types configurable in robopilot.yaml per-node
+        instead of fully hardcoded in templates.
+
+v2.2.0  ROS Package Lint (Track B)
+        Add robopilot lint command. Static checks for package.xml format version,
+        required fields, dependency declaration consistency, missing buildtool_depend,
+        common CMakeLists.txt issues (missing find_package, missing catkin_package/
+        ament_package), and setup.py/setup.cfg ament_python convention checks.
+
+v2.3.0  Migration Readiness Scoring (Track B)
+        Add robopilot migrate-score command. Score a ROS1 package on migration
+        readiness (0-100). Break down by: API surface patterns (rospy→rclpy, roscpp→
+        rclcpp), build system complexity, dependency availability in ROS2, launch file
+        conversion complexity, custom message/service/action surface.
+
+v2.4.0  Interactive Tutorial Mode (Track A)
+        Add robopilot tutorial command. Step-by-step guided workflow through plan→
+        validate→generate→inspect→report. Each step explains what it does, shows
+        expected output, and verifies the user's result. Target: a complete beginner
+        can finish a tutorial in under 15 minutes without prior ROS knowledge.
+
+v2.5.0  Launch File Static Validation (Track B)
+        Extend launch file analysis for ROS1 XML and ROS2 Python launch files.
+        Detect: missing node declarations, unreferenced parameters, undefined
+        arguments, deprecated ROS1-only patterns, missing remap targets.
+        Integrate findings into lint and migrate-score.
+
+v2.6.0  Error Diagnosis Expansion (Track A)
+        Expand debugger from basic cv_bridge patterns to 30+ common ROS errors.
+        Cover: tf/tf2 issues, parameter server, actionlib, nodelet migration,
+        QoS mismatches, build failures, CMake errors, Python import errors in
+        ROS context. Each error type maps to a readable diagnosis and fix suggestion.
+
+v2.7.0  Workspace-level Static Analysis (Track B)
+        Add robopilot workspace command. Multi-package catkin_ws/src or colcon_ws/src
+        detection. Cross-package dependency graph, circular dependency detection,
+        suggested migration ordering, inter-package version conflict hints.
+
+v2.8.0  User-configurable Templates (Track A)
+        Support user template overrides via .robopilot/templates/ directory.
+        Template inheritance (base template + user overrides). Allow users to
+        define custom nodes, topics, and config files without editing RoboPilot
+        source. Add robopilot template-init and robopilot template-validate.
+
+v2.9.0  VSCode Education & Quality Workflow (Track A+B)
+        Polish VSCode extension: template browser in sidebar, lint-on-save via
+        robopilot lint --json, migration score in status bar, guided tutorial
+        panel, inline issue annotations for lint results.
+
+v2.10.0 Quality Report Export & CI Integration (Track B)
+        Exportable quality reports in Markdown and SARIF format. CI-friendly
+        structured output (GitHub Actions, GitLab CI). Add robopilot ci-check
+        as a unified command for CI pipelines. Stable exit codes for gating.
 ```
 
-The VSCode extension should be a thin beginner-friendly interface over the CLI / API layer. It should not duplicate RoboPilot core logic.
+### Design Principles for 2.x
 
-RoboPilot should treat v2.0.0 as a stage-completion milestone for the mature v1.x toolchain, not as an excuse for risky expansion. Unless explicitly planned otherwise, v2.0.0 is not intended to be a breaking rewrite.
+- Each version is self-contained: one theme, complete tests, updated docs.
+- Track A and Track B alternate to keep both user groups engaged.
+- No command from v1.0.0–v2.0.1 is removed or silently changed.
+- The no-ROS-required safety model applies to every new feature.
+- Static analysis never imports or executes user project code.
+- New CLI commands use --json for integration readiness from day one.
 
-After v2.0.0, do not pursue risky expansion by default. Any future work should prioritize maintenance, bug fixes, compatibility improvements, documentation quality, optional VSCode UI polish, and carefully scoped ROS ecosystem support while preserving the existing static migration assistant workflow.
+## 2.x Planning Rules
 
-v2.0.0 should represent:
+2.x work follows the Track A (Education) / Track B (Quality) plan defined above. Implementation is version-scoped and review-first:
 
-- PyPI-distributed CLI
-- Python API layer
-- documented JSON contracts
-- optional VSCode extension
-- English and Chinese documentation
-- examples, tutorials, and demo pack
-- static ROS1 / ROS2 inspection
-- dependency analysis
-- ROS1-to-ROS2 migration planning
-- migration scaffold preview / generate / validate / report workflow
-- no-ROS-required safety model
-
-If no breaking changes are introduced, v2.0.0 should be described as a stage-completion release, not a breaking rewrite.
-
-## 2.x Research-backed Planning Rules
-
-Future 2.x work should be conservative, review-first, and based on documented research rather than broad invention during implementation.
-
-- Do not browse the web for broad product requirements during implementation tasks unless the user explicitly asks for research.
-- Capture product research first under `docs/research/`.
+- Each minor version implements one accepted theme. Do not mix Track A and Track B work in the same minor release.
+- Capture product research under `docs/research/` before starting implementation of a new version.
 - Use accepted research briefs as the source for scoped implementation tasks.
-- Do not expand beyond an accepted research brief without explicit user approval.
+- Do not expand beyond the planned version scope without explicit user approval.
 - Treat `docs/research/feature_backlog_2x.md` and `docs/research/decision_log.md` as planning inputs, not product specifications, unless an item is marked accepted.
-- Preserve RoboPilot's no-ROS-required safety model.
+- Preserve RoboPilot's no-ROS-required safety model in every new feature.
 - Avoid broad rewrites and speculative feature expansion.
 - Prefer small, testable, documented improvements.
+- New CLI commands should ship with --json support from the start.
+- VSCode extension updates should remain thin wrappers over CLI/API.
 
 ## Important Constraints
 

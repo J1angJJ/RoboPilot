@@ -1330,56 +1330,230 @@ Expected behavior:
 - preserve the no-ROS-required safety model
 - avoid starting research-backed 2.x feature work in this patch
 
-## 2.x Long-term Direction
+## 2.x: Education & Static Quality Toolchain (v2.1.0 – v2.10.0)
 
-Status: Proposed conservative 2.x direction
+Status: Planned direction
 
-v2.0.0 is the stable stage-completion release for RoboPilot's no-ROS-required static engineering workflow.
+After v2.0.1, RoboPilot's 2.x development follows two complementary tracks that share the same no-ROS-required safety model:
 
-Future 2.x work should be research-backed, review-first, and scoped to one focused theme per minor release. These milestones are proposed directions, not hard promises:
+**Track A — Education & Onboarding:** Expand RoboPilot as the best tool for learning ROS project structure without installing ROS. More templates, interactive tutorials, error diagnosis, and beginner workflows.
 
-- `v2.1.0` Research-backed Migration Hints: improve migration reports and dependency hints for common ROS1-to-ROS2 review pain points such as launch XML, parameters, QoS review, `tf`/`tf2`, `dynamic_reconfigure`, `actionlib`, `nodelet`, and interface generation.
-- `v2.2.0` ROS Distro / Profile Hints: add conservative static hints for common ROS ecosystems such as Noetic, Humble, Jazzy, or other relevant profiles without installing or running ROS tooling.
-- `v2.3.0` Workspace-level Static Analysis: explore read-only multi-package workspace inspection, `catkin_ws/src` or `colcon_ws/src` detection, and static package graph summaries.
-- `v2.4.0` VSCode Extension UX Upgrade: improve TreeView grouping, command discoverability, report opening, documentation links, and clearer warnings while keeping the extension a thin CLI wrapper.
-- `v2.5.0` Scaffold Quality Upgrade: improve generated scaffold TODOs, package metadata placeholders, launch placeholders, params files, and `MIGRATION_NOTES.md` while remaining scaffold-only.
-- `v2.6.0` Optional LLM Explanation Layer: candidate experimental layer for explaining reports, risks, dependency hints, and review checklists without directly writing files or bypassing validation.
+**Track B — Static Quality Tooling:** Make RoboPilot a linting and quality-analysis tool for real ROS projects. Package health checks, migration readiness scoring, dependency consistency validation, and CI-friendly reports.
 
-Longer-term or 3.x candidates should remain outside normal 2.x scope unless explicitly revisited:
+Each minor version focuses on one clear theme. Track A and Track B alternate to keep both user groups engaged:
+
+### v2.1.0 — Template Expansion I (Track A)
+
+Goal: Expand from 5 to 12 generation templates and make ProjectSpec fields configurable.
+
+Expected work:
+
+- Add 7 new templates: `slam`, `navigation`, `sensor_fusion`, `image_processing`, `robot_arm`, `rosbag_tools`, `state_machine`
+- Make topic names, message types, and parameter values overridable in `robopilot.yaml` per-node
+- Update `task_classifier.py` with richer keyword → template mapping
+- Update template registry, generator, and templates module
+- Add template-specific parameter YAML rendering
+- Regenerate demo projects
+- Tests for each new template and configurable override paths
+- Update docs and tutorials
+
+### v2.2.0 — ROS Package Lint (Track B)
+
+Goal: Add `robopilot lint` for static package quality checks.
+
+Expected command:
+
+```bash
+robopilot lint path/to/package
+robopilot lint path/to/package --json
+```
+
+Expected checks:
+
+- `package.xml`: format version, required fields (name, version, description, maintainer, license), dependency declaration consistency
+- `CMakeLists.txt`: missing `find_package`, missing `catkin_package()` / `ament_package()`, suspicious install rules
+- `setup.py` / `setup.cfg`: ament_python convention compliance, missing entry_points, missing data_files
+- ROS1 vs ROS2 convention mismatch detection (e.g., catkin buildtool in a package with ament_python signals)
+- Severity levels: error, warning, info
+- Human-readable terminal output and deterministic `--json` output
+- No file modification
+
+### v2.3.0 — Migration Readiness Scoring (Track B)
+
+Goal: Add `robopilot migrate-score` to quantify ROS1-to-ROS2 migration difficulty.
+
+Expected command:
+
+```bash
+robopilot migrate-score path/to/ros1_package
+robopilot migrate-score path/to/ros1_package --json
+```
+
+Expected behavior:
+
+- Score 0-100 across weighted categories:
+  - API surface (rospy→rclpy, roscpp→rclcpp patterns detected)
+  - Build system complexity (custom CMake logic, non-standard macros)
+  - Dependency availability (ROS2 equivalents exist, missing equivalents flagged)
+  - Launch file conversion complexity (simple node launches vs complex arg/param logic)
+  - Custom message/service/action surface
+- Category breakdown with per-category scores and specific findings
+- Reuse existing ROS1 inspection, dependency analysis, and migration plan modules
+- Conservative wording: "This score is a static estimate, not a guarantee."
+
+### v2.4.0 — Interactive Tutorial Mode (Track A)
+
+Goal: Add `robopilot tutorial` to guide a complete beginner through the spec-first workflow.
+
+Expected command:
+
+```bash
+robopilot tutorial
+robopilot tutorial --lesson demo_detector
+robopilot tutorial --list
+```
+
+Expected behavior:
+
+- Step-by-step guided walkthrough: plan → validate → generate → inspect → report
+- Each step prints explanatory text, runs the command, and shows expected output
+- Verification: check generated files exist, validate spec, compare with expected structure
+- Multiple lessons: `demo_detector`, `migration_basics`, `lint_basics` (after v2.2.0)
+- Target: a user with zero ROS knowledge completes the first lesson in under 15 minutes
+- All tutorial logic is read-only until explicit `generate` steps
+- Chinese and English tutorial text
+
+### v2.5.0 — Launch File Static Validation (Track B)
+
+Goal: Deepen launch file analysis for ROS1 XML and ROS2 Python launch files.
+
+Expected behavior:
+
+- Parse ROS1 XML launch files: extract node declarations, remaps, params, args, includes, groups
+- Parse ROS2 Python launch files via AST: extract Node actions, LaunchDescription, substitutions
+- Detect common issues:
+  - Missing node declarations referenced in remaps
+  - Unreferenced parameters
+  - Undefined arguments
+  - Deprecated ROS1-only patterns (ns attribute, machine tag, env loader)
+  - Missing remap targets
+- Integrate findings into `robopilot lint` and `robopilot migrate-score`
+- Deterministic `--json` output for integration
+- Static only: no launch execution
+
+### v2.6.0 — Error Diagnosis Expansion (Track A)
+
+Goal: Expand the offline error debugger from basic patterns to 30+ common ROS errors.
+
+Expected behavior:
+
+- Error categories: tf/tf2, parameter server, actionlib, nodelet, QoS, build failures (CMake/catkin/colcon), Python import errors, launch errors, bag errors, pluginlib
+- Each error type: error pattern → confidence level → diagnosis → possible causes → suggested fixes
+- Reuse existing `robopilot debug --log / --text` interface
+- Expand `debugger/log_analyzer.py` with pattern registry
+- Tests for each error category with real error log snippets from `examples/error_logs/`
+- Add Chinese error explanations
+
+### v2.7.0 — Workspace-level Static Analysis (Track B)
+
+Goal: Add `robopilot workspace` for multi-package analysis.
+
+Expected command:
+
+```bash
+robopilot workspace path/to/catkin_ws/src
+robopilot workspace path/to/colcon_ws/src --json
+```
+
+Expected behavior:
+
+- Detect workspace type: catkin workspace, colcon workspace, mixed, unknown
+- List all detected ROS packages with types
+- Cross-package dependency graph (who depends on whom)
+- Circular dependency detection
+- Suggested migration ordering (leaf packages first)
+- Inter-package version conflict hints
+- Workspace-level summary report export
+- Reuse existing detect, deps, and inspection modules
+
+### v2.8.0 — User-configurable Templates (Track A)
+
+Goal: Allow users to define custom templates without editing RoboPilot source.
+
+Expected commands:
+
+```bash
+robopilot template-init
+robopilot template-validate --path .robopilot/templates/my_template
+robopilot plan --template my_template --name my_project --task "..."
+```
+
+Expected behavior:
+
+- `template-init` scaffolds a `.robopilot/templates/` directory with example custom template
+- Custom templates use the same ProjectSpec schema + user-defined node/topic/param overrides
+- Template inheritance: custom template can extend a built-in template
+- `template-validate` validates custom template structure
+- `plan --template` accepts custom template names
+- No execution of user template code; pure data definition
+- Templates are YAML-defined, no Python required from the user
+
+### v2.9.0 — VSCode Education & Quality Workflow (Track A+B)
+
+Goal: Polish the VSCode extension for education and quality workflows.
+
+Expected behavior:
+
+- Template browser: sidebar view showing available templates with descriptions
+- Lint-on-save: trigger `robopilot lint --json` on package.xml/CMakeLists.txt save
+- Migration score display: show score in status bar for ROS1 package workspaces
+- Guided tutorial panel: dedicated view for `robopilot tutorial` steps
+- Inline diagnostics: map lint issues to VSCode Problems panel via DiagnosticCollection
+- Keep the extension as a thin CLI/API wrapper — no logic duplication
+- All new views use existing JSON contracts
+
+### v2.10.0 — Quality Report Export & CI Integration (Track B)
+
+Goal: Make static quality results consumable by CI systems and external tools.
+
+Expected commands:
+
+```bash
+robopilot ci-check path/to/package --format sarif --output report.sarif
+robopilot ci-check path/to/workspace --format markdown --output report.md
+```
+
+Expected behavior:
+
+- Unified `robopilot ci-check` command: runs lint + deps + detect and aggregates results
+- SARIF output for GitHub Code Scanning integration
+- Markdown report for GitLab CI / general use
+- Stable exit codes: 0 (clean), 1 (warnings found), 2 (errors found)
+- GitHub Actions and GitLab CI usage examples in docs
+- All checks are read-only; never modifies project files
+- Reuses existing lint, deps, and detect modules
+
+### 3.x and Out-of-Scope Items
+
+The following remain outside 2.x scope unless explicitly revisited:
 
 - migration apply for ROS1-to-ROS2 projects
-- automatic source conversion
+- automatic source code conversion (rospy→rclpy rewriting)
 - runtime validation
-- colcon integration
+- colcon / catkin_make integration
 - complex VSCode Webview experiences
+- ROS runtime execution
+- launch file execution
 
-2.x planning should use research briefs under [docs/research/](docs/research/README.md) before committing to broad features. Feature ideas should be tracked in [docs/research/feature_backlog_2x.md](docs/research/feature_backlog_2x.md), and major product direction decisions should be tracked in [docs/research/decision_log.md](docs/research/decision_log.md).
+2.x planning uses research briefs under [docs/research/](docs/research/README.md). Feature ideas are tracked in [docs/research/feature_backlog_2x.md](docs/research/feature_backlog_2x.md), and major product direction decisions are tracked in [docs/research/decision_log.md](docs/research/decision_log.md).
 
 Release policy:
 
-- Patch releases should focus on bug fixes, documentation, compatibility, packaging, and small UX fixes.
-- Minor releases should focus on one clear feature theme with tests and documentation.
-- Major releases should be reserved for breaking CLI/API/JSON changes or major safety-boundary changes.
+- Patch releases: bug fixes, documentation, compatibility, packaging, small UX fixes.
+- Minor releases: one clear feature theme with full tests and documentation.
+- Major releases: reserved for breaking CLI/API/JSON changes or major safety-boundary changes.
 
-The roadmap should be reviewed periodically, such as once per quarter or before each new minor release, so RoboPilot keeps learning from real user needs without drifting into risky automation.
-
-## Long-term: VSCode Extension Expansion
-
-Status: Long-term idea
-
-After the VSCode MVP, possible future features include:
-
-- persistent sidebar view
-- command palette integration
-- migration plan tree view
-- dependency warning panel
-- report preview
-- ProjectSpec validation view
-- guided beginner workflow
-- one-click CLI command execution
-- clear safety prompts for file-writing workflows
-
-The extension should remain a UI wrapper over stable RoboPilot CLI/API functionality.
+The roadmap should be reviewed before each new minor release. RoboPilot should grow as a practical no-ROS-required ROS engineering toolchain — education and static quality are the two pillars of that growth.
 
 ## Non-goals
 
