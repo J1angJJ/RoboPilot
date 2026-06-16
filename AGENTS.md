@@ -119,7 +119,7 @@ Milestone 5  Launch File Static Validation (Track B)     [DONE]
              undefined arguments, deprecated ROS1-only patterns, missing remap
              targets. Integrate into lint and migrate-score.
 
-Milestone 6  Error Diagnosis Expansion (Track A)
+Milestone 6  Error Diagnosis Expansion (Track A)           [DONE]
              Expand debugger from basic cv_bridge patterns to 30+ common ROS
              errors. Cover: tf/tf2, parameter server, actionlib, nodelet,
              QoS mismatches, build failures, CMake/Python import errors.

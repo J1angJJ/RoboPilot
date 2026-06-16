@@ -1445,7 +1445,7 @@ Expected behavior:
 - Deterministic `--json` output for integration
 - Static only: no launch execution
 
-### Milestone 6 — Error Diagnosis Expansion (Track A)
+### Milestone 6 — Error Diagnosis Expansion (Track A) [DONE]
 
 Goal: Expand the offline error debugger from basic patterns to 30+ common ROS errors.
 

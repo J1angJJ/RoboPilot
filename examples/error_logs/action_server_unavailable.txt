@@ -1,0 +1,4 @@
+[action_client]: Action client '/follow_joint_trajectory' is waiting for action server...
+[action_client]: Wait for action server timed out after 5.0 seconds.
+Action server '/follow_joint_trajectory' is not available.
+Check that the action server node is running and the action name is correct.

@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - v2.1.0 Milestone 2 — ROS Package Lint: added `robopilot lint` command for static package quality checks.
 - v2.1.0 Milestone 3 — Migration Readiness Scoring: added `robopilot migrate-score` command.
 - v2.1.0 Milestone 4 — Interactive Tutorial Mode: added `robopilot tutorial` command.
-- v2.1.0 Milestone 5 — Launch File Static Validation: added `robopilot launch-lint` command. Parses ROS1 XML launch files (node/remap/param/arg/include/group/machine detection, deprecated pattern checks) and ROS2 Python launch files (LaunchDescription/Node/parameters validation via AST). Integrated into `robopilot lint` for unified quality checks.
+- v2.1.0 Milestone 5 — Launch File Static Validation: added `robopilot launch-lint` command.
+- v2.1.0 Milestone 6 — Error Diagnosis Expansion: expanded `robopilot debug` from 8 to 27 error patterns. New categories: TF2 transform lookup, TF frame not found, parameter not found, action server unavailable, QoS mismatch, DDS discovery, CMake error, linker error, rospy/rclpy import errors, message generation not found, node crash/segfault, roscore not running, disk full, network error, shared library missing, catkin_make failure, NumPy import error, YAML parse error. Added 3 new example error logs.
 - Added `docs/research/` planning docs for long-term 2.x development.
 - Added `.claude/` to `.gitignore`.
 

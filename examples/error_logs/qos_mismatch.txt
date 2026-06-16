@@ -1,0 +1,4 @@
+[WARN] [rclcpp]: New publisher discovered on topic '/scan', offering incompatible QoS.
+No compatible subscription found for topic '/scan'.
+Publisher QoS: Reliability=RELIABLE, Durability=VOLATILE
+Subscriber QoS: Reliability=BEST_EFFORT, Durability=VOLATILE
