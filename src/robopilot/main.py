@@ -42,6 +42,7 @@ from robopilot.generator.project_generator import (
     generate_project_from_spec,
 )
 from robopilot.graph.mermaid_generator import PipelineParseError, generate_mermaid
+from robopilot.launch_lint import LaunchLintResult, lint_launch_files
 from robopilot.history.journal import HistoryReport
 from robopilot.inspector.project_inspector import ProjectInspection, inspect_project
 from robopilot.migration.ros1_to_ros2 import (
@@ -941,6 +942,69 @@ def _print_lint_result(result: "LintResult") -> None:
 
     console.print(Panel.fit("Safety Note", style="bold cyan"))
     from robopilot.lint import SAFETY_NOTE
+    console.print(SAFETY_NOTE)
+
+
+@app.command("launch-lint")
+def launch_lint(
+    project_path: Annotated[Path, typer.Argument(help="Project directory with launch files to lint.")],
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Statically validate launch files (ROS1 XML and ROS2 Python) without executing them."""
+    try:
+        result = lint_launch_files(project_path)
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    if json_output:
+        print(json.dumps(result.to_dict(), indent=2))
+        if result.error_count > 0:
+            raise typer.Exit(code=1)
+        return
+
+    _print_launch_lint_result(result)
+    if result.error_count > 0:
+        raise typer.Exit(code=1)
+
+
+def _print_launch_lint_result(result: LaunchLintResult) -> None:
+    console.print(Panel.fit("Launch File Lint Summary", style="bold cyan"))
+    console.print(f"[bold]Files checked:[/bold] {len(result.files_checked)}")
+    if result.files_checked:
+        for f in result.files_checked:
+            console.print(f"  - {f}")
+    console.print(
+        f"[bold]Issues:[/bold] "
+        f"[red]{result.error_count} errors[/red], "
+        f"[yellow]{result.warning_count} warnings[/yellow], "
+        f"[cyan]{result.info_count} info[/cyan]"
+    )
+
+    if not result.issues:
+        console.print("[green]No launch file issues found.[/green]")
+        return
+
+    table = Table(title="Launch File Issues")
+    table.add_column("Severity", style="bold")
+    table.add_column("File")
+    table.add_column("Rule")
+    table.add_column("Message")
+    for issue in result.issues:
+        sev_style = {"error": "red", "warning": "yellow", "info": "cyan"}.get(issue.severity, "")
+        table.add_row(
+            f"[{sev_style}]{issue.severity}[/{sev_style}]",
+            issue.file,
+            issue.rule,
+            issue.message,
+        )
+    console.print(table)
+
+    from robopilot.launch_lint import SAFETY_NOTE
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
     console.print(SAFETY_NOTE)
 
 

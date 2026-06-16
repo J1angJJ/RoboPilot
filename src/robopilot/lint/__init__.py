@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from robopilot.detector.project_detector import detect_project
+from robopilot.launch_lint import lint_launch_files
 
 
 SAFETY_NOTE = (
@@ -110,6 +111,11 @@ def lint_project(project_path: Path) -> LintResult:
     setup_cfg = path / "setup.cfg"
     if setup_cfg.exists():
         issues.extend(_lint_setup_cfg(setup_cfg))
+
+    # Integrate launch file checks
+    launch_result = lint_launch_files(path)
+    for li in launch_result.issues:
+        issues.append(LintIssue(li.severity, li.file, li.rule, li.message))
 
     error_count = sum(1 for i in issues if i.severity == "error")
     warning_count = sum(1 for i in issues if i.severity == "warning")

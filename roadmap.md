@@ -1427,7 +1427,7 @@ Expected behavior:
 - All tutorial logic is read-only until explicit `generate` steps
 - Chinese and English tutorial text
 
-### Milestone 5 — Launch File Static Validation (Track B)
+### Milestone 5 — Launch File Static Validation (Track B) [DONE]
 
 Goal: Deepen launch file analysis for ROS1 XML and ROS2 Python launch files.
 

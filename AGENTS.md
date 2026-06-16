@@ -113,7 +113,7 @@ Milestone 4  Interactive Tutorial Mode (Track A)        [DONE]
              through plan→validate→generate→inspect→report. Target: a complete
              beginner can finish in under 15 minutes without ROS knowledge.
 
-Milestone 5  Launch File Static Validation (Track B)
+Milestone 5  Launch File Static Validation (Track B)     [DONE]
              Extend launch file analysis for ROS1 XML and ROS2 Python launch
              files. Detect: missing node declarations, unreferenced parameters,
              undefined arguments, deprecated ROS1-only patterns, missing remap

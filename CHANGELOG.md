@@ -14,7 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Topic names and message types in generated node code now read from `ProjectSpec.topics`, allowing user-edited `robopilot.yaml` topic overrides to flow into generated files.
 - v2.1.0 Milestone 2 — ROS Package Lint: added `robopilot lint` command for static package quality checks.
 - v2.1.0 Milestone 3 — Migration Readiness Scoring: added `robopilot migrate-score` command.
-- v2.1.0 Milestone 4 — Interactive Tutorial Mode: added `robopilot tutorial` command. Two lessons: `demo_detector` (create your first ROS package in 10 min) and `migration_basics` (learn the ROS1→ROS2 analysis workflow in 12 min). Step-by-step guided format with explanations, live command execution, and output verification. `--list` shows available lessons, `--json` exports lesson metadata.
+- v2.1.0 Milestone 4 — Interactive Tutorial Mode: added `robopilot tutorial` command.
+- v2.1.0 Milestone 5 — Launch File Static Validation: added `robopilot launch-lint` command. Parses ROS1 XML launch files (node/remap/param/arg/include/group/machine detection, deprecated pattern checks) and ROS2 Python launch files (LaunchDescription/Node/parameters validation via AST). Integrated into `robopilot lint` for unified quality checks.
 - Added `docs/research/` planning docs for long-term 2.x development.
 - Added `.claude/` to `.gitignore`.
 
