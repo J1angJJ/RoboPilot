@@ -64,6 +64,12 @@ from robopilot.planner import (
     RuleBasedPlanner,
 )
 from robopilot.repair.repair_suggester import RepairSuggestionReport, suggest_repairs
+from robopilot.tutorial import (
+    TutorialLesson,
+    TutorialResult,
+    get_lesson,
+    list_lessons,
+)
 from robopilot.refiner.llm_refiner import LLMRefiner
 from robopilot.refiner.spec_refiner import refine_spec
 from robopilot.report.project_report import generate_project_report, write_project_report
@@ -1740,6 +1746,136 @@ def _print_analysis(analysis: LogAnalysis) -> None:
     console.print("[bold]Suggested fixes:[/bold]")
     for fix in analysis.suggested_fixes:
         console.print(f"- {fix}")
+
+
+@app.command()
+def tutorial(
+    lesson: Annotated[
+        str | None,
+        typer.Option("--lesson", "-l", help="Run a specific lesson by ID."),
+    ] = None,
+    list_lessons_flag: Annotated[
+        bool,
+        typer.Option("--list", help="List available lessons."),
+    ] = False,
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print lesson metadata as JSON."),
+    ] = False,
+) -> None:
+    """Run a step-by-step interactive RoboPilot tutorial for beginners."""
+    if list_lessons_flag:
+        _print_lesson_list()
+        return
+
+    if json_output:
+        lessons_data = [l.to_dict() for l in list_lessons()]
+        if lesson:
+            selected = get_lesson(lesson)
+            if selected is None:
+                print(json.dumps({"error": f"Unknown lesson: {lesson}"}))
+                raise typer.Exit(code=1)
+            print(json.dumps(selected.to_dict(), indent=2))
+            return
+        print(json.dumps(lessons_data, indent=2))
+        return
+
+    if lesson is None:
+        console.print(Panel.fit("RoboPilot Tutorial", style="bold cyan"))
+        console.print("Welcome! Run a lesson with --lesson, or --list to see available lessons.\n")
+        console.print("[bold]Quick start:[/bold]")
+        console.print("  robopilot tutorial --lesson demo_detector")
+        console.print("  robopilot tutorial --lesson migration_basics")
+        console.print("\n[bold]List all lessons:[/bold]")
+        console.print("  robopilot tutorial --list")
+        return
+
+    selected = get_lesson(lesson)
+    if selected is None:
+        console.print(f"[red]Unknown lesson:[/red] {lesson}")
+        console.print("Run [bold]robopilot tutorial --list[/bold] to see available lessons.")
+        raise typer.Exit(code=1)
+
+    _run_tutorial_lesson(selected)
+
+
+def _print_lesson_list() -> None:
+    lessons = list_lessons()
+    console.print(Panel.fit("Available Tutorials", style="bold cyan"))
+    table = Table()
+    table.add_column("ID")
+    table.add_column("Title")
+    table.add_column("Duration")
+    for les in lessons:
+        table.add_row(les.id, les.title, f"~{les.estimated_minutes} min")
+    console.print(table)
+    console.print("\nRun: [bold]robopilot tutorial --lesson <id>[/bold]")
+
+
+def _run_tutorial_lesson(lesson: TutorialLesson) -> None:
+    console.print(Panel.fit(f"Tutorial: {lesson.title}", style="bold cyan"))
+    console.print(f"[bold]Summary:[/bold] {lesson.summary}")
+    console.print(f"[bold]Estimated time:[/bold] ~{lesson.estimated_minutes} minutes")
+    console.print(f"[bold]Steps:[/bold] {len(lesson.steps)}\n")
+    console.print("Press [bold]Enter[/bold] after each step to continue...\n")
+
+    for i, step in enumerate(lesson.steps, 1):
+        input(f"  [{i}/{len(lesson.steps)}] Press Enter to continue...")
+        console.print()
+
+        if step.action == "explain":
+            console.print(Panel.fit(f"[bold cyan]Step {i}: {step.title}[/bold cyan]"))
+            console.print(step.description)
+            console.print()
+        elif step.action == "run" and step.command:
+            console.print(Panel.fit(f"[bold cyan]Step {i}: {step.title}[/bold cyan]"))
+            console.print(step.description)
+            if step.expected:
+                console.print(f"\n[dim]Expected: {step.expected}[/dim]")
+            console.print()
+            _run_step_command(step)
+        console.print()
+
+    console.print(Panel.fit("[green]Tutorial Complete![/green]", style="bold green"))
+    console.print(f"You finished '{lesson.title}' — all {len(lesson.steps)} steps.\n")
+    console.print("[bold]Next:[/bold]")
+    console.print("  - Try another lesson: robopilot tutorial --lesson migration_basics")
+    console.print("  - Explore all commands: robopilot --help")
+    console.print("  - Read the docs: docs/")
+
+    from robopilot.tutorial import SAFETY_NOTE
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    console.print(SAFETY_NOTE)
+
+
+def _run_step_command(step: "TutorialStep") -> None:
+    import subprocess
+    import sys
+
+    if not step.command:
+        return
+
+    console.print(f"[dim]$ {step.command}[/dim]\n")
+    try:
+        result = subprocess.run(
+            step.command,
+            shell=True,
+            capture_output=True,
+            text=True,
+            timeout=60,
+            cwd=str(Path.cwd()),
+        )
+        output = result.stdout
+        if result.stderr:
+            output += "\n" + result.stderr
+        console.print(output)
+        if step.verification:
+            if step.verification in output:
+                console.print(f"[green]✓ Verified: '{step.verification}' found in output.[/green]")
+            else:
+                console.print(f"[yellow]⚠ Warning: Expected '{step.verification}' not found. Results may still be valid.[/yellow]")
+    except Exception as exc:
+        console.print(f"[red]Command failed:[/red] {exc}")
 
 
 @app.command()

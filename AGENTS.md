@@ -95,20 +95,20 @@ Milestone 1  Template Expansion I (Track A)              [DONE]
              state_machine. Make topic names and message types configurable
              in robopilot.yaml per-node instead of fully hardcoded.
 
-Milestone 2  ROS Package Lint (Track B)                  [IN PROGRESS]
+Milestone 2  ROS Package Lint (Track B)                  [DONE]
              Add robopilot lint command. Static checks for package.xml format
              version, required fields, dependency declaration consistency,
              missing buildtool_depend, common CMakeLists.txt issues (missing
              find_package, missing catkin_package/ament_package), and
              setup.py/setup.cfg ament_python convention checks.
 
-Milestone 3  Migration Readiness Scoring (Track B)
+Milestone 3  Migration Readiness Scoring (Track B)      [DONE]
              Add robopilot migrate-score command. Score a ROS1 package on
              migration readiness (0-100). Break down by: API surface patterns,
              build system complexity, dependency availability in ROS2, launch
              file conversion complexity, custom message/service/action surface.
 
-Milestone 4  Interactive Tutorial Mode (Track A)
+Milestone 4  Interactive Tutorial Mode (Track A)        [DONE]
              Add robopilot tutorial command. Step-by-step guided workflow
              through plan→validate→generate→inspect→report. Target: a complete
              beginner can finish in under 15 minutes without ROS knowledge.

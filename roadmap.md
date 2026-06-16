@@ -1361,7 +1361,7 @@ Expected work:
 - Tests for each new template and configurable override paths
 - Update docs and tutorials
 
-### Milestone 2 — ROS Package Lint (Track B)
+### Milestone 2 — ROS Package Lint (Track B) [DONE]
 
 Goal: Add `robopilot lint` for static package quality checks.
 
@@ -1382,7 +1382,7 @@ Expected checks:
 - Human-readable terminal output and deterministic `--json` output
 - No file modification
 
-### Milestone 3 — Migration Readiness Scoring (Track B)
+### Milestone 3 — Migration Readiness Scoring (Track B) [DONE]
 
 Goal: Add `robopilot migrate-score` to quantify ROS1-to-ROS2 migration difficulty.
 
@@ -1405,7 +1405,7 @@ Expected behavior:
 - Reuse existing ROS1 inspection, dependency analysis, and migration plan modules
 - Conservative wording: "This score is a static estimate, not a guarantee."
 
-### Milestone 4 — Interactive Tutorial Mode (Track A)
+### Milestone 4 — Interactive Tutorial Mode (Track A) [DONE]
 
 Goal: Add `robopilot tutorial` to guide a complete beginner through the spec-first workflow.
 
