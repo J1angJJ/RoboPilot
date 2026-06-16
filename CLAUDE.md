@@ -6,13 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 RoboPilot is a **no-ROS-required static engineering toolchain** for ROS/ROS2-style projects. It helps users plan, generate, inspect, analyze, migrate, and document ROS-style project structures without installing ROS, ROS2, catkin, or colcon.
 
-- Python package: `robopilot` (v2.0.1, Python 3.10-3.11)
+- Python package: `robopilot` (v2.1.0, Python 3.10-3.11)
 - PyPI: `pip install robopilot`
 - VSCode extension: `j1angjj.robopilot-vscode` (thin CLI/API wrapper, lives under `vscode-extension/`)
 
 ### 2.x Direction: Two Tracks
 
-After v2.0.1, development follows two complementary tracks:
+After v2.1.0, development follows two complementary tracks:
 
 - **Track A — Education & Onboarding**: Expand templates (5→12), add interactive tutorial mode, error diagnosis for 30+ ROS patterns, user-configurable templates. Goal: best tool for learning ROS structure without installing ROS.
 - **Track B — Static Quality Tooling**: Add `robopilot lint` (package health checks), `robopilot migrate-score` (migration readiness 0-100), launch file validation, workspace-level analysis, CI-friendly report export. Goal: linting and quality analysis for real ROS projects.

@@ -5,31 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.1.0] - 2026-06-16
+
+This release completes 10 development milestones across two tracks — Education (Track A) and Static Quality (Track B). All milestones are committed to main and published together.
 
 ### Added
 
-- v2.1.0 Milestone 1 — Template Expansion I: expanded from 5 to 12 generation templates. New templates: `slam`, `navigation`, `sensor_fusion`, `image_processing`, `robot_arm`, `rosbag_tools`, and `state_machine`.
-- Template-specific parameter YAML for all 12 templates with domain-appropriate ROS2 parameters.
-- Topic names and message types in generated node code now read from `ProjectSpec.topics`, allowing user-edited `robopilot.yaml` topic overrides to flow into generated files.
-- v2.1.0 Milestone 2 — ROS Package Lint: added `robopilot lint` command for static package quality checks.
-- v2.1.0 Milestone 3 — Migration Readiness Scoring: added `robopilot migrate-score` command.
-- v2.1.0 Milestone 4 — Interactive Tutorial Mode: added `robopilot tutorial` command.
-- v2.1.0 Milestone 5 — Launch File Static Validation: added `robopilot launch-lint` command.
-- v2.1.0 Milestone 6 — Error Diagnosis Expansion: expanded `robopilot debug` from 8 to 27 error patterns.
-- v2.1.0 Milestone 7 — Workspace-level Static Analysis: added `robopilot workspace` command.
-- v2.1.0 Milestone 8 — User-configurable Templates: added `robopilot template-init`, `robopilot template-validate`, `robopilot plan --template`.
-- v2.1.0 Milestone 9 — VSCode Education & Quality Workflow: added lint-on-save diagnostics, status bar indicator, new commands.
-- v2.1.0 Milestone 10 — Quality Report Export & CI Integration: added `robopilot ci-check` command. Aggregates lint + deps + launch results into a unified check with stable exit codes (0=clean, 1=warnings, 2=errors). Supports SARIF (GitHub Code Scanning) and Markdown report export. Supports `--json` output.
-- Added `docs/research/` planning docs for long-term 2.x development.
-- Added `.claude/` to `.gitignore`.
+**Track A — Education & Onboarding:**
+- **Template Expansion (M1):** 5→12 generation templates (`slam`, `navigation`, `sensor_fusion`, `image_processing`, `robot_arm`, `rosbag_tools`, `state_machine`). Topic names/message types now configurable via `robopilot.yaml`.
+- **Interactive Tutorial (M4):** `robopilot tutorial` with two guided lessons (`demo_detector` ~10 min, `migration_basics` ~12 min). Step-by-step explanations, live command execution, output verification.
+- **Error Diagnosis (M6):** `robopilot debug` expanded from 8 to 27 offline error patterns (tf/tf2, parameters, actionlib, QoS, DDS, CMake, linker, rospy/rclpy, segfault, roscore, disk/network, shared lib, YAML, catkin_make, NumPy).
+- **User Templates (M8):** `robopilot template-init`, `template-validate`, `plan --template <name>`. YAML-defined custom templates with built-in template inheritance. No Python required.
+
+**Track B — Static Quality Tooling:**
+- **Package Lint (M2):** `robopilot lint` — 14 static rules across package.xml, CMakeLists.txt, setup.py, setup.cfg.
+- **Migration Scoring (M3):** `robopilot migrate-score` — 0-100 score across 5 weighted categories (API Surface, Build System, Dependencies, Launch, Interfaces).
+- **Launch Validation (M5):** `robopilot launch-lint` — ROS1 XML and ROS2 Python launch file parsing with 12 issue types. Integrated into `robopilot lint`.
+- **Workspace Analysis (M7):** `robopilot workspace` — multi-package discovery, cross-package dependency graph, circular dep detection, topological migration order.
+- **CI Check (M10):** `robopilot ci-check` — unified lint+deps+launch aggregation. SARIF (GitHub Code Scanning) and Markdown export. Stable exit codes (0/1/2).
+
+**VSCode Extension:**
+- **VSCode Workflow (M9):** Lint-on-save diagnostics (package.xml/CMakeLists.txt/setup.py/setup.cfg), status bar indicator, VSCode: Lint Workspace and Show Templates commands.
 
 ### Changed
 
-- Updated task classifier keyword rules with priority ordering: `state_machine` → `rosbag_tools` → `slam` → `robot_arm` → `sensor_fusion` → `image_processing` → `navigation` → (existing templates) → `generic_node`. Added edge-case tests for classification boundary correctness.
-- Updated roadmap and agent guidance with the 10-version Track A (Education) / Track B (Static Quality) plan for v2.1.0–v2.10.0.
-- Refreshed demo detector project under `examples/generated_projects/demo_detector/`.
-- Fixed minor indentation in `package_xml` and `setup_py` template renderers.
+- Updated task classifier with priority-ordered keyword rules for 12 templates.
+- Fixed SLAM node pseudocode coordinate math (angle→cos/sin).
+- Fixed `detect_project` call order in lint module (guards before detection).
+- Fixed custom template `extends` validation path computation.
+- Regenerated `demo_detector` example project under `examples/generated_projects/`.
+- Updated roadmap and agent guidance: 10-release plan flattened to 10 internal milestones under single v2.1.0.
+
+### Stats
+
+- **456 tests** (added 115 new tests across 10 milestones), zero regressions
+- **7 new Python modules:** `lint`, `launch_lint`, `migrate_score`, `tutorial`, `workspace`, `user_templates`, `ci_check`
+- **11 new CLI commands:** `lint`, `launch-lint`, `migrate-score`, `tutorial`, `workspace`, `template-init`, `template-validate`, `ci-check`
 
 ## [2.0.1] - 2026-05-17
 

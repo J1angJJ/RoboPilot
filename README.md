@@ -187,9 +187,9 @@ Transient generated projects should go under `outputs/`, which is intentionally 
 
 ## Project Status
 
-Current stable release: `v2.0.1`.
+Current stable release: `v2.1.0`.
 
-RoboPilot v2.0.x is the stable stage-completion release line for the current no-ROS-required static ROS engineering workflow. v2.0.1 is a post-v2.0 public polish patch, not a breaking rewrite.
+v2.1.0 adds 10 milestones across Education (more templates, interactive tutorials, error diagnosis, custom templates) and Static Quality (lint, migration scoring, launch validation, workspace analysis, CI check with SARIF export).
 
 RoboPilot's no-ROS-required static engineering workflow is the stable v2.0.x baseline:
 
@@ -214,7 +214,7 @@ code --install-extension j1angjj.robopilot-vscode
 
 See [docs/vscode_extension.md](docs/vscode_extension.md), [docs/vscode_packaging.md](docs/vscode_packaging.md), and [docs/vscode_marketplace.md](docs/vscode_marketplace.md).
 
-The Python package version is `2.0.1`; the human-facing tag and release name should be `v2.0.1`. The VSCode extension is versioned separately and remains available as `j1angjj.robopilot-vscode`.
+The Python package version is `2.1.0`; the human-facing tag and release name should be `v2.1.0`. The VSCode extension is versioned separately and remains available as `j1angjj.robopilot-vscode`.
 
 ## Development
 
