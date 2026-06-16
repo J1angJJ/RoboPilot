@@ -32,6 +32,7 @@ from robopilot.api.static_analysis import (
     export_project_report,
     inspect_project_static,
     inspect_ros1_project_static,
+    lint_project_api,
 )
 
 __all__ = [
@@ -46,6 +47,7 @@ __all__ = [
     "generate_project",
     "inspect_project_static",
     "inspect_ros1_project_static",
+    "lint_project_api",
     "plan_project",
     "preview_apply",
     "preview_migration_plan",

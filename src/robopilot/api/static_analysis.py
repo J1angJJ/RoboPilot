@@ -6,6 +6,7 @@ from robopilot.api.models import PathLike, StructuredResult, normalize_path, to_
 from robopilot.deps.analyzer import DependencyAnalysis, analyze_dependencies
 from robopilot.detector.project_detector import ProjectDetection, detect_project
 from robopilot.inspector.project_inspector import ProjectInspection, inspect_project
+from robopilot.lint import LintResult, lint_project
 from robopilot.report.project_report import generate_project_report, write_project_report
 from robopilot.ros1.inspector import ROS1Inspection, inspect_ros1_project
 from robopilot.ros2.inspector import ROS2Inspection, inspect_ros2_project
@@ -67,3 +68,13 @@ def export_project_report(project_path: PathLike, output_path: PathLike | None =
     if output_path is None:
         return generate_project_report(normalized_project_path)
     return write_project_report(normalized_project_path, normalize_path(output_path))
+
+
+def lint_project_api(
+    project_path: PathLike,
+    *,
+    as_dict: bool = True,
+) -> StructuredResult | LintResult:
+    """Run static lint checks on a ROS-style project without modifying files."""
+    result = lint_project(normalize_path(project_path))
+    return to_structured_result(result) if as_dict else result

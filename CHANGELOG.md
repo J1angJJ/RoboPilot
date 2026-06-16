@@ -9,12 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- v2.1.0 Template Expansion I: expanded from 5 to 12 generation templates. New templates: `slam` (SLAM mapping with LiDAR), `navigation` (autonomous Nav2-style path planning), `sensor_fusion` (EKF/UKF multi-sensor fusion), `image_processing` (OpenCV-style pipeline), `robot_arm` (joint trajectory control), `rosbag_tools` (recording/playback utility), and `state_machine` (FSM/behavior tree orchestration).
+- v2.1.0 Milestone 1 — Template Expansion I: expanded from 5 to 12 generation templates. New templates: `slam`, `navigation`, `sensor_fusion`, `image_processing`, `robot_arm`, `rosbag_tools`, and `state_machine`.
 - Template-specific parameter YAML for all 12 templates with domain-appropriate ROS2 parameters.
 - Topic names and message types in generated node code now read from `ProjectSpec.topics`, allowing user-edited `robopilot.yaml` topic overrides to flow into generated files.
-- Configurable topic override: users can edit topic names and message types in `robopilot.yaml` and the changes appear in generated Python node pseudocode.
-- Comprehensive tests for all 7 new templates: task classification, spec build/validation, project file generation, Python syntax compilation, and YAML round-trip.
-- Added `docs/research/` planning docs for long-term 2.x development, including research brief, LLM research prompt, implementation prompt, feature backlog, and decision log templates.
+- v2.1.0 Milestone 2 — ROS Package Lint: added `robopilot lint` command for static package quality checks. Checks package.xml (format version, required fields, dependency consistency), CMakeLists.txt (cmake_minimum_required, find_package, catkin_package/ament_package), setup.py (package_name, entry_points, data_files), and setup.cfg (script_dir, install_scripts). Supports `--json` output with deterministic structure.
+- Added `docs/research/` planning docs for long-term 2.x development.
+- Added `.claude/` to `.gitignore`.
 
 ### Changed
 

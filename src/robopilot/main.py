@@ -27,6 +27,7 @@ from robopilot.api.static_analysis import (
     detect_project_type as api_detect_project_type,
     inspect_ros1_project_static as api_inspect_ros1_project_static,
     inspect_ros2_project_static as api_inspect_ros2_project_static,
+    lint_project_api as api_lint_project,
 )
 from robopilot.apply.apply_plan import ApplySummary, apply_from_plan
 from robopilot.apply_plan.plan import export_apply_plan, validate_apply_plan_file
@@ -872,6 +873,68 @@ def _print_dependency_analysis(result: DependencyAnalysis) -> None:
 
     console.print(Panel.fit("Safety Note", style="bold cyan"))
     console.print(result.safety_note)
+
+
+@app.command()
+def lint(
+    project_path: Annotated[Path, typer.Argument(help="Project directory to lint.")],
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Run static lint checks on a ROS-style project without modifying files."""
+    try:
+        result = api_lint_project(project_path, as_dict=False)
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    if json_output:
+        print(json.dumps(result.to_dict(), indent=2))
+        if result.error_count > 0:
+            raise typer.Exit(code=1)
+        return
+
+    _print_lint_result(result)
+    if result.error_count > 0:
+        raise typer.Exit(code=1)
+
+
+def _print_lint_result(result: "LintResult") -> None:
+    console.print(Panel.fit("Lint Summary", style="bold cyan"))
+    console.print(f"[bold]Project path:[/bold] {result.project_path}")
+    console.print(f"[bold]Package name:[/bold] {result.package_name or 'unknown'}")
+    console.print(f"[bold]Project type:[/bold] {result.project_type}")
+    console.print(
+        f"[bold]Issues:[/bold] "
+        f"[red]{result.error_count} errors[/red], "
+        f"[yellow]{result.warning_count} warnings[/yellow], "
+        f"[cyan]{result.info_count} info[/cyan]"
+    )
+
+    if not result.issues:
+        console.print("[green]No issues found.[/green]")
+        return
+
+    table = Table(title="Lint Issues")
+    table.add_column("Severity", style="bold")
+    table.add_column("File")
+    table.add_column("Rule")
+    table.add_column("Message")
+    for issue in result.issues:
+        sev_style = {"error": "red", "warning": "yellow", "info": "cyan"}.get(issue.severity, "")
+        table.add_row(
+            f"[{sev_style}]{issue.severity}[/{sev_style}]",
+            issue.file,
+            issue.rule,
+            issue.message,
+        )
+    console.print(table)
+
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    from robopilot.lint import SAFETY_NOTE
+    console.print(SAFETY_NOTE)
 
 
 @app.command("migrate-plan")
