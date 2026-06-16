@@ -1458,7 +1458,7 @@ Expected behavior:
 - Tests for each error category with real error log snippets from `examples/error_logs/`
 - Add Chinese error explanations
 
-### Milestone 7 — Workspace-level Static Analysis (Track B)
+### Milestone 7 — Workspace-level Static Analysis (Track B) [DONE]
 
 Goal: Add `robopilot workspace` for multi-package analysis.
 

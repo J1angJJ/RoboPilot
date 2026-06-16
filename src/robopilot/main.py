@@ -71,6 +71,7 @@ from robopilot.tutorial import (
     get_lesson,
     list_lessons,
 )
+from robopilot.workspace import WorkspaceResult, analyze_workspace
 from robopilot.refiner.llm_refiner import LLMRefiner
 from robopilot.refiner.spec_refiner import refine_spec
 from robopilot.report.project_report import generate_project_report, write_project_report
@@ -1004,6 +1005,71 @@ def _print_launch_lint_result(result: LaunchLintResult) -> None:
     console.print(table)
 
     from robopilot.launch_lint import SAFETY_NOTE
+    console.print(Panel.fit("Safety Note", style="bold cyan"))
+    console.print(SAFETY_NOTE)
+
+
+@app.command()
+def workspace(
+    workspace_path: Annotated[Path, typer.Argument(help="Workspace root directory (e.g., catkin_ws/src or colcon_ws).")],
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Analyze a multi-package ROS workspace without executing anything."""
+    try:
+        result = analyze_workspace(workspace_path)
+    except (OSError, ValueError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=1) from exc
+
+    if json_output:
+        print(json.dumps(result.to_dict(), indent=2))
+        return
+
+    _print_workspace_result(result)
+
+
+def _print_workspace_result(result: WorkspaceResult) -> None:
+    console.print(Panel.fit("Workspace Analysis", style="bold cyan"))
+    console.print(f"[bold]Path:[/bold] {result.workspace_path}")
+    console.print(f"[bold]Type:[/bold] {result.workspace_type}")
+    console.print(f"[bold]Packages:[/bold] {result.package_count}")
+
+    if not result.packages:
+        if result.issues:
+            for issue in result.issues:
+                console.print(f"[yellow]{issue}[/yellow]")
+        return
+
+    pkg_table = Table(title="Packages")
+    pkg_table.add_column("Name")
+    pkg_table.add_column("Type")
+    pkg_table.add_column("Path")
+    pkg_table.add_column("Deps (intra-workspace)")
+    for pkg in result.packages:
+        intra_deps = [d for d in pkg.dependencies if d in result.dependency_graph]
+        pkg_table.add_row(pkg.name, pkg.package_type, pkg.path,
+                          ", ".join(intra_deps) if intra_deps else "—")
+    console.print(pkg_table)
+
+    if result.circular_deps:
+        console.print(Panel.fit("[red]Circular Dependencies[/red]", style="bold red"))
+        for cycle in result.circular_deps:
+            console.print(f"  [red]{' → '.join(cycle)} → {cycle[0]}[/red]")
+
+    if result.migration_order:
+        console.print(Panel.fit("Suggested Migration Order (leaves first)", style="bold cyan"))
+        for i, name in enumerate(result.migration_order, 1):
+            console.print(f"  {i}. {name}")
+
+    if result.issues:
+        console.print(Panel.fit("Issues", style="bold yellow"))
+        for issue in result.issues:
+            console.print(f"[yellow]- {issue}[/yellow]")
+
+    from robopilot.workspace import SAFETY_NOTE
     console.print(Panel.fit("Safety Note", style="bold cyan"))
     console.print(SAFETY_NOTE)
 

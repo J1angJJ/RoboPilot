@@ -124,7 +124,7 @@ Milestone 6  Error Diagnosis Expansion (Track A)           [DONE]
              errors. Cover: tf/tf2, parameter server, actionlib, nodelet,
              QoS mismatches, build failures, CMake/Python import errors.
 
-Milestone 7  Workspace-level Static Analysis (Track B)
+Milestone 7  Workspace-level Static Analysis (Track B)    [DONE]
              Add robopilot workspace command. Multi-package workspace detection,
              cross-package dependency graph, circular dependency detection,
              suggested migration ordering, inter-package version conflict hints.
