@@ -3,6 +3,7 @@
 [English](README.md) | [中文](README.zh-CN.md)
 
 [![Tests](https://github.com/J1angJJ/RoboPilot/actions/workflows/tests.yml/badge.svg)](https://github.com/J1angJJ/RoboPilot/actions/workflows/tests.yml)
+[![Quality](https://github.com/J1angJJ/RoboPilot/actions/workflows/quality.yml/badge.svg)](https://github.com/J1angJJ/RoboPilot/actions/workflows/quality.yml)
 [![PyPI](https://img.shields.io/pypi/v/robopilot)](https://pypi.org/project/robopilot/)
 [![Python](https://img.shields.io/pypi/pyversions/robopilot)](https://pypi.org/project/robopilot/)
 [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/j1angjj.robopilot-vscode)](https://marketplace.visualstudio.com/items?itemName=j1angjj.robopilot-vscode)

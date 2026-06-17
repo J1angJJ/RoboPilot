@@ -1,0 +1,56 @@
+name: Quality
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  security-events: write
+
+jobs:
+  ci-check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11"]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install robopilot
+        run: |
+          python -m pip install -U pip
+          pip install -e "."
+
+      - name: Lint demo_detector
+        run: robopilot lint examples/generated_projects/demo_detector
+
+      - name: CI check demo_detector (SARIF)
+        run: robopilot ci-check examples/generated_projects/demo_detector --format sarif --output robopilot-demo.sarif
+
+      - name: CI check ros1_migration_demo (SARIF)
+        run: robopilot ci-check examples/ros1_migration_demo --format sarif --output robopilot-ros1.sarif
+
+      - name: Upload SARIF to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: robopilot-demo.sarif
+          category: robopilot-demo-detector
+
+      - name: Upload ROS1 SARIF to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: robopilot-ros1.sarif
+          category: robopilot-ros1-migration
+
+      - name: Doctor check
+        run: robopilot doctor --json
