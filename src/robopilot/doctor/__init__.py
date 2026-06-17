@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import shutil
 import sys
 from dataclasses import dataclass
@@ -153,12 +154,14 @@ def _check_config_integrity(base: Path) -> DoctorCheck:
 
 
 def _detect_ros_env() -> str | None:
-    import os
     distro = os.environ.get("ROS_DISTRO", "")
     if distro:
         return distro
-    # Check common ROS paths
-    for p in ("/opt/ros", "C:\\opt\\ros"):
+    # Check common ROS paths (Linux, macOS, Windows native)
+    for p in ("/opt/ros", "/usr/local/opt/ros", "C:\\dev\\ros2"):
         if Path(p).is_dir():
             return "detected (not sourced)"
+    # Check WSL via /mnt/ pattern
+    if Path("/mnt/wsl").exists():
+        return "not detected (WSL may have ROS — check inside WSL)"
     return None
