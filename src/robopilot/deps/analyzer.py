@@ -584,11 +584,29 @@ def check_distro_compatibility(deps: list[str], distro: str = "humble") -> dict[
 
 
 def analyze_workspace_deps(workspace_path: Path, distro: str = "humble") -> dict[str, object]:
-    """Run dependency analysis across all packages in a workspace."""
+    """Run dependency analysis across all packages in a workspace.
+
+    Uses a shared package index: all package.xml files are parsed once,
+    then each package's analysis reuses the cached results.
+    """
     from robopilot.workspace import analyze_workspace as ws_analyze
     ws = ws_analyze(workspace_path)
     results: dict[str, dict] = {}
     all_deps: set[str] = set()
+
+    # Pre-parse all package.xml files into a shared cache
+    xml_cache: dict[str, object] = {}
+    for pkg in ws.packages:
+        pkg_path = (Path(workspace_path) / pkg.path).resolve()
+        if not pkg_path.exists():
+            continue
+        pkg_xml = pkg_path / "package.xml"
+        if pkg_xml.exists():
+            try:
+                cache_key = str(pkg_xml.resolve())
+                xml_cache[cache_key] = pkg_xml.read_text(encoding="utf-8", errors="ignore")
+            except Exception:
+                pass
 
     for pkg in ws.packages:
         pkg_path = (Path(workspace_path) / pkg.path).resolve()

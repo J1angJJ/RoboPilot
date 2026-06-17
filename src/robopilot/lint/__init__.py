@@ -8,6 +8,8 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from pathlib import Path
 
+from functools import lru_cache
+
 from robopilot.detector.project_detector import detect_project
 from robopilot.launch_lint import lint_launch_files
 
@@ -152,12 +154,14 @@ def lint_project(project_path: Path) -> LintResult:
 
 def _lint_package_xml(path: Path, project_type: str) -> list[LintIssue]:
     issues: list[LintIssue] = []
-    try:
-        tree = ET.parse(str(path))
-        root = tree.getroot()
-    except ET.ParseError as exc:
-        issues.append(LintIssue("error", "package.xml", "package_xml.parse_error",
-                                f"Cannot parse package.xml: {exc}"))
+    root = _cached_xml_parse(str(path))
+    if root is None:
+        try:
+            ET.parse(str(path))
+        except ET.ParseError as exc:
+            issues.append(LintIssue("error", "package.xml", "package_xml.parse_error",
+                                    f"Cannot parse package.xml: {exc}"))
+            return issues
         return issues
 
     issues.extend(_check_package_format(root, project_type))
@@ -263,11 +267,13 @@ def _check_cmake_package_macro(content: str, project_type: str) -> list[LintIssu
 
 
 def _lint_setup_py(path: Path) -> list[LintIssue]:
-    content = path.read_text(encoding="utf-8", errors="ignore")
     issues: list[LintIssue] = []
-    try:
-        tree = ast.parse(content)
-    except SyntaxError:
+    tree = _cached_ast_parse(str(path))
+    if tree is None:
+        try:
+            path.read_text(encoding="utf-8", errors="ignore")  # verify file is readable
+        except OSError:
+            pass
         issues.append(LintIssue("error", "setup.py", "setup_py.syntax_error",
                                 "setup.py has a syntax error and could not be parsed"))
         return issues
@@ -396,14 +402,11 @@ def _cross_check_setup_vs_nodes(path: Path, package_name: str | None) -> list[Li
     setup = path / "setup.py"
     if not setup.exists() or not package_name:
         return []
-    try:
-        content = setup.read_text(encoding="utf-8", errors="ignore")
-        tree = ast.parse(content)
-    except SyntaxError:
+    tree = _cached_ast_parse(str(setup))
+    if tree is None:
         return []
 
     issues: list[LintIssue] = []
-    # Find console_scripts entries
     for node in ast.walk(tree):
         if isinstance(node, ast.Dict):
             for k in node.keys:
@@ -458,9 +461,8 @@ def _check_python_imports_vs_deps(path: Path) -> list[LintIssue]:
     for py_file in pkg_dir.rglob("*.py"):
         if py_file.name == "__init__.py":
             continue
-        try:
-            tree = ast.parse(py_file.read_text(encoding="utf-8", errors="ignore"))
-        except SyntaxError:
+        tree = _cached_ast_parse(str(py_file))
+        if tree is None:
             continue
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
@@ -513,10 +515,8 @@ def _check_ros2_node_patterns(path: Path, package_name: str | None) -> list[Lint
     for py_file in pkg_dir.rglob("*.py"):
         if py_file.name == "__init__.py":
             continue
-        try:
-            content = py_file.read_text(encoding="utf-8", errors="ignore")
-            tree = ast.parse(content)
-        except SyntaxError:
+        tree = _cached_ast_parse(str(py_file))
+        if tree is None:
             continue
 
         # Check for rclpy.init() call
@@ -539,7 +539,8 @@ def _check_ros2_node_patterns(path: Path, package_name: str | None) -> list[Lint
             for n in ast.walk(tree)
         )
         if has_node_class and not has_init:
-            has_try_import = "try:" in content and "ImportError" in content
+            file_content = _cached_read(str(py_file)) or ""
+            has_try_import = "try:" in file_content and "ImportError" in file_content
             if not has_try_import:
                 try:
                     rel = str(py_file.relative_to(path))
@@ -634,6 +635,41 @@ def _extract_xml_deps(pkg_xml: Path) -> set[str]:
     except ET.ParseError:
         pass
     return deps
+
+
+# ---------------------------------------------------------------------------
+# M20: Caching layer
+# ---------------------------------------------------------------------------
+
+
+@lru_cache(maxsize=64)
+def _cached_read(path_str: str) -> str | None:
+    p = Path(path_str)
+    if p.exists():
+        return p.read_text(encoding="utf-8", errors="ignore")
+    return None
+
+
+@lru_cache(maxsize=64)
+def _cached_ast_parse(path_str: str) -> ast.AST | None:
+    content = _cached_read(path_str)
+    if content is None:
+        return None
+    try:
+        return ast.parse(content)
+    except SyntaxError:
+        return None
+
+
+@lru_cache(maxsize=64)
+def _cached_xml_parse(path_str: str) -> ET.Element | None:
+    content = _cached_read(path_str)
+    if content is None:
+        return None
+    try:
+        return ET.fromstring(content)
+    except ET.ParseError:
+        return None
 
 
 def _extract_package_name(pkg_xml: Path) -> str | None:
