@@ -163,7 +163,7 @@ detect → inspect-ros1 / inspect-ros2 → deps
 - Do not add new product commands during packaging/release work.
 - Prefer pure Python, pathlib, type hints. Keep functions small. Separate CLI from business logic.
 
-v2.3.0 is a polish-and-stabilize release (documentation, CI examples, performance, UX, test coverage). No new module additions — all existing modules are refined in place.
+v2.2.0 is a deepen-and-polish release: M11–M17 deepen features, M18–M23 polish for production (documentation, CI, performance, UX, test coverage).
 
 New commands must follow the existing pattern: core module → API wrapper → CLI command, with `--json` support and read-only safety.
 

@@ -1637,7 +1637,7 @@ The following remain outside 2.x scope unless explicitly revisited:
 Release policy:
 
 - v2.1.0: shipped as one MINOR bump (10 milestones complete).
-- v2.2.0: planned as one MINOR bump after all 7 milestones are complete and tested.
+- v2.2.0: planned as one MINOR bump after all 13 milestones (M11–M23) are complete and tested. M11–M17 deepen features; M18–M23 polish for production.
 - PATCH releases (v2.1.1, v2.2.1) are reserved for bug fixes discovered after release.
 - Major releases are reserved for breaking CLI/API/JSON changes or safety-boundary changes.
 
