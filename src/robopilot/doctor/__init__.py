@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-import platform
 import shutil
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 
 @dataclass(frozen=True)
@@ -103,7 +101,7 @@ def _check_disk_space(base: Path) -> DoctorCheck:
             return DoctorCheck("Disk space", False, "warn", f"{gb_free:.1f} GB free — low disk space may affect builds and bag files.")
         return DoctorCheck("Disk space", True, "ok", f"{gb_free:.1f} GB free.")
     except Exception:
-        return DoctorCheck("Disk space", True, "ok", "Could not determine disk usage.")
+        return DoctorCheck("Disk space", False, "warn", "Could not determine disk usage — check permissions.")
 
 
 def _check_workspace_structure(base: Path) -> DoctorCheck:

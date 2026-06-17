@@ -152,9 +152,6 @@ def generate_html_report(project_path: Path, history_data: dict | None = None) -
         "</table>",
     ]
 
-    if ci.lint_errors + ci.lint_warnings > 0:
-        issues = ci_check(project_path)
-
     if history_data:
         prev = history_data.get("previous", {})
         lines.append("<h2>Trend Comparison</h2>")

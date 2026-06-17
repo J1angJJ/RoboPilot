@@ -2394,6 +2394,8 @@ def _run_step_command(step: "TutorialStep") -> None:
         if result.stderr:
             output += "\n" + result.stderr
         console.print(output)
+        if result.returncode != 0:
+            console.print(f"[yellow]⚠ Command exited with code {result.returncode}[/yellow]")
         if step.verification:
             if step.verification in output:
                 console.print(f"[green]✓ Verified: '{step.verification}' found in output.[/green]")

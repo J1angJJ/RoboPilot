@@ -102,17 +102,17 @@ def test_lint_parses_real_package_xml() -> None:
 
 
 def test_cmake_minimum_version_missing() -> None:
-    issues = _check_cmake_minimum_version("project(foo)\n", [])
+    issues = _check_cmake_minimum_version("project(foo)\n")
     assert any(i.rule == "cmake.missing_minimum_version" for i in issues)
 
 
 def test_cmake_minimum_version_low() -> None:
-    issues = _check_cmake_minimum_version("cmake_minimum_required(VERSION 2.8)\n", [])
+    issues = _check_cmake_minimum_version("cmake_minimum_required(VERSION 2.8)\n")
     assert any(i.rule == "cmake.low_minimum_version" for i in issues)
 
 
 def test_cmake_minimum_version_ok() -> None:
-    issues = _check_cmake_minimum_version("cmake_minimum_required(VERSION 3.8)\n", [])
+    issues = _check_cmake_minimum_version("cmake_minimum_required(VERSION 3.8)\n")
     assert len(issues) == 0
 
 

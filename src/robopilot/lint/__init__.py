@@ -217,16 +217,15 @@ def _check_dependency_consistency(root: ET.Element) -> list[LintIssue]:
 
 def _lint_cmake(path: Path, project_type: str) -> list[LintIssue]:
     content = path.read_text(encoding="utf-8", errors="ignore")
-    lines = content.splitlines()
     issues: list[LintIssue] = []
 
-    issues.extend(_check_cmake_minimum_version(content, lines))
+    issues.extend(_check_cmake_minimum_version(content))
     issues.extend(_check_cmake_find_package(content))
     issues.extend(_check_cmake_package_macro(content, project_type))
     return issues
 
 
-def _check_cmake_minimum_version(content: str, lines: list[str]) -> list[LintIssue]:
+def _check_cmake_minimum_version(content: str) -> list[LintIssue]:
     if "cmake_minimum_required" not in content:
         return [LintIssue("error", "CMakeLists.txt", "cmake.missing_minimum_version",
                           "Missing cmake_minimum_required")]
@@ -365,7 +364,6 @@ def _cross_check_cmake_vs_package_xml(path: Path) -> list[LintIssue]:
         return []
 
     issues: list[LintIssue] = []
-    import re
     found = set(re.findall(r"find_package\s*\(\s*(\w+)", cmake_text))
 
     # Check xml deps missing from cmake
@@ -410,8 +408,7 @@ def _cross_check_setup_vs_nodes(path: Path, package_name: str | None) -> list[Li
         if isinstance(node, ast.Dict):
             for k in node.keys:
                 if isinstance(k, ast.Constant) and k.value == "console_scripts":
-                    if isinstance(node, ast.Dict):
-                        for v in node.values:
+                    for v in node.values:
                             if isinstance(v, ast.List):
                                 for item in v.elts:
                                     if isinstance(item, ast.Constant) and isinstance(item.value, str):
@@ -525,16 +522,21 @@ def _check_ros2_node_patterns(path: Path, package_name: str | None) -> list[Lint
             isinstance(n, ast.Call)
             and isinstance(n.func, ast.Attribute)
             and n.func.attr == "init"
+            and isinstance(n.func.value, ast.Name)
+            and n.func.value.id == "rclpy"
             for n in ast.walk(tree)
             if isinstance(n, ast.Call)
         )
-        # Check if Node subclass is defined
+        # Check if Node subclass is defined (inherits from a ROS Node)
         has_node_class = any(
             isinstance(n, ast.ClassDef)
+            and any(
+                isinstance(base, ast.Name) and "Node" in base.id
+                for base in n.bases
+            )
             for n in ast.walk(tree)
         )
         if has_node_class and not has_init:
-            # Check if it uses the offline fallback pattern (try/except ImportError)
             has_try_import = "try:" in content and "ImportError" in content
             if not has_try_import:
                 try:
@@ -543,18 +545,8 @@ def _check_ros2_node_patterns(path: Path, package_name: str | None) -> list[Lint
                     rel = py_file.name
                 issues.append(LintIssue(
                     "info", rel, "ros2.missing_rclpy_init",
-                    "Node class defined but no rclpy.init() call found. Consider adding rclpy.init() before node construction."
+                    "Node class defined but no rclpy.init() call found."
                 ))
-
-        # Check QoS patterns
-        if "QoS" in content or "qos" in content.lower():
-            # Check for common QoS profile usage
-            has_qos_profile = any(
-                isinstance(n, ast.Call) and (
-                    isinstance(n.func, ast.Name) and "QoS" in (n.func.id if hasattr(n.func, 'id') else "")
-                )
-                for n in ast.walk(tree)
-            )
 
     return issues
 

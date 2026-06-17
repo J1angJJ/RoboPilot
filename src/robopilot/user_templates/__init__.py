@@ -416,7 +416,7 @@ def build_project_spec_from_custom(
         ),
         topics=defn.topics,
         config_files=("config/params.yaml",),
-        launch_files=(f"launch/{name}.launch.py",),
+        launch_files=(f"launch/{pkg_name}.launch.py",),
         generated_by=f"RoboPilot (custom template: {ct.name})",
         notes=defn.notes,
     )
