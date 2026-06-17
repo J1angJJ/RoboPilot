@@ -31,6 +31,8 @@ from robopilot.api.static_analysis import (
     inspect_ros2_project_static as api_inspect_ros2_project_static,
     lint_project_api as api_lint_project,
 )
+from difflib import get_close_matches
+
 from robopilot.apply.apply_plan import ApplySummary, apply_from_plan
 from robopilot.apply_plan.plan import export_apply_plan, validate_apply_plan_file
 from robopilot.apply_preview.preview import ApplyPreviewResult
@@ -165,7 +167,11 @@ def generate(
                 output_root=output_root,
                 overwrite=overwrite,
             )
-    except (OutputPathExistsError, ValueError) as exc:
+    except OutputPathExistsError as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        console.print("[yellow]Tip:[/yellow] Use [bold]--overwrite[/bold] to regenerate an existing project.")
+        raise typer.Exit(code=1) from exc
+    except ValueError as exc:
         console.print(f"[red]Error:[/red] {exc}")
         raise typer.Exit(code=1) from exc
 
@@ -215,10 +221,17 @@ def plan(
         if template:
             project_spec = build_project_spec_from_custom(template, task, root=Path.cwd(), package_name=name)
             if project_spec is None:
-                available = ", ".join(list_custom_templates().keys()) or "none"
-                console.print(f"[red]Custom template not found:[/red] {template}")
-                console.print(f"[dim]Available custom templates: {available}[/dim]")
-                console.print("Run [bold]robopilot template-init[/bold] to scaffold the templates directory.")
+                custom = list_custom_templates().keys()
+                all_available = sorted(set(custom))
+                suggestions = get_close_matches(template, all_available, n=3, cutoff=0.3)
+                console.print(f"[red]Template not found:[/red] {template}")
+                if suggestions:
+                    console.print(f"[yellow]Did you mean:[/yellow] {', '.join(suggestions)}")
+                if all_available:
+                    console.print(f"[dim]Available: {', '.join(all_available)}[/dim]")
+                else:
+                    console.print("[dim]No custom templates found.[/dim]")
+                console.print("Run [bold]robopilot template-init[/bold] to create your first template.")
                 raise typer.Exit(code=1)
             # use project_spec from custom template
         else:
