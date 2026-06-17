@@ -98,7 +98,7 @@ def spec_from_yaml(content: str) -> ProjectSpec:
         stripped = raw_line.strip()
         if stripped.startswith("- "):
             item = stripped[2:]
-            if ":" in item:
+            if ":" in item and not (item.startswith('"') or item.startswith("'")):
                 key, value = _split_key_value(item)
                 current_item = {key: _unquote(value)}
                 section.append(current_item)
@@ -163,7 +163,7 @@ def _quote(value: str) -> str:
 def _unquote(value: str) -> str:
     if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
         value = value[1:-1]
-    return value.replace("\\\\", "\\").replace('\\"', '"')
+    return value.replace('\\"', '"').replace("\\\\", "\\")
 
 
 def _list_of_dicts(value: object) -> list[dict[str, str]]:

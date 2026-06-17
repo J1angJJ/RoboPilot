@@ -345,6 +345,8 @@ def _relative_files(root: Path, directory: Path, patterns: tuple[str, ...]) -> t
     paths: list[str] = []
     for pattern in patterns:
         for file_path in sorted(directory.rglob(pattern)):
+            if not file_path.is_file():
+                continue
             if _is_ignored(file_path.relative_to(root)):
                 continue
             paths.append(file_path.relative_to(root).as_posix())

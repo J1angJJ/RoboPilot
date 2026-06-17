@@ -28,12 +28,13 @@ from robopilot.spec.io import spec_to_yaml
 
 def package_xml(spec: ProjectSpec) -> str:
     """Render a ROS-style package.xml file."""
+    from robopilot import __version__ as _ver
     return dedent(
         f"""\
         <?xml version="1.0"?>
         <package format="3">
           <name>{spec.package_name}</name>
-          <version>2.1.0</version>
+          <version>{_ver}</version>
           <description>{spec.description}</description>
           <maintainer email="developer@example.com">RoboPilot User</maintainer>
           <license>MIT</license>
@@ -55,6 +56,7 @@ def package_xml(spec: ProjectSpec) -> str:
 
 def setup_py(spec: ProjectSpec) -> str:
     """Render a ROS-style setup.py file."""
+    from robopilot import __version__ as _ver
     return dedent(
         f"""\
         from setuptools import find_packages, setup
@@ -64,7 +66,7 @@ def setup_py(spec: ProjectSpec) -> str:
 
         setup(
             name=package_name,
-            version="2.1.0",
+            version="{_ver}",
             packages=find_packages(exclude=["test"]),
             data_files=[
                 (f"share/{{package_name}}", ["package.xml", "robopilot.yaml"]),

@@ -170,7 +170,8 @@ def generate_html_report(project_path: Path, history_data: dict | None = None) -
             lines.append(f"<tr><td>{metric}</td><td>{prev_val}</td><td>{cur_val}{diff_str}</td></tr>")
         lines.append("</table>")
 
-    lines.append(f"<p class='timestamp'>RoboPilot v2.2.0 — static analysis only, no ROS runtime.</p>")
+    from robopilot import __version__ as _ver
+    lines.append(f"<p class='timestamp'>RoboPilot v{_ver} — static analysis only, no ROS runtime.</p>")
     lines.append("</body></html>")
     return "\n".join(lines)
 
