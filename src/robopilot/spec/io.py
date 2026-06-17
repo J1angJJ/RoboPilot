@@ -163,7 +163,7 @@ def _quote(value: str) -> str:
 def _unquote(value: str) -> str:
     if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
         value = value[1:-1]
-    return value.replace('\\"', '"').replace("\\\\", "\\")
+    return value.replace("\\\\", "\\").replace('\\"', '"')
 
 
 def _list_of_dicts(value: object) -> list[dict[str, str]]:

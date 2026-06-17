@@ -551,6 +551,7 @@ def _slam_node(spec: ProjectSpec) -> str:
         from __future__ import annotations
 
         from dataclasses import dataclass
+        from math import cos as _cos, sin as _sin
         from typing import Any
 
 
@@ -603,7 +604,6 @@ def _slam_node(spec: ProjectSpec) -> str:
                 for i, rng in enumerate(scan_ranges):
                     if rng < self.max_laser_range:
                         angle = i * 3.14159 / 180.0
-                        from math import cos as _cos, sin as _sin
                         mx = int(self.pose[0] + rng * _cos(angle) / self.map_resolution)
                         my = int(self.pose[1] + rng * _sin(angle) / self.map_resolution)
                         self.map_cells.append(MapCell(mx, my, True, 0.90))
@@ -968,7 +968,6 @@ def _robot_arm_node(spec: ProjectSpec) -> str:
         from __future__ import annotations
 
         from dataclasses import dataclass
-        from time import sleep as time_sleep
         from typing import Any
 
 
@@ -1215,8 +1214,7 @@ def _state_machine_node(spec: ProjectSpec) -> str:
 
         from dataclasses import dataclass
         from enum import Enum
-        from time import sleep as time_sleep
-        from typing import Any, Callable
+        from typing import Any
 
 
         '''
@@ -1491,7 +1489,7 @@ def _ackermann_drive_node(spec: ProjectSpec) -> str:
 
         from __future__ import annotations
 
-        from math import atan2, hypot, pi, tan as _tan
+        from math import atan2, hypot, tan as _tan
         from typing import Any
 
 
@@ -1721,6 +1719,7 @@ def _diagnostic_aggregator_node(spec: ProjectSpec) -> str:
             def run_once(self) -> None:
                 statuses = self.simulate_diagnostics()
                 aggregated = self.analyze(statuses)
+                self.status_history["latest"] = aggregated
                 self.publish_aggregated(aggregated)
 
             def simulate_diagnostics(self) -> list[DiagnosticStatus]:
@@ -1761,13 +1760,11 @@ def _diagnostic_aggregator_node(spec: ProjectSpec) -> str:
 
             def get_summary(self) -> dict[str, int]:
                 """Return a count summary by diagnostic level."""
+                latest = self.status_history.get("latest", [])
                 return {{
-                    "ok": sum(1 for s in self.status_history.get("latest", [])
-                              if s.level == DiagnosticLevel.OK.value),
-                    "warn": sum(1 for s in self.status_history.get("latest", [])
-                                if s.level == DiagnosticLevel.WARN.value),
-                    "error": sum(1 for s in self.status_history.get("latest", [])
-                                 if s.level == DiagnosticLevel.ERROR.value),
+                    "ok": sum(1 for s in latest if s.level == DiagnosticLevel.OK.value),
+                    "warn": sum(1 for s in latest if s.level == DiagnosticLevel.WARN.value),
+                    "error": sum(1 for s in latest if s.level == DiagnosticLevel.ERROR.value),
                 }}
         '''
         )
