@@ -56,3 +56,31 @@ def test_exit_code_errors_on_bad_package(tmp_path: Path) -> None:
     result = ci_check(tmp_path)
     assert result.exit_code == 2
     assert result.overall_status == "errors"
+
+
+def test_ci_check_json_output() -> None:
+    result = ci_check(Path("examples/generated_projects/demo_detector"))
+    d = result.to_dict()
+    assert d["overall_status"] in ("clean", "warnings", "errors")
+    assert d["exit_code"] in (0, 1, 2)
+    assert "safety_note" in d
+
+
+def test_ci_check_all_formats(tmp_path: Path) -> None:
+    demo = Path("examples/generated_projects/demo_detector")
+    for fmt in ("summary", "sarif", "markdown"):
+        result = ci_check(demo, fmt=fmt)
+        assert result.exit_code in (0, 1, 2)
+
+
+def test_ci_check_sarif_output_has_expected_keys(tmp_path: Path) -> None:
+    demo = Path("examples/generated_projects/demo_detector")
+    out = tmp_path / "report.sarif"
+    ci_check(demo, fmt="sarif", output=out)
+    import json
+    data = json.loads(out.read_text(encoding="utf-8"))
+    assert data["version"] == "2.1.0"
+    assert "runs" in data
+    assert len(data["runs"]) > 0
+    assert "tool" in data["runs"][0]
+    assert "results" in data["runs"][0]

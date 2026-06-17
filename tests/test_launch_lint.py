@@ -143,3 +143,57 @@ def test_result_to_dict() -> None:
     assert "safety_note" in d
     assert d["files_checked"] == ["f1.launch", "f2.launch.py"]
     assert len(d["issues"]) == 1
+
+
+def test_ros1_launch_with_nested_group(tmp_path: Path) -> None:
+    lf = tmp_path / "nested.launch"
+    lf.write_text(
+        '<?xml version="1.0"?>\n<launch>\n'
+        '  <group ns="camera">\n'
+        '    <node pkg="foo" type="foo_node" name="foo"/>\n'
+        '  </group>\n'
+        '</launch>\n',
+        encoding="utf-8",
+    )
+    issues = _lint_ros1_launch(lf, "nested.launch")
+    assert any("group" in i.rule for i in issues)
+
+
+def test_ros1_include_without_file(tmp_path: Path) -> None:
+    lf = tmp_path / "include.launch"
+    lf.write_text(
+        '<?xml version="1.0"?>\n<launch>\n'
+        '  <include/>\n'
+        '</launch>\n',
+        encoding="utf-8",
+    )
+    issues = _lint_ros1_launch(lf, "include.launch")
+    assert any(i.rule == "launch.ros1.include_no_file" for i in issues)
+
+
+def test_ros1_param_without_name(tmp_path: Path) -> None:
+    lf = tmp_path / "param.launch"
+    lf.write_text(
+        '<?xml version="1.0"?>\n<launch>\n'
+        '  <param/>\n'
+        '</launch>\n',
+        encoding="utf-8",
+    )
+    issues = _lint_ros1_launch(lf, "param.launch")
+    assert any(i.rule == "launch.ros1.param_no_name" for i in issues)
+
+
+def test_ros2_launch_with_node(tmp_path: Path) -> None:
+    lf = tmp_path / "with_node.launch.py"
+    lf.write_text(
+        "from launch import LaunchDescription\n"
+        "from launch_ros.actions import Node\n\n"
+        "def generate_launch_description():\n"
+        "    return LaunchDescription([\n"
+        "        Node(package='foo', executable='bar', name='bar'),\n"
+        "    ])\n",
+        encoding="utf-8",
+    )
+    issues = _lint_ros2_launch(lf, "with_node.launch.py")
+    errors = [i for i in issues if i.severity == "error"]
+    assert len(errors) == 0
