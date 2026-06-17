@@ -951,3 +951,57 @@ Minimal output:
   "suggested_commands": []
 }
 ```
+
+## `lint --json`
+
+Purpose: run static quality checks on a ROS project.
+
+Top-level stable keys: `project_path`, `package_name`, `project_type`, `issues`, `error_count`, `warning_count`, `info_count`, `safety_note`.
+
+Issue keys: `severity`, `file`, `rule`, `message`, `line`.
+
+## `migrate-score --json`
+
+Purpose: score ROS1→ROS2 migration readiness.
+
+Top-level stable keys: `source_path`, `package_name`, `source_project_type`, `overall_score`, `categories`, `summary`, `suggested_next_steps`, `safety_note`.
+
+Category keys: `key`, `label`, `score`, `max_score`, `weight`, `findings`.
+
+## `ci-check --json`
+
+Purpose: aggregated quality check for CI pipelines.
+
+Top-level stable keys: `project_path`, `package_name`, `project_type`, `lint_errors`, `lint_warnings`, `lint_infos`, `dep_warnings`, `launch_issues`, `overall_status`, `exit_code`, `safety_note`.
+
+## `doctor --json`
+
+Purpose: self-diagnose the RoboPilot environment.
+
+Top-level stable keys: `checks`, `all_passed`, `error_count`, `warn_count`.
+
+Check keys: `name`, `passed`, `status`, `message`. Status values: `ok`, `warn`, `error`.
+
+## `workspace --json`
+
+Purpose: multi-package workspace analysis.
+
+Top-level stable keys: `workspace_path`, `workspace_type`, `package_count`, `packages`, `dependency_graph`, `circular_deps`, `migration_order`, `issues`, `safety_note`.
+
+Package keys: `name`, `path`, `package_type`, `dependencies`.
+
+## `launch-lint --json`
+
+Purpose: static launch file validation.
+
+Top-level stable keys: `files_checked`, `issues`, `error_count`, `warning_count`, `info_count`, `safety_note`.
+
+Issue keys: `severity`, `file`, `rule`, `message`. No `line` field (launch lint operates at file level).
+
+## `tutorial --json`
+
+Purpose: export lesson metadata.
+
+Top-level keys (lesson): `id`, `title`, `summary`, `estimated_minutes`, `step_count`.
+
+Top-level keys (list): array of lesson objects. Use `tutorial --list --json`.

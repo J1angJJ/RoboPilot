@@ -409,8 +409,149 @@ Mode: read-only when printed to terminal; file-writing when `--output` is provid
 
 Safety notes: graph generation is deterministic and offline.
 
+## `lint`
+
+Purpose: run static quality checks on a ROS project.
+
+Example:
+
+```bash
+robopilot lint path/to/package
+robopilot lint path/to/package --json
+```
+
+Mode: read-only.
+
+Safety notes: static only; no ROS runtime.
+
+## `launch-lint`
+
+Purpose: validate launch files (ROS1 XML and ROS2 Python).
+
+Example:
+
+```bash
+robopilot launch-lint path/to/package
+```
+
+Mode: read-only.
+
+## `migrate-score`
+
+Purpose: score a ROS1 package on ROS2 migration readiness (0-100).
+
+Example:
+
+```bash
+robopilot migrate-score path/to/ros1_package
+robopilot migrate-score path/to/ros1_package --json
+```
+
+Mode: read-only.
+
+## `tutorial`
+
+Purpose: run interactive step-by-step RoboPilot tutorials.
+
+Example:
+
+```bash
+robopilot tutorial --list
+robopilot tutorial --lesson demo_detector
+robopilot tutorial --all
+```
+
+Mode: read-only except for explicit `generate` steps within lessons.
+
+## `workspace`
+
+Purpose: analyze a multi-package ROS workspace.
+
+Example:
+
+```bash
+robopilot workspace path/to/catkin_ws/src
+robopilot workspace path/to/catkin_ws/src --json
+```
+
+Mode: read-only.
+
+## `template-init`
+
+Purpose: scaffold a `.robopilot/templates/` directory.
+
+Example:
+
+```bash
+robopilot template-init
+```
+
+Mode: file-writing (creates `.robopilot/templates/`).
+
+## `template-validate`
+
+Purpose: validate a custom template definition.
+
+Example:
+
+```bash
+robopilot template-validate --path .robopilot/templates/my_template
+```
+
+Mode: read-only.
+
+## `template-install`
+
+Purpose: install a community template from a URL or file.
+
+Example:
+
+```bash
+robopilot template-install https://example.com/template.yaml --name my_tpl
+```
+
+Mode: file-writing.
+
+## `ci-check`
+
+Purpose: run aggregated quality checks (lint + deps + launch) with SARIF/Markdown export.
+
+Example:
+
+```bash
+robopilot ci-check path/to/package --format sarif --output report.sarif
+robopilot ci-check path/to/package --json
+```
+
+Mode: read-only; file-writing when `--output` is provided. Exit codes 0/1/2 for CI.
+
+## `doctor`
+
+Purpose: self-diagnose the RoboPilot environment.
+
+Example:
+
+```bash
+robopilot doctor
+robopilot doctor --json
+```
+
+Mode: read-only.
+
+## `schema`
+
+Purpose: export a JSON Schema for the robopilot.yaml format.
+
+Example:
+
+```bash
+robopilot schema
+```
+
+Mode: read-only (prints to stdout).
+
 ## JSON Output
 
-Several commands support `--json`, including `diff`, `apply-preview`, `apply`, `rollback`, `history`, `detect`, `inspect`, `inspect-ros1`, `inspect-ros2`, `deps`, `migrate-plan-validate`, `migrate-plan-diff`, `migrate-preview`, `migrate-scaffold-preview`, `migrate-scaffold`, `migrate-scaffold-validate`, and `repair-suggest`. Some commands write JSON files via format options, such as `migrate-plan --format json` and `apply-plan --format json`. JSON keys are intended to be stable for tests and lightweight integrations.
+Commands supporting `--json`: `diff`, `apply-preview`, `apply`, `rollback`, `history`, `detect`, `inspect`, `inspect-ros1`, `inspect-ros2`, `deps`, `lint`, `launch-lint`, `migrate-score`, `workspace`, `ci-check`, `doctor`, `migrate-plan-validate`, `migrate-plan-diff`, `migrate-preview`, `migrate-scaffold-preview`, `migrate-scaffold`, `migrate-scaffold-validate`, `repair-suggest`, `tutorial`. Some commands write JSON files via format options (`migrate-plan --format json`, `apply-plan --format json`). JSON keys are intended to be stable for tests and integrations.
 
 For documented integration contracts, see [JSON Contracts](json_contracts.md). External tools should prefer `--json` and should not parse Rich human-readable output.

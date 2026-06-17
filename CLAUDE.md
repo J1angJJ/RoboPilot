@@ -163,18 +163,7 @@ detect → inspect-ros1 / inspect-ros2 → deps
 - Do not add new product commands during packaging/release work.
 - Prefer pure Python, pathlib, type hints. Keep functions small. Separate CLI from business logic.
 
-### Planned Module Additions (v2.2.0 milestones)
-
-```
-src/robopilot/
-├── doctor/          # M17: environment self-diagnostic
-├── deps/            # M13: workspace-level dep resolution, rosdep hints
-├── lint/            # M12: cross-file rules, ROS2-specific checks
-├── report/          # M16: HTML/PDF export, trend history, diff mode
-├── templates/       # M11: quality polish, Chinese comments
-├── tutorial/        # M14: 4 new lessons, Chinese text, progress tracking
-└── user_templates/  # M17: template-install, template-search, community
-```
+v2.3.0 is a polish-and-stabilize release (documentation, CI examples, performance, UX, test coverage). No new module additions — all existing modules are refined in place.
 
 New commands must follow the existing pattern: core module → API wrapper → CLI command, with `--json` support and read-only safety.
 

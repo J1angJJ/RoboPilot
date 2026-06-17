@@ -107,10 +107,59 @@ history = read_project_history("outputs/demo_detector")
 
 `apply_exported_plan()` and `rollback_project_backup()` preserve RoboPilot's safety model. They are dry-run by default unless `confirm=True` is passed.
 
+## Lint Example
+
+```python
+from robopilot.api.static_analysis import lint_project_api
+
+result = lint_project_api("path/to/package")
+print(result["error_count"], result["warning_count"])
+for issue in result["issues"]:
+    print(issue["severity"], issue["rule"], issue["message"])
+```
+
+## Migration Score Example
+
+```python
+from robopilot.api.migration import score_migration_readiness_api
+
+score = score_migration_readiness_api("path/to/ros1_package")
+print(f"Migration readiness: {score['overall_score']}/100")
+for cat in score["categories"]:
+    print(f"  {cat['label']}: {cat['score']}")
+```
+
+## Workspace Dependencies Example
+
+```python
+from robopilot.deps.analyzer import analyze_workspace_deps
+
+result = analyze_workspace_deps("path/to/catkin_ws/src", distro="humble")
+print(result["distro_compatibility"]["compat_ratio"])
+for cmd in result["rosdep_install_hints"]:
+    print(f"  $ {cmd}")
+```
+
+## Doctor Example
+
+```python
+from robopilot.doctor import run_doctor
+
+result = run_doctor()
+for check in result.checks:
+    print(f"{check.status}: {check.name} — {check.message}")
+```
+
 ## API Groups
 
 - `robopilot.api.project`: ProjectSpec planning, refinement, validation, diff, and generation wrappers.
-- `robopilot.api.static_analysis`: project detection, inspection, ROS1 inspection, ROS2 inspection, dependency analysis, and report export wrappers.
-- `robopilot.api.migration`: ROS1-to-ROS2 migration plan, validation, diff, preview, scaffold preview, scaffold generation, scaffold validation, and scaffold report wrappers.
+- `robopilot.api.static_analysis`: project detection, inspection, ROS1 inspection, ROS2 inspection, dependency analysis, report export, and lint wrappers.
+- `robopilot.api.migration`: ROS1-to-ROS2 migration plan, validation, diff, preview, scaffold preview/generation/validation/report, and migration readiness scoring wrappers.
 - `robopilot.api.apply`: apply-preview, apply-plan export/validation, apply, rollback, and history wrappers.
 - `robopilot.api.models`: small helper aliases for path-like inputs and structured results.
+- `robopilot.deps.analyzer`: `analyze_workspace_deps()`, `get_rosdep_install_hints()`, `check_distro_compatibility()`.
+- `robopilot.doctor`: `run_doctor()` — self-diagnostic for the RoboPilot environment.
+- `robopilot.report.project_report`: `generate_html_report()`, `generate_history_report()`, `generate_diff_report()`, `save_report_snapshot()`.
+- `robopilot.tutorial`: `list_lessons()`, `get_lesson()`, `load_progress()`, `save_progress()`.
+- `robopilot.ci_check`: `ci_check()` — aggregated lint+deps+launch check with SARIF/Markdown export.
+- `robopilot.user_templates`: `init_templates_dir()`, `list_custom_templates()`, `validate_custom_template()`, `build_project_spec_from_custom()`.

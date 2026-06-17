@@ -69,10 +69,12 @@ Do not break the v1.0.0 command surface or documented safety model unless the ta
 The current priority is:
 
 ```txt
-v2.2.0 Deepening & Ecosystem
+v2.3.0 Polish & Production Readiness
 ```
 
-v2.1.0 established the foundation (12 templates, lint, scoring, tutorial, workspace, CI). v2.2.0 deepens each area: better templates, deeper lint rules, dependency intelligence, more tutorials, VSCode integration v2, quality reports, and ecosystem readiness.
+v2.1.0 built the foundation (16 templates, lint, scoring, tutorial, workspace, CI).
+v2.2.0 deepened each area (20 lint rules, rosdep hints, 6 tutorials, VSCode v2, HTML reports, doctor).
+v2.3.0 makes everything production-ready: documentation, CI examples, performance, UX polish, test coverage.
 
 **Track A — Education & Onboarding:** Polish templates with production-quality pseudocode, expand tutorial library, add Chinese tutorial text, build VSCode template browser.
 
@@ -218,10 +220,56 @@ Milestone 17 Ecosystem Readiness & Doctor (Track A+B)
 
 - v2.2.0 releases as a single MINOR bump when all 7 milestones are complete.
 - Each milestone deepens an area established in v2.1.0 rather than inventing new categories.
-- No command from v1.0.0–v2.1.0 is removed or silently changed.
+
+## v2.3.0 Milestone Plan
+
+v2.3.0 is a polish-and-stabilize release. No new CLI commands or module categories.
+Every milestone makes existing features more reliable, documented, or performant.
+
+```
+Milestone 1  Documentation Alignment
+             Update docs/api.md, docs/command_reference.md, and
+             docs/json_contracts.md to cover all v2.1.0/v2.2.0 additions.
+             Verify all tutorial paths and example references still resolve.
+             Add doc cross-links between related commands (lint→ci-check,
+             workspace→deps, migrate-plan→migrate-score).
+
+Milestone 2  CI Integration Examples
+             Add .github/workflows/quality.yml running robopilot ci-check
+             on examples/ with SARIF upload to GitHub Code Scanning.
+             Add CI badge to README. Verify workflow on Windows + Linux.
+
+Milestone 3  Performance & Caching
+             Cache detect_project and ast.parse results in lint module
+             to avoid redundant file parsing. Optimize workspace-level
+             dep analysis with shared package index. Limit launch_lint
+             directory traversal depth.
+
+Milestone 4  Error Messages & UX Polish
+             Improve CLI error messages with actionable suggestions.
+             Add fuzzy-matching for typo'd template names. Add --overwrite
+             hint when generate hits existing directory. Handle Rich table
+             character truncation on Windows terminals.
+
+Milestone 5  Test Coverage Balance
+             Add test_doctor.py (0→10+ tests). Expand ci_check tests to
+             cover all format+output paths. Expand launch_lint tests for
+             edge cases in ROS2 launch AST parsing. Target 500+ tests.
+
+Milestone 6  Migration Scaffold Quality (optional)
+             Replace NotImplementedError placeholders with useful migration
+             patterns (rospy→rclpy, rospy.Publisher→create_publisher, etc).
+             Improve launch file scaffold mapping (ROS1 XML→ROS2 Python).
+             Preserve conservative safety model: still not automatic migration.
+```
+
+### Design Principles
+
+- No command from v1.0.0–v2.2.0 is removed or silently changed.
 - The no-ROS-required safety model applies to every new feature.
 - Static analysis never imports or executes user project code.
 - New CLI commands use --json for integration readiness from day one.
+- v2.3.0 prioritizes quality over quantity. No speculative expansion.
 
 ## 2.x Planning Rules
 
