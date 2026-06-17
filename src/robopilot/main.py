@@ -86,7 +86,14 @@ from robopilot.ci_check import CICheckResult, ci_check
 from robopilot.workspace import WorkspaceResult, analyze_workspace
 from robopilot.refiner.llm_refiner import LLMRefiner
 from robopilot.refiner.spec_refiner import refine_spec
-from robopilot.report.project_report import generate_project_report, write_project_report
+from robopilot.report.project_report import (
+    generate_diff_report,
+    generate_history_report,
+    generate_html_report,
+    generate_project_report,
+    save_report_snapshot,
+    write_project_report,
+)
 from robopilot.rollback.rollback import RollbackSummary, rollback_project
 from robopilot.ros1.inspector import ROS1Inspection
 from robopilot.ros2.inspector import ROS2Inspection
@@ -1986,11 +1993,55 @@ def report(
     project_path: Annotated[Path, typer.Argument(help="Project directory to report on.")],
     output: Annotated[
         Path | None,
-        typer.Option("--output", "-o", help="Optional Markdown report output path."),
+        typer.Option("--output", "-o", help="Optional report output path."),
+    ] = None,
+    fmt: Annotated[
+        str,
+        typer.Option("--format", "-f", help="Report format: markdown, html, history, diff."),
+    ] = "markdown",
+    snapshot: Annotated[
+        bool,
+        typer.Option("--snapshot", help="Save a quality snapshot for trend tracking."),
+    ] = False,
+    compare: Annotated[
+        Path | None,
+        typer.Option("--diff", help="Compare current against another project path."),
     ] = None,
 ) -> None:
-    """Export a static Markdown report for a project inspection."""
+    """Export a static report for a project inspection with optional history/diff."""
     try:
+        if snapshot:
+            snap_path = save_report_snapshot(project_path)
+            console.print(f"[green]Saved quality snapshot to[/green] {snap_path}")
+            return
+
+        if compare:
+            report_text = generate_diff_report(project_path, compare)
+            if output:
+                output.write_text(report_text, encoding="utf-8")
+                console.print(f"[green]Wrote diff report to[/green] {output}")
+            else:
+                print(report_text)
+            return
+
+        if fmt == "history":
+            report_text = generate_history_report(project_path)
+            if output:
+                output.write_text(report_text, encoding="utf-8")
+                console.print(f"[green]Wrote history report to[/green] {output}")
+            else:
+                print(report_text)
+            return
+
+        if fmt == "html":
+            report_text = generate_html_report(project_path)
+            if output:
+                output.write_text(report_text, encoding="utf-8")
+                console.print(f"[green]Wrote HTML report to[/green] {output}")
+            else:
+                print(report_text)
+            return
+
         if output is None:
             print(generate_project_report(project_path))
             return
