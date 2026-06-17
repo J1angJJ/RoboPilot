@@ -417,12 +417,14 @@ def _cross_check_setup_vs_nodes(path: Path, package_name: str | None) -> list[Li
                                         parts = entry.split("=")
                                         if len(parts) == 2:
                                             mod_ref = parts[1].strip().split(":")[0].strip()
-                                            mod_file = mod_ref.split(".")[-1] + ".py" if "." in mod_ref else mod_ref + ".py"
-                                            node_path = path / package_name / mod_file
+                                            if mod_ref.startswith(package_name + "."):
+                                                mod_ref = mod_ref[len(package_name) + 1:]
+                                            mod_path = mod_ref.replace(".", "/") + ".py"
+                                            node_path = path / package_name / mod_path
                                             if not node_path.exists():
                                                 issues.append(LintIssue(
                                                     "error", "setup.py", "cross.entry_point_missing_node",
-                                                    f"console_script '{entry}' references '{mod_file}' but file does not exist at {package_name}/{mod_file}"
+                                                    f"console_script '{entry}' references '{mod_path}' but file does not exist at {package_name}/{mod_path}"
                                                 ))
     return issues
 
@@ -625,7 +627,8 @@ def _extract_xml_deps(pkg_xml: Path) -> set[str]:
     try:
         tree = ET.parse(str(pkg_xml))
         for child in tree.getroot():
-            if child.tag in ("depend", "build_depend", "exec_depend", "buildtool_depend"):
+            if child.tag in ("depend", "build_depend", "build_export_depend",
+                             "exec_depend", "run_depend", "test_depend", "buildtool_depend"):
                 if child.text:
                     deps.add(child.text.strip())
     except ET.ParseError:

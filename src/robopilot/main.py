@@ -2383,8 +2383,8 @@ def _run_step_command(step: "TutorialStep") -> None:
     console.print(f"[dim]$ {step.command}[/dim]\n")
     try:
         result = subprocess.run(
-            step.command,
-            shell=True,
+            step.command.split(),
+            shell=False,
             capture_output=True,
             text=True,
             timeout=60,

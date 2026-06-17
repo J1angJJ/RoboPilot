@@ -609,8 +609,8 @@ def analyze_workspace_deps(workspace_path: Path, distro: str = "humble") -> dict
             for d in results[pkg.name]["declared"]:
                 if isinstance(d, str):
                     all_deps.add(d)
-        except Exception:
-            results[pkg.name] = {"error": "Could not analyze dependencies"}
+        except Exception as exc:
+            results[pkg.name] = {"error": f"Could not analyze dependencies: {exc}"}
 
     install_hints = get_rosdep_install_hints(sorted(all_deps), distro)
     compat = check_distro_compatibility(sorted(all_deps), distro)
