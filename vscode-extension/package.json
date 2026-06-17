@@ -43,6 +43,8 @@
     "onCommand:robopilot.showOutput",
     "onCommand:robopilot.lintWorkspace",
     "onCommand:robopilot.showTemplates",
+    "onCommand:robopilot.templateInit",
+    "onCommand:robopilot.showMigrationScore",
     "workspaceContains:robopilot.yaml",
     "workspaceContains:package.xml"
   ],
@@ -104,6 +106,14 @@
       {
         "command": "robopilot.showTemplates",
         "title": "RoboPilot: Show Templates &amp; Tutorials"
+      },
+      {
+        "command": "robopilot.templateInit",
+        "title": "RoboPilot: Initialize Templates"
+      },
+      {
+        "command": "robopilot.showMigrationScore",
+        "title": "RoboPilot: Show Migration Score"
       }
     ],
     "configuration": {

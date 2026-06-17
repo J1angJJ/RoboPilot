@@ -77,6 +77,10 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(vscode.commands.registerCommand("robopilot.lintWorkspace", lintWorkspace));
   context.subscriptions.push(vscode.commands.registerCommand("robopilot.showTemplates", showTemplates));
 
+  // v2.2.0 M15: template-init and migrate-score
+  context.subscriptions.push(vscode.commands.registerCommand("robopilot.templateInit", templateInit));
+  context.subscriptions.push(vscode.commands.registerCommand("robopilot.showMigrationScore", showMigrationScore));
+
   // v2.1.0 M9: lint on save for package files
   context.subscriptions.push(
     vscode.workspace.onDidSaveTextDocument((doc) => {
@@ -215,6 +219,58 @@ async function showTemplates(): Promise<void> {
       "Init templates: robopilot template-init"
     ]);
     tree.update({ templateCount: lessons.length });
+    output.show();
+  } catch (error) {
+    showFailure(error);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// M15: template-init and migrate-score
+// ---------------------------------------------------------------------------
+
+async function templateInit(): Promise<void> {
+  const workspacePath = getWorkspacePath();
+  if (!workspacePath) { return; }
+  const args = ["template-init", "--root", workspacePath];
+  output.appendCommand(renderCommand(args), workspacePath);
+  try {
+    const result = await runRobopilot(getExecutablePath(), args, { cwd: workspacePath });
+    output.appendSection("Template Init", result.stdout.trim().split(/\r?\n/));
+    output.appendSection("Next Steps", [
+      "Edit .robopilot/templates/my_custom_node/template.yaml",
+      "Validate: robopilot template-validate --path .robopilot/templates/my_custom_node",
+      "Use: robopilot plan --template my_custom_node --name <proj> --task \"...\""
+    ]);
+    output.show();
+    vscode.window.showInformationMessage("RoboPilot: Templates directory created in .robopilot/templates/");
+  } catch (error) {
+    showFailure(error);
+  }
+}
+
+async function showMigrationScore(): Promise<void> {
+  const workspacePath = getWorkspacePath();
+  if (!workspacePath) { return; }
+  const args = ["migrate-score", workspacePath, "--json"];
+  output.appendCommand(renderCommand(args), workspacePath);
+  try {
+    const result = await runRobopilot(getExecutablePath(), args, { cwd: workspacePath });
+    const parsed = JSON.parse(result.stdout) as {
+      overall_score: number;
+      source_project_type: string;
+      package_name: string | null;
+    };
+    const score = parsed.overall_score;
+    const band = score >= 80 ? "LOW" : score >= 60 ? "MODERATE" : score >= 40 ? "HIGH" : "VERY HIGH";
+    output.appendSection("Migration Readiness Score", [
+      `Score: ${score}/100 — ${band} difficulty`,
+      `Package: ${parsed.package_name ?? "unknown"}`,
+      `Type: ${parsed.source_project_type}`
+    ]);
+    tree.update({ packageName: parsed.package_name ?? undefined });
+    statusBar.text = `$(graph) RoboPilot: migrate ${score}/100`;
+    statusBar.tooltip = `ROS1→ROS2 migration readiness: ${score}/100 (${band})`;
     output.show();
   } catch (error) {
     showFailure(error);
