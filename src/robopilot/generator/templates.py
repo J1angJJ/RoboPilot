@@ -104,40 +104,37 @@ def setup_cfg(spec: ProjectSpec) -> str:
 
 def readme(spec: ProjectSpec) -> str:
     """Render a README for the generated package."""
-    notes = "\n".join(f"- {note}" for note in spec.notes)
-    return dedent(
-        f"""\
-        # {spec.package_name}
+    note_lines = "\n".join(f"- {note}" for note in spec.notes) if spec.notes else "- (no notes)"
+    return f"""# {spec.package_name}
 
-        {spec.description}
+{spec.description}
 
-        ## Task
+## Task
 
-        {spec.task}
+{spec.task}
 
-        ## Selected Template
+## Selected Template
 
-        `{spec.selected_template}`
+`{spec.selected_template}`
 
-        ## Generated Files
+## Generated Files
 
-        - `package.xml`
-        - `setup.py`
-        - `setup.cfg`
-        - `robopilot.yaml`
-        - `launch/{spec.package_name}.launch.py`
-        - `config/params.yaml`
-        - `{spec.package_name}/{spec.node_file_name}`
+- `package.xml`
+- `setup.py`
+- `setup.cfg`
+- `robopilot.yaml`
+- `launch/{spec.package_name}.launch.py`
+- `config/params.yaml`
+- `{spec.package_name}/{spec.node_file_name}`
 
-        ## Notes
+## Notes
 
-        {notes}
+{note_lines}
 
-        This package is intentionally offline-friendly pseudocode. It mirrors common
-        ROS2 Python package structure, but RoboPilot does not require a real ROS2
-        installation to generate or inspect these files.
-        """
-    )
+This package is intentionally offline-friendly pseudocode. It mirrors common
+ROS2 Python package structure, but RoboPilot does not require a real ROS2
+installation to generate or inspect these files.
+"""
 
 
 def launch_file(spec: ProjectSpec) -> str:

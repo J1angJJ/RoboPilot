@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 RoboPilot is a **no-ROS-required static engineering toolchain** for ROS/ROS2-style projects. It helps users plan, generate, inspect, analyze, migrate, and document ROS-style project structures without installing ROS, ROS2, catkin, or colcon.
 
-- Python package: `robopilot` (v2.1.0, Python 3.10-3.11)
+- Python package: `robopilot` (v2.2.0, Python 3.10-3.11)
 - PyPI: `pip install robopilot`
 - VSCode extension: `j1angjj.robopilot-vscode` (thin CLI/API wrapper, lives under `vscode-extension/`)
 
@@ -24,6 +24,30 @@ v2.1.0 is shipped (10 milestones). v2.2.0 is planned with 7 deepening milestones
 - **No AI attribution**: Never include AI-authored signatures in commits, PR descriptions, or files. No `Co-authored-by`, `Generated with Claude Code`, `AI-generated`, or similar tags. Use the user's global git settings exclusively for commit authorship.
 - **Commits**: Add and commit locally as needed. Do NOT push — the user handles push (requires credentials).
 - **Releases**: No PyPI or VSCode Marketplace publish permissions. When release-ready, suggest the manual steps (build, twine check, tag, publish) for the user to execute.
+
+### Remote Repository
+
+- **GitHub**: https://github.com/J1angJJ/RoboPilot (public)
+- **Default branch**: `main`
+- **Tags**: use `v<version>` format (e.g., `v2.2.0`)
+- **PyPI**: https://pypi.org/project/robopilot/ (owner: J1angJJ)
+- **VSCode Marketplace**: extension id `j1angjj.robopilot-vscode`
+
+### CI Workflows (GitHub Actions)
+
+Three workflows run on push:
+
+| Workflow | File | Purpose |
+|----------|------|---------|
+| Tests | `.github/workflows/tests.yml` | pytest on Python 3.10/3.11 (ubuntu) |
+| Quality | `.github/workflows/quality.yml` | lint + ci-check + SARIF upload |
+| VSCode Extension | `.github/workflows/vscode-extension.yml` | TypeScript compile/test |
+
+**Known CI behavior (not bugs):**
+- `ros1_migration_demo` has expected lint warnings; its `ci-check` step uses `continue-on-error: true`
+- `doctor` step uses `continue-on-error: true` (may produce warnings on CI)
+- `robopilot` CLI uses `python -m robopilot.main` (not bare `robopilot`) because pip's bin dir isn't always on `$PATH` in CI
+- SARIF upload requires `permissions.security-events: write`
 
 ## Dev Environment
 

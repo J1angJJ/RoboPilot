@@ -5,6 +5,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-06-18
+
+This release completes 13 milestones (M11-M23) deepening features and polishing for production readiness.
+
+### Added
+
+**Feature Deepening (M11-M17):**
+- 4 new templates (depth_camera, ackermann_drive, teleop, diagnostic_aggregator) — 20 total templates. Chinese comment support with --lang zh.
+- Deep lint: 14→20 rules including cross-file consistency checks, ROS2-specific patterns, and .robopilot/lintrc.yaml configuration.
+- Dependency intelligence: rosdep install hints (40+ ROS packages mapped to apt/pip), workspace-level dep analysis (deps --workspace), distro compatibility checking.
+- Tutorial platform: 2→6 lessons (~55 min total), Chinese text, progress tracking (.robopilot_tutorial_state), --all mode.
+- VSCode v2: template-init command, migration score in status bar, template browser.
+- Quality reports: HTML export with severity badges, history trend comparison, before/after migration diff.
+- Ecosystem readiness: robopilot doctor (7 diagnostic checks), robopilot template-install, robopilot schema for JSON Schema export.
+
+**Production Polish (M18-M23):**
+- Documentation: api.md, command_reference.md, and json_contracts.md updated for all new commands.
+- CI: .github/workflows/quality.yml with lint, ci-check, SARIF upload, and doctor checks.
+- Performance: lint module caching layer (lru_cache for file reads, AST parsing, XML parsing). Workspace deps shared package index.
+- UX: fuzzy template matching, --overwrite hints on generation conflicts.
+- Test coverage: expanded from 478 to 498 tests. Added test_doctor.py (13 tests).
+- Migration scaffold quality: Python/C++/launch placeholders with ROS1→ROS2 API cheat sheets instead of bare NotImplementedError.
+
+### Changed
+
+- Bumped version to 2.2.0 (pyproject.toml, __init__.py, templates, docs).
+- Regenerated demo_detector example with 2.2.0 metadata.
+- Updated README and Chinese README version references.
+- Added CI configuration and remote repository information to CLAUDE.md.
+
+### Fixed
+
+- 7 bugs from pre-release review: spec/io.py quoted-value parsing, _unquote escape order, version consistency across all files, doctor reporting vunknown, ros1 inspector missing is_file() check.
+
 ## [2.1.0] - 2026-06-16
 
 This release completes 10 development milestones across two tracks — Education (Track A) and Static Quality (Track B). All milestones are committed to main and published together.
