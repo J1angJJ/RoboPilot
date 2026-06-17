@@ -23,6 +23,7 @@ from robopilot.api.migration import (
     validate_migration_scaffold as api_validate_migration_scaffold,
     validate_migration_plan_file as api_validate_migration_plan_file,
 )
+from robopilot.deps.analyzer import analyze_workspace_deps as core_analyze_workspace_deps
 from robopilot.api.static_analysis import (
     analyze_project_dependencies as api_analyze_project_dependencies,
     detect_project_type as api_detect_project_type,
@@ -846,19 +847,57 @@ def _print_ros2_inspection(result: ROS2Inspection) -> None:
 
 @app.command()
 def deps(
-    project_path: Annotated[Path, typer.Argument(help="Project directory to analyze.")],
+    project_path: Annotated[Path, typer.Argument(help="Project or workspace directory to analyze.")],
     json_output: Annotated[
         bool,
         typer.Option("--json", help="Print deterministic JSON output."),
     ] = False,
+    workspace: Annotated[
+        bool,
+        typer.Option("--workspace", "-w", help="Analyze all packages in a workspace."),
+    ] = False,
+    distro: Annotated[
+        str,
+        typer.Option("--distro", "-d", help="ROS distro for install hints (default: humble)."),
+    ] = "humble",
 ) -> None:
     """Analyze ROS-style dependencies without requiring ROS."""
+    if workspace:
+        if json_output:
+            print(json.dumps(core_analyze_workspace_deps(project_path, distro), indent=2))
+            return
+        result = core_analyze_workspace_deps(project_path, distro)
+        _print_workspace_deps(result)
+        return
+
     result = api_analyze_project_dependencies(project_path, as_dict=False)
     if json_output:
         print(json.dumps(result.to_dict(), indent=2))
         return
 
     _print_dependency_analysis(result)
+
+
+def _print_workspace_deps(result: dict) -> None:
+    console.print(Panel.fit("Workspace Dependency Analysis", style="bold cyan"))
+    console.print(f"[bold]Workspace:[/bold] {result['workspace_path']}")
+    console.print(f"[bold]Distro:[/bold] {result['distro']}")
+    console.print(f"[bold]Packages:[/bold] {result['package_count']}")
+
+    dc = result.get("distro_compatibility", {})
+    if dc:
+        ratio = dc.get("compat_ratio", 0)
+        color = "green" if ratio >= 0.9 else "yellow" if ratio >= 0.6 else "red"
+        console.print(f"[bold]Distro compat:[/bold] [{color}]{int(ratio * 100)}%[/{color}] "
+                      f"({len(dc.get('available', []))}/{len(dc.get('available', [])) + len(dc.get('unknown', []))} in {result['distro']})")
+
+    hints = result.get("rosdep_install_hints", [])
+    if hints:
+        console.print(Panel.fit("Install Commands", style="bold cyan"))
+        for hint in hints[:15]:
+            console.print(f"  [dim]$[/dim] {hint}")
+        if len(hints) > 15:
+            console.print(f"  [dim]... and {len(hints) - 15} more[/dim]")
 
 
 def _print_dependency_analysis(result: DependencyAnalysis) -> None:

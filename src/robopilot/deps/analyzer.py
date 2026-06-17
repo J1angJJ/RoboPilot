@@ -471,6 +471,162 @@ def _suggest_next_steps(
     return tuple(steps)
 
 
+# ---------------------------------------------------------------------------
+# M13: Enhanced rosdep hints with install commands
+# ---------------------------------------------------------------------------
+
+_ROSDEP_APT: dict[str, str] = {
+    "rclpy": "ros-<distro>-rclpy",
+    "rclcpp": "ros-<distro>-rclcpp",
+    "std_msgs": "ros-<distro>-std-msgs",
+    "sensor_msgs": "ros-<distro>-sensor-msgs",
+    "geometry_msgs": "ros-<distro>-geometry-msgs",
+    "nav_msgs": "ros-<distro>-nav-msgs",
+    "trajectory_msgs": "ros-<distro>-trajectory-msgs",
+    "visualization_msgs": "ros-<distro>-visualization-msgs",
+    "shape_msgs": "ros-<distro>-shape-msgs",
+    "diagnostic_msgs": "ros-<distro>-diagnostic-msgs",
+    "actionlib_msgs": "ros-<distro>-actionlib-msgs",
+    "tf2": "ros-<distro>-tf2",
+    "tf2_ros": "ros-<distro>-tf2-ros",
+    "tf2_msgs": "ros-<distro>-tf2-msgs",
+    "tf2_geometry_msgs": "ros-<distro>-tf2-geometry-msgs",
+    "cv_bridge": "ros-<distro>-cv-bridge",
+    "image_transport": "ros-<distro>-image-transport",
+    "image_geometry": "ros-<distro>-image-geometry",
+    "pcl_conversions": "ros-<distro>-pcl-conversions",
+    "pcl_ros": "ros-<distro>-pcl-ros",
+    "robot_state_publisher": "ros-<distro>-robot-state-publisher",
+    "joint_state_publisher": "ros-<distro>-joint-state-publisher",
+    "rosbag2": "ros-<distro>-rosbag2",
+    "ros2bag": "ros-<distro>-ros2bag",
+    "slam_toolbox": "ros-<distro>-slam-toolbox",
+    "nav2": "ros-<distro>-navigation2",
+    "robot_localization": "ros-<distro>-robot-localization",
+    "ros2_control": "ros-<distro>-ros2-control",
+    "ros2_controllers": "ros-<distro>-ros2-controllers",
+    "moveit": "ros-<distro>-moveit",
+    "gazebo_ros": "ros-<distro>-gazebo-ros",
+    "rviz2": "ros-<distro>-rviz2",
+    "teleop_twist_keyboard": "ros-<distro>-teleop-twist-keyboard",
+    "teleop_twist_joy": "ros-<distro>-teleop-twist-joy",
+    "xacro": "ros-<distro>-xacro",
+    "urdf": "ros-<distro>-urdf",
+    "rosidl_default_generators": "ros-<distro>-rosidl-default-generators",
+    "rosidl_default_runtime": "ros-<distro>-rosidl-default-runtime",
+}
+
+_ROSDEP_PIP: dict[str, str] = {
+    "numpy": "pip install numpy",
+    "opencv": "pip install opencv-python",
+    "cv2": "pip install opencv-python",
+    "matplotlib": "pip install matplotlib",
+    "scipy": "pip install scipy",
+    "pyyaml": "pip install pyyaml",
+    "yaml": "pip install pyyaml",
+    "pytest": "pip install pytest",
+    "torch": "pip install torch",
+    "tensorflow": "pip install tensorflow",
+    "transformers": "pip install transformers",
+    "flask": "pip install flask",
+    "requests": "pip install requests",
+}
+
+_DISTRO_PACKAGES: dict[str, set[str]] = {
+    "humble": {
+        "rclpy", "rclcpp", "std_msgs", "sensor_msgs", "geometry_msgs",
+        "nav_msgs", "tf2", "tf2_ros", "cv_bridge", "image_transport",
+        "rosbag2", "slam_toolbox", "nav2", "robot_localization",
+        "ros2_control", "ros2_controllers", "rviz2",
+    },
+    "jazzy": {
+        "rclpy", "rclcpp", "std_msgs", "sensor_msgs", "geometry_msgs",
+        "nav_msgs", "tf2", "tf2_ros", "cv_bridge", "image_transport",
+        "rosbag2", "slam_toolbox", "nav2", "robot_localization",
+        "ros2_control", "ros2_controllers", "rviz2", "moveit",
+    },
+    "noetic": {
+        "rospy", "roscpp", "std_msgs", "sensor_msgs", "geometry_msgs",
+        "nav_msgs", "tf", "tf2", "cv_bridge", "image_transport",
+        "rosbag", "slam_gmapping", "moveit",
+    },
+}
+
+
+def get_rosdep_install_hints(deps: list[str], distro: str = "humble") -> list[str]:
+    """Generate rosdep install commands for a list of package names."""
+    hints: list[str] = []
+    for dep in deps:
+        if dep in _ROSDEP_APT:
+            pkg = _ROSDEP_APT[dep].replace("<distro>", distro)
+            hints.append(f"sudo apt install {pkg}")
+        elif dep in _ROSDEP_PIP:
+            hints.append(_ROSDEP_PIP[dep])
+    return sorted(set(hints))
+
+
+def check_distro_compatibility(deps: list[str], distro: str = "humble") -> dict[str, object]:
+    """Check which deps are known to be available in a ROS distro."""
+    known = _DISTRO_PACKAGES.get(distro.lower(), set())
+    available = sorted(set(deps) & known)
+    unknown = sorted(set(deps) - known)
+    return {
+        "distro": distro,
+        "available": available,
+        "unknown": unknown,
+        "compat_ratio": round(len(available) / max(1, len(deps)), 2),
+    }
+
+
+# ---------------------------------------------------------------------------
+# M13: Workspace-level dependency analysis
+# ---------------------------------------------------------------------------
+
+
+def analyze_workspace_deps(workspace_path: Path, distro: str = "humble") -> dict[str, object]:
+    """Run dependency analysis across all packages in a workspace."""
+    from robopilot.workspace import analyze_workspace as ws_analyze
+    ws = ws_analyze(workspace_path)
+    results: dict[str, dict] = {}
+    all_deps: set[str] = set()
+
+    for pkg in ws.packages:
+        pkg_path = (Path(workspace_path) / pkg.path).resolve()
+        if not pkg_path.exists():
+            continue
+        try:
+            analysis = analyze_dependencies(pkg_path)
+            results[pkg.name] = {
+                "declared": sorted(set(
+                    list(analysis.declared_dependencies.buildtool)
+                    + list(analysis.declared_dependencies.build)
+                    + list(analysis.declared_dependencies.exec)
+                    + list(analysis.declared_dependencies.run)
+                )),
+                "possibly_missing": list(analysis.possibly_missing),
+                "rosdep_hints": list(analysis.rosdep_hints),
+            }
+            for d in results[pkg.name]["declared"]:
+                if isinstance(d, str):
+                    all_deps.add(d)
+        except Exception:
+            results[pkg.name] = {"error": "Could not analyze dependencies"}
+
+    install_hints = get_rosdep_install_hints(sorted(all_deps), distro)
+    compat = check_distro_compatibility(sorted(all_deps), distro)
+
+    return {
+        "workspace_path": str(workspace_path),
+        "distro": distro,
+        "package_count": len(results),
+        "packages": results,
+        "all_dependencies": sorted(all_deps),
+        "rosdep_install_hints": install_hints,
+        "distro_compatibility": compat,
+        "safety_note": SAFETY_NOTE,
+    }
+
+
 def _declared_dependency_set(declared: DeclaredDependencies) -> set[str]:
     return (
         set(declared.buildtool)
