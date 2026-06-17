@@ -118,6 +118,18 @@ def lint_project(project_path: Path) -> LintResult:
     for li in launch_result.issues:
         issues.append(LintIssue(li.severity, li.file, li.rule, li.message))
 
+    # v2.2.0 M12: cross-file consistency checks
+    issues.extend(_cross_check_cmake_vs_package_xml(path))
+    issues.extend(_cross_check_setup_vs_nodes(path, package_name))
+    issues.extend(_check_python_imports_vs_deps(path))
+
+    # v2.2.0 M12: ROS2-specific checks
+    issues.extend(_check_ros2_node_patterns(path, package_name))
+
+    # v2.2.0 M12: load lintrc and filter/override
+    lintrc = _load_lintrc(path)
+    issues = _apply_lintrc(issues, lintrc)
+
     error_count = sum(1 for i in issues if i.severity == "error")
     warning_count = sum(1 for i in issues if i.severity == "warning")
     info_count = sum(1 for i in issues if i.severity == "info")
@@ -336,8 +348,297 @@ def _lint_setup_cfg(path: Path) -> list[LintIssue]:
 
 
 # ---------------------------------------------------------------------------
+# M12: Cross-file consistency
+# ---------------------------------------------------------------------------
+
+
+def _cross_check_cmake_vs_package_xml(path: Path) -> list[LintIssue]:
+    """Check that CMake find_package calls match package.xml dependencies."""
+    cmake = path / "CMakeLists.txt"
+    pkg_xml = path / "package.xml"
+    if not cmake.exists() or not pkg_xml.exists():
+        return []
+
+    cmake_text = cmake.read_text(encoding="utf-8", errors="ignore")
+    xml_deps = _extract_xml_deps(pkg_xml)
+    if not xml_deps:
+        return []
+
+    issues: list[LintIssue] = []
+    import re
+    found = set(re.findall(r"find_package\s*\(\s*(\w+)", cmake_text))
+
+    # Check xml deps missing from cmake
+    for dep in sorted(xml_deps):
+        if dep in ("catkin", "ament_cmake", "ament_python", "message_generation", "message_runtime"):
+            continue
+        if dep not in found:
+            issues.append(LintIssue(
+                "warning", "package.xml", "cross.xml_dep_not_in_cmake",
+                f"<depend>{dep}</depend> in package.xml has no matching find_package({dep}) in CMakeLists.txt"
+            ))
+
+    # Check cmake finds missing from xml
+    for dep in sorted(found):
+        if dep in ("ament_cmake", "catkin", "rosidl_default_generators", "rosidl_default_runtime"):
+            continue
+        if dep.lower() in ("project",):  # cmake project() call, not a package dep
+            continue
+        if dep not in xml_deps:
+            issues.append(LintIssue(
+                "info", "CMakeLists.txt", "cross.cmake_find_not_in_xml",
+                f"find_package({dep}) in CMakeLists.txt has no matching <depend> in package.xml"
+            ))
+
+    return issues
+
+
+def _cross_check_setup_vs_nodes(path: Path, package_name: str | None) -> list[LintIssue]:
+    """Check setup.py entry_points reference real node files."""
+    setup = path / "setup.py"
+    if not setup.exists() or not package_name:
+        return []
+    try:
+        content = setup.read_text(encoding="utf-8", errors="ignore")
+        tree = ast.parse(content)
+    except SyntaxError:
+        return []
+
+    issues: list[LintIssue] = []
+    # Find console_scripts entries
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Dict):
+            for k in node.keys:
+                if isinstance(k, ast.Constant) and k.value == "console_scripts":
+                    if isinstance(node, ast.Dict):
+                        for v in node.values:
+                            if isinstance(v, ast.List):
+                                for item in v.elts:
+                                    if isinstance(item, ast.Constant) and isinstance(item.value, str):
+                                        entry = item.value
+                                        # entry format: "exec_name = pkg.module:main"
+                                        parts = entry.split("=")
+                                        if len(parts) == 2:
+                                            mod_ref = parts[1].strip().split(":")[0].strip()
+                                            mod_file = mod_ref.split(".")[-1] + ".py" if "." in mod_ref else mod_ref + ".py"
+                                            node_path = path / package_name / mod_file
+                                            if not node_path.exists():
+                                                issues.append(LintIssue(
+                                                    "error", "setup.py", "cross.entry_point_missing_node",
+                                                    f"console_script '{entry}' references '{mod_file}' but file does not exist at {package_name}/{mod_file}"
+                                                ))
+    return issues
+
+
+def _check_python_imports_vs_deps(path: Path) -> list[LintIssue]:
+    """Check Python imports in node files against package.xml dependencies."""
+    pkg_xml = path / "package.xml"
+    if not pkg_xml.exists():
+        return []
+
+    xml_deps = _extract_xml_deps(pkg_xml)
+    if not xml_deps:
+        return []
+
+    issues: list[LintIssue] = []
+    known_ros_imports = {
+        "rclpy", "rclcpp", "std_msgs", "sensor_msgs", "geometry_msgs",
+        "nav_msgs", "trajectory_msgs", "visualization_msgs", "shape_msgs",
+        "diagnostic_msgs", "actionlib_msgs", "tf2_msgs", "tf2_ros", "tf2_geometry_msgs",
+        "cv_bridge", "image_geometry", "image_transport",
+    }
+    # Scan Python files in the package directory
+    pkg_dir = None
+    for child in path.iterdir():
+        if child.is_dir() and (child / "__init__.py").exists():
+            pkg_dir = child
+            break
+    if not pkg_dir:
+        return issues
+
+    for py_file in pkg_dir.rglob("*.py"):
+        if py_file.name == "__init__.py":
+            continue
+        try:
+            tree = ast.parse(py_file.read_text(encoding="utf-8", errors="ignore"))
+        except SyntaxError:
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                for alias in node.names:
+                    _check_import(alias.name, xml_deps, known_ros_imports, py_file, issues, path)
+            elif isinstance(node, ast.ImportFrom):
+                if node.module:
+                    _check_import(node.module, xml_deps, known_ros_imports, py_file, issues, path)
+
+    return issues
+
+
+def _check_import(
+    mod: str,
+    xml_deps: set[str],
+    known: set[str],
+    py_file: Path,
+    issues: list[LintIssue],
+    root: Path,
+) -> None:
+    top = mod.split(".")[0]
+    if top not in known:
+        return
+    if top in xml_deps or top in ("rclpy", "std_msgs"):
+        return
+    try:
+        rel = str(py_file.relative_to(root))
+    except ValueError:
+        rel = py_file.name
+    issues.append(LintIssue(
+        "warning", rel, "cross.import_not_in_xml",
+        f"Python imports '{top}' but package.xml has no <depend>{top}</depend>"
+    ))
+
+
+# ---------------------------------------------------------------------------
+# M12: ROS2-specific checks
+# ---------------------------------------------------------------------------
+
+
+def _check_ros2_node_patterns(path: Path, package_name: str | None) -> list[LintIssue]:
+    """Check ROS2 node conventions in Python node files."""
+    issues: list[LintIssue] = []
+    if not package_name:
+        return issues
+    pkg_dir = path / package_name
+    if not pkg_dir.is_dir():
+        return issues
+
+    for py_file in pkg_dir.rglob("*.py"):
+        if py_file.name == "__init__.py":
+            continue
+        try:
+            content = py_file.read_text(encoding="utf-8", errors="ignore")
+            tree = ast.parse(content)
+        except SyntaxError:
+            continue
+
+        # Check for rclpy.init() call
+        has_init = any(
+            isinstance(n, ast.Call)
+            and isinstance(n.func, ast.Attribute)
+            and n.func.attr == "init"
+            for n in ast.walk(tree)
+            if isinstance(n, ast.Call)
+        )
+        # Check if Node subclass is defined
+        has_node_class = any(
+            isinstance(n, ast.ClassDef)
+            for n in ast.walk(tree)
+        )
+        if has_node_class and not has_init:
+            # Check if it uses the offline fallback pattern (try/except ImportError)
+            has_try_import = "try:" in content and "ImportError" in content
+            if not has_try_import:
+                try:
+                    rel = str(py_file.relative_to(path))
+                except ValueError:
+                    rel = py_file.name
+                issues.append(LintIssue(
+                    "info", rel, "ros2.missing_rclpy_init",
+                    "Node class defined but no rclpy.init() call found. Consider adding rclpy.init() before node construction."
+                ))
+
+        # Check QoS patterns
+        if "QoS" in content or "qos" in content.lower():
+            # Check for common QoS profile usage
+            has_qos_profile = any(
+                isinstance(n, ast.Call) and (
+                    isinstance(n.func, ast.Name) and "QoS" in (n.func.id if hasattr(n.func, 'id') else "")
+                )
+                for n in ast.walk(tree)
+            )
+
+    return issues
+
+
+# ---------------------------------------------------------------------------
+# M12: lintrc configuration
+# ---------------------------------------------------------------------------
+
+
+def _load_lintrc(path: Path) -> dict[str, object]:
+    """Load .robopilot/lintrc.yaml config if present."""
+    lintrc = path / ".robopilot" / "lintrc.yaml"
+    if not lintrc.exists():
+        return {}
+    try:
+        content = lintrc.read_text(encoding="utf-8")
+        return _parse_lintrc(content)
+    except Exception:
+        return {}
+
+
+def _parse_lintrc(content: str) -> dict[str, object]:
+    """Parse a simple lintrc YAML-like config."""
+    result: dict[str, object] = {}
+    for line in content.splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if ":" in line:
+            key, value = line.split(":", 1)
+            key, value = key.strip(), value.strip().strip('"').strip("'")
+            result[key] = value
+    return result
+
+
+def _apply_lintrc(issues: list[LintIssue], lintrc: dict[str, object]) -> list[LintIssue]:
+    """Filter/override issues based on lintrc config."""
+    if not lintrc:
+        return issues
+
+    disabled = set()
+    severity_map: dict[str, str] = {}
+
+    for k, v in lintrc.items():
+        k = str(k)
+        v = str(v)
+        if k.startswith("disable_") and v.lower() in ("true", "yes", "1"):
+            disabled.add(k[len("disable_"):])
+        elif k.startswith("severity_"):
+            rule = k[len("severity_"):]
+            if v in ("error", "warning", "info", "off"):
+                severity_map[rule] = v
+
+    filtered: list[LintIssue] = []
+    for issue in issues:
+        if issue.rule in disabled:
+            continue
+        if issue.rule in severity_map:
+            sev = severity_map[issue.rule]
+            if sev == "off":
+                continue
+            filtered.append(LintIssue(sev, issue.file, issue.rule, issue.message, issue.line))
+        else:
+            filtered.append(issue)
+
+    return filtered
+
+
+# ---------------------------------------------------------------------------
 # helpers
 # ---------------------------------------------------------------------------
+
+
+def _extract_xml_deps(pkg_xml: Path) -> set[str]:
+    deps: set[str] = set()
+    try:
+        tree = ET.parse(str(pkg_xml))
+        for child in tree.getroot():
+            if child.tag in ("depend", "build_depend", "exec_depend", "buildtool_depend"):
+                if child.text:
+                    deps.add(child.text.strip())
+    except ET.ParseError:
+        pass
+    return deps
 
 
 def _extract_package_name(pkg_xml: Path) -> str | None:

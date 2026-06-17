@@ -190,3 +190,86 @@ def test_lint_nonexistent_path() -> None:
     result = lint_project(Path("/nonexistent_robopilot_lint_test_path"))
     assert any(i.rule == "project.missing" for i in result.issues)
     assert result.error_count >= 1
+
+
+# ---------------------------------------------------------------------------
+# M12: cross-file and ROS2-specific checks
+# ---------------------------------------------------------------------------
+
+
+def test_cross_cmake_dep_not_in_xml(tmp_path: Path) -> None:
+    (tmp_path / "package.xml").write_text(
+        '<?xml version="1.0"?><package format="3">'
+        '<name>p</name><version>0.1</version><description>X</description>'
+        '<maintainer email="a@b.com">A</maintainer><license>MIT</license>'
+        '<depend>rclpy</depend></package>',
+        encoding="utf-8",
+    )
+    (tmp_path / "CMakeLists.txt").write_text(
+        "cmake_minimum_required(VERSION 3.8)\nfind_package(rclpy REQUIRED)\n"
+        "find_package(OpenCV REQUIRED)\nament_package()\n",
+        encoding="utf-8",
+    )
+    result = lint_project(tmp_path)
+    cross = [i for i in result.issues if i.rule.startswith("cross.")]
+    assert any("OpenCV" in i.message for i in cross)
+
+
+def test_cross_entry_point_missing_node(tmp_path: Path) -> None:
+    pkg = tmp_path / "my_pkg"
+    pkg.mkdir()
+    (pkg / "__init__.py").write_text("", encoding="utf-8")
+    (tmp_path / "package.xml").write_text(
+        '<?xml version="1.0"?><package format="3">'
+        '<name>my_pkg</name><version>0.1</version><description>X</description>'
+        '<maintainer email="a@b.com">A</maintainer><license>MIT</license></package>',
+        encoding="utf-8",
+    )
+    (tmp_path / "setup.py").write_text(
+        "from setuptools import setup\npackage_name='my_pkg'\n"
+        "setup(name=package_name, entry_points={'console_scripts': "
+        "['missing_node = my_pkg.nonexistent:main']})\n",
+        encoding="utf-8",
+    )
+    result = lint_project(tmp_path)
+    assert any(i.rule == "cross.entry_point_missing_node" for i in result.issues)
+
+
+def test_python_import_not_in_xml(tmp_path: Path) -> None:
+    pkg = tmp_path / "my_pkg"
+    pkg.mkdir()
+    (pkg / "__init__.py").write_text("", encoding="utf-8")
+    (pkg / "my_node.py").write_text("import cv_bridge\n", encoding="utf-8")
+    (tmp_path / "package.xml").write_text(
+        '<?xml version="1.0"?><package format="3">'
+        '<name>my_pkg</name><version>0.1</version><description>X</description>'
+        '<maintainer email="a@b.com">A</maintainer><license>MIT</license>'
+        '<depend>rclpy</depend><depend>sensor_msgs</depend></package>',
+        encoding="utf-8",
+    )
+    result = lint_project(tmp_path)
+    assert any(i.rule == "cross.import_not_in_xml" for i in result.issues)
+
+
+def test_lintrc_disables_rule(tmp_path: Path) -> None:
+    (tmp_path / "package.xml").write_text("<bad>", encoding="utf-8")
+    rc_dir = tmp_path / ".robopilot"
+    rc_dir.mkdir()
+    (rc_dir / "lintrc.yaml").write_text("disable_package_xml.parse_error: true\n", encoding="utf-8")
+    result = lint_project(tmp_path)
+    assert not any(i.rule == "package_xml.parse_error" for i in result.issues)
+
+
+def test_lintrc_severity_override(tmp_path: Path) -> None:
+    (tmp_path / "package.xml").write_text(
+        '<?xml version="1.0"?><package format="3">'
+        '<name>p</name><version>0.1</version><description>X</description>'
+        '<maintainer email="a@b.com">A</maintainer><license>MIT</license></package>',
+        encoding="utf-8",
+    )
+    rc_dir = tmp_path / ".robopilot"
+    rc_dir.mkdir()
+    (rc_dir / "lintrc.yaml").write_text("severity_package_xml.missing_buildtool: error\n", encoding="utf-8")
+    result = lint_project(tmp_path)
+    buildtool_issues = [i for i in result.issues if i.rule == "package_xml.missing_buildtool"]
+    assert all(i.severity == "error" for i in buildtool_issues)
