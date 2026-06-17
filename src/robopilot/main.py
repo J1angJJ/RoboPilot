@@ -83,6 +83,7 @@ from robopilot.user_templates import (
     validate_custom_template,
 )
 from robopilot.ci_check import CICheckResult, ci_check
+from robopilot.doctor import DoctorResult, run_doctor
 from robopilot.workspace import WorkspaceResult, analyze_workspace
 from robopilot.refiner.llm_refiner import LLMRefiner
 from robopilot.refiner.spec_refiner import refine_spec
@@ -1244,6 +1245,151 @@ def template_validate(
         for err in result.errors:
             console.print(f"[red]- {err}[/red]")
         raise typer.Exit(code=1)
+
+
+@app.command("template-install")
+def template_install(
+    url: Annotated[str, typer.Argument(help="URL or path to a template ZIP or YAML file.")],
+    name: Annotated[
+        str | None,
+        typer.Option("--name", "-n", help="Template name override."),
+    ] = None,
+) -> None:
+    """Install a community template from a URL or local file."""
+    import urllib.request
+    import zipfile
+    import tempfile
+
+    tpl_name = name or Path(url).stem
+    target = Path.cwd() / ".robopilot" / "templates" / tpl_name
+
+    if target.exists():
+        console.print(f"[red]Template '{tpl_name}' already exists at {target}[/red]")
+        raise typer.Exit(code=1)
+
+    try:
+        if url.startswith(("http://", "https://")):
+            console.print(f"[dim]Downloading {url}...[/dim]")
+            with tempfile.NamedTemporaryFile(suffix=".zip", delete=False) as tmp:
+                urllib.request.urlretrieve(url, tmp.name)
+                dl_path = Path(tmp.name)
+            if url.endswith(".zip"):
+                with zipfile.ZipFile(dl_path) as zf:
+                    zf.extractall(target)
+            else:
+                target.mkdir(parents=True, exist_ok=True)
+                content = dl_path.read_text(encoding="utf-8")
+                (target / "template.yaml").write_text(content, encoding="utf-8")
+            dl_path.unlink(missing_ok=True)
+        else:
+            src = Path(url).resolve()
+            if not src.exists():
+                console.print(f"[red]File not found: {url}[/red]")
+                raise typer.Exit(code=1)
+            target.mkdir(parents=True, exist_ok=True)
+            import shutil
+            if src.is_dir():
+                shutil.copytree(src, target, dirs_exist_ok=True)
+            else:
+                shutil.copy2(src, target / "template.yaml")
+    except Exception as exc:
+        console.print(f"[red]Failed to install template: {exc}[/red]")
+        raise typer.Exit(code=1)
+
+    console.print(f"[green]Template installed:[/green] {target}")
+    console.print("Validate with: robopilot template-validate --path " + str(target))
+
+
+@app.command()
+def doctor(
+    root: Annotated[
+        Path | None,
+        typer.Option("--root", "-r", help="Project root to diagnose."),
+    ] = None,
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print deterministic JSON output."),
+    ] = False,
+) -> None:
+    """Run self-diagnostics on the RoboPilot environment."""
+    result = run_doctor(root)
+    if json_output:
+        print(json.dumps(result.to_dict(), indent=2))
+        if result.error_count > 0:
+            raise typer.Exit(code=1)
+        return
+
+    console.print(Panel.fit("RoboPilot Doctor", style="bold cyan"))
+    for check in result.checks:
+        icon = "[green]OK[/green]" if check.status == "ok" else "[yellow]WARN[/yellow]" if check.status == "warn" else "[red]FAIL[/red]"
+        console.print(f"  {icon}  {check.name}: {check.message}")
+    console.print()
+    console.print(f"[bold]Summary:[/bold] [green]{len([c for c in result.checks if c.passed])}/{len(result.checks)} checks passed[/green]"
+                  f"{' — ' + str(result.warn_count) + ' warnings' if result.warn_count else ''}"
+                  f"{' — ' + str(result.error_count) + ' errors' if result.error_count else ''}")
+    if not result.all_passed:
+        raise typer.Exit(code=1)
+
+
+@app.command()
+def schema(
+    fmt: Annotated[
+        str,
+        typer.Option("--format", "-f", help="Schema format: json-schema."),
+    ] = "json-schema",
+) -> None:
+    """Export a JSON Schema for the robopilot.yaml ProjectSpec format."""
+    if fmt == "json-schema":
+        s = _generate_project_spec_schema()
+        print(json.dumps(s, indent=2))
+
+
+def _generate_project_spec_schema() -> dict:
+    return {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "RoboPilot ProjectSpec",
+        "description": "Schema for robopilot.yaml — the central ProjectSpec intermediate representation.",
+        "type": "object",
+        "required": ["package_name", "task", "selected_template", "generated_by"],
+        "properties": {
+            "package_name": {"type": "string", "description": "Package name for the generated ROS project."},
+            "task": {"type": "string", "description": "Natural language description of the robotics task."},
+            "selected_template": {"type": "string", "description": "Template type identifier (e.g., slam, object_detection)."},
+            "generated_by": {"type": "string", "description": "Generator name, typically 'RoboPilot'."},
+            "nodes": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "required": ["name", "executable", "module", "class_name", "file_name"],
+                    "properties": {
+                        "name": {"type": "string"},
+                        "executable": {"type": "string"},
+                        "module": {"type": "string"},
+                        "class_name": {"type": "string"},
+                        "file_name": {"type": "string"},
+                        "description": {"type": "string"},
+                    },
+                },
+            },
+            "topics": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "required": ["name", "direction", "message_type"],
+                    "properties": {
+                        "name": {"type": "string"},
+                        "direction": {"type": "string", "enum": ["subscribe", "publish"]},
+                        "message_type": {"type": "string"},
+                        "description": {"type": "string"},
+                    },
+                },
+            },
+            "config_files": {"type": "array", "items": {"type": "string"}},
+            "launch_files": {"type": "array", "items": {"type": "string"}},
+            "notes": {"type": "array", "items": {"type": "string"}},
+            "lang": {"type": "string", "enum": ["en", "zh"], "description": "Comment language: en (English) or zh (Chinese)."},
+        },
+    }
 
 
 @app.command("migrate-plan")
