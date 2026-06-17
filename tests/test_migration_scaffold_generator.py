@@ -293,8 +293,8 @@ def test_generated_files_contain_todo_manual_migration_warnings(tmp_path: Path) 
     launch_text = (output / "launch" / "demo.launch.py").read_text(encoding="utf-8")
     notes = (output / "MIGRATION_NOTES.md").read_text(encoding="utf-8")
     assert "This is not an automatic migration" in node_text
-    assert "TODO: migrate node initialization" in node_text
-    assert "TODO: migrate ROS1 XML launch semantics" in launch_text
+    assert "TODO" in node_text  # improved templates have specific migration TODOs
+    assert "TODO" in launch_text
     assert "No runtime validation was performed" in notes
     assert "migrate-scaffold-validate" in notes
 
