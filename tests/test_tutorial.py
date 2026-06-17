@@ -1,5 +1,7 @@
 """Tests for robopilot tutorial (v2.1.0 Milestone 4)."""
 
+from pathlib import Path
+
 from robopilot.tutorial import (
     TutorialLesson,
     TutorialResult,
@@ -9,12 +11,16 @@ from robopilot.tutorial import (
 )
 
 
-def test_list_lessons_returns_both_lessons() -> None:
+def test_list_lessons_returns_all_six_lessons() -> None:
     lessons = list_lessons()
     ids = {l.id for l in lessons}
     assert "demo_detector" in ids
     assert "migration_basics" in ids
-    assert len(lessons) >= 2
+    assert "slam_basics" in ids
+    assert "navigation_stack" in ids
+    assert "custom_authoring" in ids
+    assert "lint_workflow" in ids
+    assert len(lessons) >= 6
 
 
 def test_get_existing_lesson() -> None:
@@ -76,3 +82,17 @@ def test_migration_basics_lesson_structure() -> None:
     step_titles = [s.title for s in lesson.steps]
     assert "Step 2: Inspect the ROS1 Package" in step_titles
     assert "Step 3: Score Migration Readiness" in step_titles
+
+
+def test_progress_tracking(tmp_path: Path) -> None:
+    from robopilot.tutorial import save_progress, load_progress, get_progress_summary
+    # Initially empty
+    assert load_progress(tmp_path) == {}
+    # Mark one done
+    save_progress("demo_detector", True, tmp_path)
+    p = load_progress(tmp_path)
+    assert p["demo_detector"] is True
+    # Summary
+    s = get_progress_summary(tmp_path)
+    assert s["completed"] >= 1
+    assert s["total_lessons"] >= 6

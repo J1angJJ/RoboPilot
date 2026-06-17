@@ -94,6 +94,54 @@ def get_lesson(lesson_id: str) -> TutorialLesson | None:
 
 
 # ---------------------------------------------------------------------------
+# M14: Progress tracking
+# ---------------------------------------------------------------------------
+
+_STATE_FILE = ".robopilot_tutorial_state"
+
+
+def load_progress(root: Path | None = None) -> dict[str, bool]:
+    """Load tutorial progress: lesson_id → completed."""
+    base = Path(root or Path.cwd()).resolve()
+    state_path = base / _STATE_FILE
+    if not state_path.exists():
+        return {}
+    try:
+        import json as _json
+        data = _json.loads(state_path.read_text(encoding="utf-8"))
+        if isinstance(data, dict):
+            return {str(k): bool(v) for k, v in data.items()}
+    except Exception:
+        pass
+    return {}
+
+
+def save_progress(lesson_id: str, completed: bool = True, root: Path | None = None) -> None:
+    """Mark a lesson as completed in the progress file."""
+    base = Path(root or Path.cwd()).resolve()
+    state_path = base / _STATE_FILE
+    progress = load_progress(root)
+    progress[lesson_id] = completed
+    import json as _json
+    state_path.write_text(_json.dumps(progress, indent=2) + "\n", encoding="utf-8")
+
+
+def get_progress_summary(root: Path | None = None) -> dict[str, object]:
+    """Return a progress summary: total, completed, remaining."""
+    lessons = list_lessons()
+    progress = load_progress(root)
+    total = len(lessons)
+    done = sum(1 for l in lessons if progress.get(l.id, False))
+    return {
+        "total_lessons": total,
+        "completed": done,
+        "remaining": total - done,
+        "lesson_ids": [l.id for l in lessons],
+        "completed_ids": [l.id for l in lessons if progress.get(l.id, False)],
+    }
+
+
+# ---------------------------------------------------------------------------
 # Lesson 1: Demo Detector
 # ---------------------------------------------------------------------------
 
@@ -317,5 +365,158 @@ _register(TutorialLesson(
             action="explain",
             command=None, verification=None, expected=None,
         ),
+    ),
+))
+
+# ---------------------------------------------------------------------------
+# v2.2.0 M14: 4 new lessons + progress tracking
+# ---------------------------------------------------------------------------
+
+_register(TutorialLesson(
+    id="slam_basics",
+    title="SLAM Mapping Walkthrough",
+    summary="Plan and generate a SLAM node — understand LiDAR input, occupancy grids, and map building.",
+    estimated_minutes=8,
+    steps=(
+        TutorialStep("SLAM Concepts",
+            "SLAM (Simultaneous Localization and Mapping) lets robots build maps "
+            "of unknown environments while tracking their position. Core data flow: "
+            "LiDAR scans in → occupancy grid map out. "
+            "中文: SLAM 让机器人同时定位和建图，数据流为激光扫描输入→占据栅格地图输出。",
+            "explain", None, None, None),
+        TutorialStep("Step 1: Plan a SLAM Node",
+            "Use plan to create a robopilot.yaml for SLAM.",
+            "run", "python -m robopilot.main plan --name slam_demo "
+            "--task 'Create a SLAM mapping node for lidar data' "
+            "--output outputs/tutorial/slam_demo.yaml",
+            "selected_template: slam", "You should see 'selected_template: slam'."),
+        TutorialStep("Step 2: Generate the Package",
+            "Generate the SLAM package skeleton.",
+            "run", "python -m robopilot.main generate --spec outputs/tutorial/slam_demo.yaml "
+            "-o outputs/tutorial --overwrite",
+            "Generated slam_demo", None),
+        TutorialStep("Step 3: Inspect the Code",
+            "Open slam_node.py to see /scan subscription, /map publication, "
+            "occupancy grid logic, and map resolution params.",
+            "explain", None, None, None),
+        TutorialStep("Step 4: Run Lint",
+            "Verify the generated package passes lint.",
+            "run", "python -m robopilot.main lint outputs/tutorial/slam_demo",
+            "0 errors", "Should show 0 errors."),
+        TutorialStep("Key Takeaways",
+            "SLAM: /scan → /map. Key params: resolution, max_range. "
+            "Use slam_toolbox (2D) or rtabmap (3D) in real ROS2. "
+            "中文: SLAM 节点订阅激光扫描，发布栅格地图，分辨率和距离是核心参数。",
+            "explain", None, None, None),
+    ),
+))
+
+_register(TutorialLesson(
+    id="navigation_stack",
+    title="Navigation Stack Explained",
+    summary="Understand Nav2 architecture: planner, controller, costmaps, and behavior trees.",
+    estimated_minutes=10,
+    steps=(
+        TutorialStep("Nav2 Concepts",
+            "Nav2 controls robot motion from A to B while avoiding obstacles. "
+            "Components: Global Planner (path to goal), Local Controller (follow path), "
+            "Costmaps (global/local), Behavior Tree (orchestration). "
+            "中文: Nav2 控制机器人运动并避开障碍物，包括规划器、控制器、代价地图和行为树。",
+            "explain", None, None, None),
+        TutorialStep("Step 1: Plan a Navigator",
+            "Create a navigator node with odom, goal, cmd_vel, and plan topics.",
+            "run", "python -m robopilot.main plan --name nav_demo "
+            "--task 'Build autonomous navigation with path planning and obstacle avoidance' "
+            "--output outputs/tutorial/nav_demo.yaml",
+            "selected_template: navigation", None),
+        TutorialStep("Step 2: Generate & Examine",
+            "Generate the navigator package.",
+            "run", "python -m robopilot.main generate --spec outputs/tutorial/nav_demo.yaml "
+            "-o outputs/tutorial --overwrite",
+            "Generated nav_demo", None),
+        TutorialStep("Step 3: Data Flow",
+            "/odom (sub) → where am I? /goal_pose (sub) → where to? "
+            "/plan (pub) → path waypoints. /cmd_vel (pub) → velocity commands.",
+            "explain", None, None, None),
+        TutorialStep("Step 4: Quality Check",
+            "Run lint + ci-check on the generated package.",
+            "run", "python -m robopilot.main lint outputs/tutorial/nav_demo",
+            "0 errors", None),
+        TutorialStep("Key Takeaways",
+            "Nav2 separates planning from control. Costmaps merge static + sensor data. "
+            "Behavior trees replace ROS1 state machines. "
+            "中文: 规划和控制分离，代价地图融合静态和传感器数据，行为树替代状态机。",
+            "explain", None, None, None),
+    ),
+))
+
+_register(TutorialLesson(
+    id="custom_authoring",
+    title="Create Your Own Templates",
+    summary="Define custom generation templates in YAML — no Python required.",
+    estimated_minutes=8,
+    steps=(
+        TutorialStep("Custom Templates",
+            "Define reusable ROS package blueprints in YAML. Extend built-in templates "
+            "and override topics, node names, and parameters. "
+            "中文: 用 YAML 定义可复用模板，继承内置模板覆盖话题和参数。",
+            "explain", None, None, None),
+        TutorialStep("Step 1: Init Templates",
+            "Scaffold .robopilot/templates/ with an example.",
+            "run", "python -m robopilot.main template-init --root outputs/tutorial",
+            "Created templates directory", None),
+        TutorialStep("Step 2: Validate",
+            "Verify the example template structure.",
+            "run", "python -m robopilot.main template-validate "
+            "--path outputs/tutorial/.robopilot/templates/my_custom_node",
+            "Valid template", None),
+        TutorialStep("Step 3: Use It",
+            "Plan a project using the custom template.",
+            "run", "python -m robopilot.main plan --template my_custom_node "
+            "--name my_proj --task 'My custom node' "
+            "--output outputs/tutorial/my_proj.yaml",
+            "selected_template: my_custom_node", None),
+        TutorialStep("Next Steps",
+            "Create templates for sensor drivers, processing pipelines, "
+            "and standardized configs. Share via git. "
+            "中文: 为传感器驱动、处理流水线创建模板，通过 git 分享。",
+            "explain", None, None, None),
+    ),
+))
+
+_register(TutorialLesson(
+    id="lint_workflow",
+    title="Lint & CI Quality Workflow",
+    summary="Use lint, ci-check, and lintrc.yaml for quality gates locally and in CI.",
+    estimated_minutes=7,
+    steps=(
+        TutorialStep("Quality Gates",
+            "RoboPilot lint and ci-check act as quality gates without running ROS. "
+            "Use them locally during dev and in CI on every push. "
+            "中文: lint 和 ci-check 作为质量门禁，在本地和 CI 中使用。",
+            "explain", None, None, None),
+        TutorialStep("Step 1: Run Lint",
+            "Lint the demo detector package.",
+            "run", "python -m robopilot.main lint examples/generated_projects/demo_detector",
+            "0 errors", "Should show 0 errors."),
+        TutorialStep("Step 2: Run CI Check",
+            "Aggregated check with stable exit codes.",
+            "run", "python -m robopilot.main ci-check examples/generated_projects/demo_detector --json",
+            "overall_status", "JSON with overall_status and exit_code."),
+        TutorialStep("Step 3: SARIF Export",
+            "Generate SARIF for GitHub Code Scanning.",
+            "run", "python -m robopilot.main ci-check examples/generated_projects/demo_detector "
+            "--format sarif --output outputs/tutorial/check.sarif",
+            "Wrote sarif report", None),
+        TutorialStep("Step 4: lintrc.yaml",
+            "Configure rules via .robopilot/lintrc.yaml: "
+            "disable_<rule>: true, severity_<rule>: error|warning|info|off. "
+            "中文: 通过 lintrc.yaml 配置规则：禁用或修改严重级别。",
+            "explain", None, None, None),
+        TutorialStep("CI Integration",
+            "GitHub Actions: pip install robopilot → robopilot ci-check --format sarif → "
+            "github/codeql-action/upload-sarif@v3. "
+            "中文: CI 中运行 ci-check，生成 SARIF 上载到 GitHub。",
+            "explain", None, None, None),
     ),
 ))

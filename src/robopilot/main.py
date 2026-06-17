@@ -70,7 +70,10 @@ from robopilot.tutorial import (
     TutorialLesson,
     TutorialResult,
     get_lesson,
+    get_progress_summary,
     list_lessons,
+    load_progress,
+    save_progress,
 )
 from robopilot.user_templates import (
     TemplateValidationResult,
@@ -2050,6 +2053,10 @@ def tutorial(
         bool,
         typer.Option("--list", help="List available lessons."),
     ] = False,
+    run_all: Annotated[
+        bool,
+        typer.Option("--all", help="Run all lessons in sequence."),
+    ] = False,
     json_output: Annotated[
         bool,
         typer.Option("--json", help="Print lesson metadata as JSON."),
@@ -2072,12 +2079,19 @@ def tutorial(
         print(json.dumps(lessons_data, indent=2))
         return
 
+    if run_all:
+        _run_all_lessons()
+        return
+
     if lesson is None:
         console.print(Panel.fit("RoboPilot Tutorial", style="bold cyan"))
-        console.print("Welcome! Run a lesson with --lesson, or --list to see available lessons.\n")
+        summary = get_progress_summary()
+        completed = summary.get("completed", 0)
+        total = summary.get("total_lessons", 0)
+        console.print(f"Welcome! [green]{completed}/{total} lessons completed[/green].\n")
         console.print("[bold]Quick start:[/bold]")
         console.print("  robopilot tutorial --lesson demo_detector")
-        console.print("  robopilot tutorial --lesson migration_basics")
+        console.print("  robopilot tutorial --all")
         console.print("\n[bold]List all lessons:[/bold]")
         console.print("  robopilot tutorial --list")
         return
@@ -2093,15 +2107,36 @@ def tutorial(
 
 def _print_lesson_list() -> None:
     lessons = list_lessons()
+    progress = load_progress()
     console.print(Panel.fit("Available Tutorials", style="bold cyan"))
     table = Table()
+    table.add_column("Status")
     table.add_column("ID")
     table.add_column("Title")
     table.add_column("Duration")
     for les in lessons:
-        table.add_row(les.id, les.title, f"~{les.estimated_minutes} min")
+        done = progress.get(les.id, False)
+        status = "[green]done[/green]" if done else "[dim]new[/dim]"
+        table.add_row(status, les.id, les.title, f"~{les.estimated_minutes} min")
     console.print(table)
     console.print("\nRun: [bold]robopilot tutorial --lesson <id>[/bold]")
+
+
+def _run_all_lessons() -> None:
+    lessons = list_lessons()
+    progress = load_progress()
+    console.print(Panel.fit("Running All Tutorials", style="bold cyan"))
+    console.print(f"[bold]Total:[/bold] {len(lessons)} lessons\n")
+
+    for i, les in enumerate(lessons, 1):
+        already_done = progress.get(les.id, False)
+        prefix = "[dim](already done)[/dim] " if already_done else ""
+        console.print(f"[bold]{i}/{len(lessons)}:[/bold] {prefix}{les.title} (~{les.estimated_minutes} min)")
+        if already_done:
+            console.print()
+            continue
+        _run_tutorial_lesson(les)
+        console.print()
 
 
 def _run_tutorial_lesson(lesson: TutorialLesson) -> None:
@@ -2130,6 +2165,7 @@ def _run_tutorial_lesson(lesson: TutorialLesson) -> None:
 
     console.print(Panel.fit("[green]Tutorial Complete![/green]", style="bold green"))
     console.print(f"You finished '{lesson.title}' — all {len(lesson.steps)} steps.\n")
+    save_progress(lesson.id, completed=True)
     console.print("[bold]Next:[/bold]")
     console.print("  - Try another lesson: robopilot tutorial --lesson migration_basics")
     console.print("  - Explore all commands: robopilot --help")
